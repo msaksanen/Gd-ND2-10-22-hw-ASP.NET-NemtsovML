@@ -1,0 +1,72 @@
+﻿@using MedContactApp.Helpers;
+
+@model IEnumerable<CustomerDto>
+
+@{
+    ViewData["Title"] = "Customers Table";
+}
+
+@*<h1>Articles</h1>
+
+<a href="~/article/create">Create article</a>
+
+*@
+<Table class="table table-bordered">
+    <caption>Customers Info Table</caption>
+    <tr>
+        <th>
+           Username
+        </th>
+        <th>
+           Email
+        </th>
+        <th>
+           User Id
+        </th>
+        <th>
+           Name
+        </th>
+        <th>
+           Middle Name
+        </th>
+        <th>
+           Surname
+        </th>
+        <th>
+           Age
+        </th>
+        <th>
+           Sex
+        </th>
+        <th>
+           Address
+        </th>
+        <th>
+           Details
+        </th>
+    </tr>
+    
+        
+
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        await Html.RenderPartialAsync("CustomerPartialView", item);
+    }
+}
+
+</Table>
+
+@*@Html.GeneratePagintator(new int[]{1,2,3,4,5,6})*@
+
+@section CssStyles
+    {
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}
+    </style>
+}

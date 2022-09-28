@@ -1,0 +1,36 @@
+﻿@model CustomerDto
+
+<tr>
+
+    <th>
+        @Html.DisplayFor(modelItem => Model.Username)
+    </th>
+    <th>
+        @Html.DisplayFor(modelItem => Model.Email)
+    </th>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Id)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.MidName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Surname)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Age) years
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Sex)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Address)
+    </td>
+    <td>
+        <span> <a class="btn btn-primary" href="~/article/details/@Model.Id">View details</a></span>
+    </td>
+
+</tr>

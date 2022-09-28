@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactApp", "MedContactApp\MedContactApp.csproj", "{2A0006BF-5942-409A-95E2-0E3891F7327D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataRepositories", "MedContactDataRepositories\MedContactDataRepositories.csproj", "{F91E90C6-0AE9-4193-99AA-9342C852D188}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataAbstractions", "MedContactDataAbstractions\MedContactDataAbstractions.csproj", "{6F03C1AD-77B4-4B0E-B36D-6A147936C46A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactCore", "MedContactCore\MedContactCore.csproj", "{70DAA994-DF38-4B09-AD5D-EA6D491DD5E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactBusiness", "MedContactBusiness\MedContactBusiness.csproj", "{BC923189-D131-4940-B4DF-DC9A9FD62B52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactDb", "MedContactDb\MedContactDb.csproj", "{1BC1BE62-4BB4-4763-9D97-9BC21579777D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A0006BF-5942-409A-95E2-0E3891F7327D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A0006BF-5942-409A-95E2-0E3891F7327D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A0006BF-5942-409A-95E2-0E3891F7327D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A0006BF-5942-409A-95E2-0E3891F7327D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F91E90C6-0AE9-4193-99AA-9342C852D188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F91E90C6-0AE9-4193-99AA-9342C852D188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F91E90C6-0AE9-4193-99AA-9342C852D188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F91E90C6-0AE9-4193-99AA-9342C852D188}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F03C1AD-77B4-4B0E-B36D-6A147936C46A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F03C1AD-77B4-4B0E-B36D-6A147936C46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F03C1AD-77B4-4B0E-B36D-6A147936C46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F03C1AD-77B4-4B0E-B36D-6A147936C46A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70DAA994-DF38-4B09-AD5D-EA6D491DD5E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70DAA994-DF38-4B09-AD5D-EA6D491DD5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70DAA994-DF38-4B09-AD5D-EA6D491DD5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70DAA994-DF38-4B09-AD5D-EA6D491DD5E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC923189-D131-4940-B4DF-DC9A9FD62B52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC923189-D131-4940-B4DF-DC9A9FD62B52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC923189-D131-4940-B4DF-DC9A9FD62B52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC923189-D131-4940-B4DF-DC9A9FD62B52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BC1BE62-4BB4-4763-9D97-9BC21579777D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BC1BE62-4BB4-4763-9D97-9BC21579777D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BC1BE62-4BB4-4763-9D97-9BC21579777D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BC1BE62-4BB4-4763-9D97-9BC21579777D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BCABCA3A-10C2-43AB-86B5-BD4FEA6E1F8F}
+	EndGlobalSection
+EndGlobal
