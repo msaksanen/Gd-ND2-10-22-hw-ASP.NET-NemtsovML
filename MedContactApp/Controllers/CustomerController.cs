@@ -49,5 +49,27 @@ namespace MedContactApp.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create (CustomerModel model)
+        {
+            if (ModelState.IsValid)
+            {
+               // var userRoleId = await _roleService.GetRoleIdByNameAsync("User");
+                var customerDto = _mapper.Map<CustomerDto>(model);
+                if (customerDto != null) // && userRoleId != null
+                {
+                   //userDto.RoleId = userRoleId.Value;
+                    var result = await _customerService.CreateCustomerAsync(customerDto);
+                    if (result > 0)
+                    {
+                        //await Authenticate(model.Email);
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+            return View(model);
+        }
+
     }
 }

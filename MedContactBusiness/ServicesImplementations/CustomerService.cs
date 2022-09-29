@@ -26,6 +26,7 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<int> CreateCustomerAsync(CustomerDto dto)
         {
             var entity = _mapper.Map<Customer>(dto);
+            entity.PasswordHash = CreateMd5(dto.PasswordHash);
 
             if (entity != null)
             {
@@ -69,6 +70,19 @@ namespace MedContactBusiness.ServicesImplementations
         {
             await _unitOfWork.CustomerRepository.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
+        }
+
+        private string CreateMd5(string? password)
+        {
+            var passwordSalt = _configuration["UserSecrets:PasswordSalt"];
+
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var inputBytes = System.Text.Encoding.UTF8.GetBytes(password + passwordSalt);
+                var hashBytes = md5.ComputeHash(inputBytes);
+
+                return Convert.ToHexString(hashBytes);
+            }
         }
     }
 }

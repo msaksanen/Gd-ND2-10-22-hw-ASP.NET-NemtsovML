@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QPcRuGxH4GOe8v8JZ8eNuTT2qLrIWkf/oAThLOyXHSGH8KT1BjFXCf3IxiPXS9bPvuV1BkgvQ7K1V439NZGHWA==",
+  "dgSpecHash": "nBUtLQgZS4LqMFvvYO/0fIizhhafY/PtgSNQ3/rNEx/8PITGBdLWVGJnmv2kQSEL+X1UZJATidao+iVfmyxJsg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wisor\\Source\\Repos\\msaksanen\\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\\MedContactDataAbstractions\\MedContactDataAbstractions.csproj",
+  "projectFilePath": "C:\\Users\\wisor\\source\\repos\\msaksanen\\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\\MedContactDataAbstractions\\MedContactDataAbstractions.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wisor\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\wisor\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",

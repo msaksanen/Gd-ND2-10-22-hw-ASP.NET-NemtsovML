@@ -16,16 +16,16 @@ namespace MedContactApp
 {
     public class Program
     {
-        public static void Main()
+        public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder();
+            var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Host.UseSerilog((ctx, lc) =>
                lc.WriteTo.File(
-                   @"D:\Logs\aspnetsample\data.log",
+                   @"D:\Logs\medcontact\data.log",
                    LogEventLevel.Information)
                    .WriteTo.Console(LogEventLevel.Verbose));
 

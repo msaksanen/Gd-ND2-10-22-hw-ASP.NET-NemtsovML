@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fViDGGuxCFcftdLjop8GK4YxxUqGiTdoerRJG3yQYflhz1oyfHzvGmnWZO17YCisxQ02H25MlWwEPCfXKRseRg==",
+  "dgSpecHash": "t4ZLfAzZTizsVgbAsDy9rAjVZFVRF83DSc430JabYsBVOOlnOpE8RmZe3nVF/H24EESPEDZeYpKY8dS+7UYiKw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wisor\\Source\\Repos\\msaksanen\\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\\MedContactDb\\MedContactDb.csproj",
+  "projectFilePath": "C:\\Users\\wisor\\source\\repos\\msaksanen\\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\\MedContactDb\\MedContactDb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wisor\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\wisor\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
