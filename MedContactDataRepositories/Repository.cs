@@ -4,7 +4,7 @@ using MedContactDb.Entities;
 using MedContactCore;
 using MedContactDataAbstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+//using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 namespace MedContactDataRepositories 
