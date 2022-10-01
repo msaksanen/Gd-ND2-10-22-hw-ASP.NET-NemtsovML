@@ -6,30 +6,40 @@ using MedContactApp.Models;
 using AutoMapper;
 using Serilog;
 using System.ComponentModel.Design;
+using System.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace MedContactApp.Controllers
 {
     public class CustomerController : Controller
     {
-        private readonly ICustomerService _customerService;
+        private readonly IBaseUserService<CustomerDto> _customerService;
         private readonly IMapper _mapper;
-        private int _pageSize = 5;
+        private int _pageSize = 7;
+        private readonly IConfiguration _configuration;
 
-        public CustomerController (ICustomerService customerService,
+        public CustomerController (IBaseUserService<CustomerDto> customerService, IConfiguration configuration,
             IMapper mapper)
         {
             _customerService = customerService;
             _mapper = mapper;
+            _configuration = configuration;
         }
         public async Task<IActionResult> Index(int page)
         {
             try
             {
-                var customers = await _customerService
-                    .GetCustomersByPageNumberAndPageSizeAsync(page, _pageSize);
+               bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+               if (result) _pageSize=pageSize;
+
+               var customers = await _customerService
+                    .GetBaseUsersByPageNumberAndPageSizeAsync(page, _pageSize);
 
                 if (customers.Any())
                 {
+                    var count= await _customerService.GetBaseUserEntitiesCountAsync();
+                    int pageCount = (int)Math.Ceiling((double)(count/ _pageSize))+1;
+                    ViewBag.pageCount = pageCount;
                     return View(customers);
                 }
                 else
@@ -55,18 +65,27 @@ namespace MedContactApp.Controllers
         {
             if (ModelState.IsValid)
             {
-               // var userRoleId = await _roleService.GetRoleIdByNameAsync("User");
-                var customerDto = _mapper.Map<CustomerDto>(model);
-                if (customerDto != null) // && userRoleId != null
+                try 
                 {
-                   //userDto.RoleId = userRoleId.Value;
-                    var result = await _customerService.CreateCustomerAsync(customerDto);
-                    if (result > 0)
+                    // var userRoleId = await _roleService.GetRoleIdByNameAsync("User");
+                    model.Role = "Customer";
+                    var customerDto = _mapper.Map<CustomerDto>(model);
+                    if (customerDto != null) // && userRoleId != null
                     {
-                        //await Authenticate(model.Email);
-                        return RedirectToAction("Index", "Home");
+                        //userDto.RoleId = userRoleId.Value;
+                        var result = await _customerService.CreateBaseUserAsync(customerDto);
+                        if (result > 0)
+                        {
+                            //await Authenticate(model.Email);
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
+                catch (Exception e)
+                {
+                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                    return BadRequest();
+                }               
             }
             return View(model);
         }

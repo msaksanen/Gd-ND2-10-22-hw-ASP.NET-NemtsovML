@@ -10,7 +10,6 @@
 
 <a href="~/customer/create">Add customer</a>
 
-
 <Table class="table table-bordered">
     <caption>Customers Info Table</caption>
     <tr>
@@ -58,7 +57,7 @@
 
 </Table>
 
-@*@Html.GeneratePagintator(new int[]{1,2,3,4,5,6})*@
+@Html.GeneratePagintator((int)ViewBag.pageCount)
 
 @section CssStyles
     {

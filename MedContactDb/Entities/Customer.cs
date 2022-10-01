@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MedContactDb.Entities
 {
-    public class Customer: BaseUser
+    public class Customer : BaseUser
     {
         public List<Appointment>? Appointments { get; set; }
     }

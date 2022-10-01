@@ -8,13 +8,16 @@ namespace MedContactDataRepositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly MedContactContext _database;
-        public IRepository<Customer> CustomerRepository { get; }
+        public IBaseUserRepository<Customer> CustomerRepository { get; }
+        public IBaseUserRepository<User> UserRepository { get; }
 
-        public UnitOfWork(MedContactContext database,
-            IRepository<Customer> customerRepository)
+       
+        public UnitOfWork(MedContactContext database, IBaseUserRepository<Customer> customerRepository,
+               IBaseUserRepository<User> userRepository)
         {
             _database = database;
             CustomerRepository = customerRepository;
+            UserRepository = userRepository;
         }
 
         public async Task<int> Commit()

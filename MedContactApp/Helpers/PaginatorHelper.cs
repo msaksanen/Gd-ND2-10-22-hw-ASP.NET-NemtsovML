@@ -1,21 +1,26 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using MedContactDb.Entities;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MedContactApp.Helpers
 {
     public static class PaginatorHelper
     {
-        public static HtmlString GeneratePagintator(this IHtmlHelper html, int[] pages)
+        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount)
         {
-            var sb = new StringBuilder("<div>");
+            var sb = new StringBuilder(@"<Table class=""table table-bordered""><tr>");
 
-            foreach (var page in pages)
+            if (pageCount>1)
             {
-                sb.Append($"<p>{page}</p>");
+                for (int i = 1; i <= pageCount; i++)
+                {
+                    sb.Append(@$"<th><a href=""/index/customer/{i - 1}"" class=""text-decoration-none"">Page &nbsp {i} &nbsp</a></th>");
+                }
             }
-
-            sb.Append("</div>");
+            sb.Append("</tr></Table>");
 
             return new HtmlString(sb.ToString());
         }

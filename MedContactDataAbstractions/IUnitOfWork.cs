@@ -3,9 +3,10 @@ using MedContactDataAbstractions.Repositories;
 
 namespace MedContactDataAbstractions;
 
-public interface IUnitOfWork
+public interface IUnitOfWork 
 {
-    IRepository<Customer> CustomerRepository { get; }
+    IBaseUserRepository<Customer> CustomerRepository { get; }
+    IBaseUserRepository<User> UserRepository { get; }
 
     Task<int> Commit();
 }

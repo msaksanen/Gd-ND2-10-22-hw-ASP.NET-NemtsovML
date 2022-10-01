@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MedContactDataRepositories 
 {
     public class Repository<T> : IRepository<T>
-    where T : class, IBaseEntity
+                 where T : class, IBaseEntity
     {
         protected readonly MedContactContext Database;
         protected readonly DbSet<T> DbSet;

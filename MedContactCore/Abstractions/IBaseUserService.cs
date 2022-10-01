@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace MedContactCore.Abstractions
 {
-    public interface ICustomerService
+    public interface IBaseUserService<DTO>  where DTO : BaseUserDto
     {
-        Task<List<CustomerDto>> GetCustomersByPageNumberAndPageSizeAsync
+        Task<List<DTO>> GetBaseUsersByPageNumberAndPageSizeAsync
        (int pageNumber, int pageSize);
-
-        List<CustomerDto> GetNewCustomersFromExternalSources();
+        Task<int> GetBaseUserEntitiesCountAsync();
+        List<DTO> GetNewBaseUsersFromExternalSources();
 
         //Task<List<CustomerDto>> GetNewCustomersFromExternalSourcesAsync();
 
-        Task<CustomerDto> GetCustomerByIdAsync(Guid id);
+        Task<DTO> GetBaseUserByIdAsync(Guid id);
 
-        Task<int> CreateCustomerAsync(CustomerDto dto);
+        Task<int> CreateBaseUserAsync(DTO dto);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
     }
 }

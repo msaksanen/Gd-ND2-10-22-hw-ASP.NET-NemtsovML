@@ -5,6 +5,7 @@ using MedContactCore;
 using System.ComponentModel.Design;
 using MedContactBusiness.ServicesImplementations;
 using MedContactCore.Abstractions;
+using MedContactCore.DataTransferObjects;
 using MedContactDataAbstractions;
 using MedContactDataAbstractions.Repositories;
 using MedContactDataRepositories;
@@ -36,9 +37,14 @@ namespace MedContactApp
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<IRepository<Customer>, Repository<Customer>>();
+            builder.Services.AddScoped < IBaseUserRepository< Customer>, BaseUserRepository<Customer>>();
+            builder.Services.AddScoped < IBaseUserRepository< User>, BaseUserRepository<User>>();
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
+            builder.Services.AddScoped<IBaseUserService<UserDto>, BaseUserService<UserDto, User>>();
+
+
 
             var app = builder.Build();
 
