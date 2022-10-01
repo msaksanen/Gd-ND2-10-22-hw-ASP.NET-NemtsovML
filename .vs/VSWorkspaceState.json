@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\MedContactApp",
+    "\\MedContactApp\\Helpers"
   ],
-  "SelectedNode": "\\MedContact.sln",
+  "SelectedNode": "\\MedContactApp\\Helpers\\PaginatorHelper.cs",
   "PreviewInSolutionExplorer": false
 }

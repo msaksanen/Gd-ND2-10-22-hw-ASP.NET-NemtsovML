@@ -133,7 +133,8 @@ namespace MedContactBusiness.ServicesImplementations
 
         private void SetRepository()
         {
-                if (typeof(B).Equals(typeof(Customer))) _unitOfWorkRepos = (IBaseUserRepository<B>)_unitOfWork.CustomerRepository;
+            if (typeof(B).Equals(typeof(Customer))) _unitOfWorkRepos = (IBaseUserRepository<B>)_unitOfWork.CustomerRepository;
+            if (typeof(B).Equals(typeof(Doctor))) _unitOfWorkRepos = (IBaseUserRepository<B>)_unitOfWork.DoctorRepository;
         }
     }
 }

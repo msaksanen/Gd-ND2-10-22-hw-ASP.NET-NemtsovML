@@ -37,12 +37,14 @@ namespace MedContactApp
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddScoped < IBaseUserRepository< Customer>, BaseUserRepository<Customer>>();
-            builder.Services.AddScoped < IBaseUserRepository< User>, BaseUserRepository<User>>();
+            builder.Services.AddScoped < IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
+            builder.Services.AddScoped < IBaseUserRepository<User>, BaseUserRepository<User>>();
+            builder.Services.AddScoped<IBaseUserRepository<Doctor>, BaseUserRepository<Doctor>>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
             builder.Services.AddScoped<IBaseUserService<UserDto>, BaseUserService<UserDto, User>>();
+            builder.Services.AddScoped<IBaseUserService<DoctorDto>, BaseUserService<DoctorDto, Doctor>>();
 
 
 

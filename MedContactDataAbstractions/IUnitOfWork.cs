@@ -7,6 +7,7 @@ public interface IUnitOfWork
 {
     IBaseUserRepository<Customer> CustomerRepository { get; }
     IBaseUserRepository<User> UserRepository { get; }
+    IBaseUserRepository<Doctor> DoctorRepository { get; }
 
     Task<int> Commit();
 }

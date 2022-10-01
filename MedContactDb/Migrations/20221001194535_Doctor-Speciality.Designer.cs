@@ -4,6 +4,7 @@ using MedContactDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedContactDb.Migrations
 {
     [DbContext(typeof(MedContactContext))]
-    partial class MedContactContextModelSnapshot : ModelSnapshot
+    [Migration("20221001194535_Doctor-Speciality")]
+    partial class DoctorSpeciality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

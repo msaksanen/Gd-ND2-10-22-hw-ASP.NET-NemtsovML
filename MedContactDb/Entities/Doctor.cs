@@ -9,6 +9,7 @@ namespace MedContactDb.Entities
 {
     public class Doctor : BaseUser
     {
+        public string? Speciality { get; set; }
         public List<DayTimeTable>? DayTimeTables { get; set; }
     }
 }
