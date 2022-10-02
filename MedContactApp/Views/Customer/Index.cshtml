@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Customers Table";
+    ViewBag.pageRoute = "/index/customer";
 }
 
 
@@ -56,7 +57,7 @@
 
 </Table>
 
-@Html.GeneratePagintator((int)ViewBag.pageCount)
+@Html.GeneratePagintator((int)ViewBag.pageCount, (string)ViewBag.pageRoute)
 
 @section CssStyles
     {

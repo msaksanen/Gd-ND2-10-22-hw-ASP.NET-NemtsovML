@@ -9,7 +9,7 @@ namespace MedContactApp.Helpers
 {
     public static class PaginatorHelper
     {
-        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount)
+        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount, string pageRoute)
         {
             var sb = new StringBuilder(@"<Table class=""table table-bordered""><tr>");
 
@@ -17,7 +17,7 @@ namespace MedContactApp.Helpers
             {
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    sb.Append(@$"<th><a href=""/index/customer/{i - 1}"" class=""text-decoration-none"">Page &nbsp {i} &nbsp</a></th>");
+                    sb.Append(@$"<th><a href=""{pageRoute}/{i - 1}"" class=""text-decoration-none"">Page &nbsp {i} &nbsp</a></th>");
                 }
             }
             sb.Append("</tr></Table>");

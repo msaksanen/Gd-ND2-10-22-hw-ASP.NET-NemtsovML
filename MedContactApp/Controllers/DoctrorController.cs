@@ -89,6 +89,41 @@ namespace MedContactApp.Controllers
             }
             return View(model);
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> Details(string? id)
+        {
+           var doctorDto = await GetDoctorDtoByIdAsync(id);
+           if (doctorDto!=null) 
+               return View(doctorDto);
+     
+           ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+               return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            var doctorDto = await GetDoctorDtoByIdAsync(id);
+            if (doctorDto != null)
+                return View(doctorDto);
+
+            ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+            return RedirectToAction("Index", "Home");
+        }
+
+        private async Task<DoctorDto?> GetDoctorDtoByIdAsync(string? id)
+        {
+            var result = Guid.TryParse(id, out Guid guid_id);
+
+            if (result)
+            {
+                var doctor = await _doctorService.GetBaseUserByIdAsync(guid_id);
+                var doctorDto = _mapper.Map<DoctorDto>(doctor);
+                return doctorDto;
+            }
+            return null;
+        }
 
     }
 }

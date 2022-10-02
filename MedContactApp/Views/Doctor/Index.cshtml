@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Doctors Table";
+    ViewBag.pageRoute = "/index/doctor";
 }
 
 <a href="~/doctor/create">Add doctor</a>
@@ -59,7 +60,7 @@
 
 </Table>
 
-@Html.GeneratePagintator((int)ViewBag.pageCount)
+@Html.GeneratePagintator((int)ViewBag.pageCount, (string)ViewBag.pageRoute)
 
 @section CssStyles
     {
