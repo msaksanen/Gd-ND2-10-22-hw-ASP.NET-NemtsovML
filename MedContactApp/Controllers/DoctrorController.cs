@@ -8,6 +8,11 @@ using Serilog;
 using System.ComponentModel.Design;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Reflection;
+using System.Xml.Linq;
+using System.Linq;
+using NuGet.Packaging;
 
 namespace MedContactApp.Controllers
 {
@@ -110,6 +115,50 @@ namespace MedContactApp.Controllers
 
             ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit (DoctorModel model)
+        {
+            try
+            {
+                if (model != null)
+                {
+                    var dto = _mapper.Map<DoctorDto>(model);
+
+                    var sourceDto = await _doctorService.GetBaseUserByIdAsync(dto.Id);
+
+                    //should be sure that dto property naming is the same with entity property naming
+                    var patchList = new List<PatchModel>();
+                    Type myType = typeof(DoctorDto);
+                    var propList = myType?.GetProperties();
+                    if (propList!=null)
+                    {
+                        foreach (var prop in propList)
+                        {
+                            var propName = myType?.GetProperty($"{prop.Name}");
+                            var propValueModel = propName?.GetValue(dto);
+                            var propValueSource = propName?.GetValue(sourceDto);
+                            if (propValueSource != propValueModel && propValueModel != null)
+                            {
+                                PatchModel patchModel = new() { PropertyName = prop.Name, PropertyValue = propValueModel };
+                                patchList.Add(patchModel);
+                            }
+                        }
+                    }
+                    await _doctorService.PatchAsync(dto.Id, patchList);
+                    return RedirectToAction("Index","Doctor");
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         private async Task<DoctorDto?> GetDoctorDtoByIdAsync(string? id)

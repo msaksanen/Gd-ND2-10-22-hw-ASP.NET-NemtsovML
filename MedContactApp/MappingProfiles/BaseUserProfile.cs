@@ -36,9 +36,9 @@ namespace MedContactApp.MappingProfiles
                 .Include<CustomerModel, CustomerDto>()
                 .Include<DoctorModel, DoctorDto>()
                 .ForMember(dto => dto.RegistrationDate,
-                  opt => opt.MapFrom(model => DateTime.Now))
+                  opt => opt.MapFrom(model => model.RegistrationDate ?? DateTime.Now))
                  .ForMember(dto => dto.Id,
-                  opt => opt.MapFrom(model => Guid.NewGuid()))
+                  opt => opt.MapFrom(model => model.Id ?? Guid.NewGuid()))
                  .ForMember(dto => dto.PasswordHash,
                   opt => opt.MapFrom(model => model.Password));
 
