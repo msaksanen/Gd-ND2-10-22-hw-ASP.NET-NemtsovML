@@ -17,8 +17,8 @@ namespace MedContactCore.Abstractions
         //Task<List<CustomerDto>> GetNewCustomersFromExternalSourcesAsync();
 
         Task<DTO> GetBaseUserByIdAsync(Guid id);
-
         Task<int> CreateBaseUserAsync(DTO dto);
+        Task<bool> CheckBaseUserEmailAsync(string email);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
     }
 }

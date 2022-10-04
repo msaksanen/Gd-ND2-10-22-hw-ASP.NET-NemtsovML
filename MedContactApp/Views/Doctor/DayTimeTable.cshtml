@@ -1,0 +1,51 @@
+﻿@model MedContactApp.Models.DayTimeTableModel
+
+@{
+    ViewData["Title"] = "DayTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>DayTimeTable</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="DayTimeTable">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartWorkTime" class="control-label"></label>
+                <input asp-for="StartWorkTime" type="time" class="form-control" />
+                <span asp-validation-for="StartWorkTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FinishWorkTime" class="control-label"></label>
+                <input asp-for="FinishWorkTime" type="time" class="form-control" />
+                <span asp-validation-for="FinishWorkTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConsultDuration" class="control-label"> Consultation Duration (min)</label>
+                <input asp-for="ConsultDuration" class="form-control" />
+                <span asp-validation-for="ConsultDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type ="hidden" asp-for="DoctorId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Linq;
 using NuGet.Packaging;
+using MedContactApp.Helpers;
+
 
 namespace MedContactApp.Controllers
 {
@@ -20,15 +22,17 @@ namespace MedContactApp.Controllers
     {
         private readonly IBaseUserService<DoctorDto> _doctorService;
         private readonly IMapper _mapper;
+        private readonly EmailChecker<DoctorDto> _emailChecker;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
 
         public DoctorController (IBaseUserService<DoctorDto> doctorService, IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper, EmailChecker<DoctorDto> emailChecker)
         {
             _doctorService = doctorService;
             _mapper = mapper;
             _configuration = configuration;
+            _emailChecker = emailChecker;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -161,6 +165,36 @@ namespace MedContactApp.Controllers
             }
         }
 
+        [HttpGet]
+        public  IActionResult DayTimeTable (string? id)
+        {
+            var result = Guid.TryParse(id, out Guid guid_id);
+            if (result)
+            {
+                var model = new DayTimeTableModel();
+                model.DoctorId = guid_id;
+                model.Date= DateTime.Now;
+                model.StartWorkTime = DateTime.Today.AddHours(8);
+                model.FinishWorkTime = DateTime.Today.AddHours(20);
+                return View(model);
+            }
+
+            ModelState.AddModelError("CustomError", $"Id {id} is invalid.");
+            return RedirectToAction("Index", "Home");
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public   async Task<IActionResult> CheckEmail(string email)
+        {
+            //string str = "ok";
+            //var result = await _emailChecker.CheckEmail(email.ToLower());
+            //if (result) return Json(false, email);
+            //else return Json(true, str);
+
+            //Json(result, string str = $" email exists");
+
+            return Json(await _emailChecker.CheckEmail(email.ToLower()));
+        }
         private async Task<DoctorDto?> GetDoctorDtoByIdAsync(string? id)
         {
             var result = Guid.TryParse(id, out Guid guid_id);

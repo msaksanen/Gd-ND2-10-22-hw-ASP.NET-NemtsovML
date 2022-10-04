@@ -105,6 +105,20 @@ namespace MedContactBusiness.ServicesImplementations
             return list;
         }
 
+        public async Task<bool> CheckBaseUserEmailAsync(string email)
+        {
+            if (_unitOfWorkRepos != null)
+            {
+                return await _unitOfWorkRepos.Get().AnyAsync
+                       (user => user.Email != null && user.Email.Equals(email));
+            }       
+            else
+            {
+                throw new NullReferenceException(nameof(_unitOfWorkRepos));
+            }
+        }
+
+
         public async Task<int> PatchAsync(Guid id, List<PatchModel> patchList)
         {
             if (_unitOfWorkRepos != null)

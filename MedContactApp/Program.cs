@@ -12,6 +12,7 @@ using MedContactDataRepositories;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Serilog;
 using Serilog.Events;
+using MedContactApp.Helpers;
 
 namespace MedContactApp
 {
@@ -37,18 +38,19 @@ namespace MedContactApp
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddScoped < IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
-            builder.Services.AddScoped < IBaseUserRepository<User>, BaseUserRepository<User>>();
+            builder.Services.AddScoped<IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
+            builder.Services.AddScoped<IBaseUserRepository<User>, BaseUserRepository<User>>();
             builder.Services.AddScoped<IBaseUserRepository<Doctor>, BaseUserRepository<Doctor>>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
             builder.Services.AddScoped<IBaseUserService<UserDto>, BaseUserService<UserDto, User>>();
             builder.Services.AddScoped<IBaseUserService<DoctorDto>, BaseUserService<DoctorDto, Doctor>>();
+            builder.Services.AddScoped<EmailChecker<DoctorDto>>();
 
 
 
-            var app = builder.Build();
+           var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

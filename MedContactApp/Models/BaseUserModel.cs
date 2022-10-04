@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace MedContactApp.Models
 {
@@ -12,7 +13,8 @@ namespace MedContactApp.Models
         public string? Username { get; set; }
 
         [Required]
-        public string? Email { get; set; }
+        [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}")]
+        public virtual  string? Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -23,20 +25,18 @@ namespace MedContactApp.Models
         public string? PasswordConfirmation { get; set; }
 
         [Required]
+        [Phone]
         public string? PhoneNumber { get; set; }
 
-        [Required]
-        [MinLength(3)]
         [MaxLength(32)]
         public string? Name { get; set; }
 
-        [Required]
-        [MinLength(3)]
         [MaxLength(32)]
         public string? Surname { get; set; }
         public string? MidName { get; set; }
 
         [Required]
+        [Range(1, 110)]
         public int? Age { get; set; }
         public string? Sex { get; set; }
 
