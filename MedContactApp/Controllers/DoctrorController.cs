@@ -7,13 +7,11 @@ using AutoMapper;
 using Serilog;
 using System.ComponentModel.Design;
 using System.Configuration;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Reflection;
-using System.Xml.Linq;
 using System.Linq;
-using NuGet.Packaging;
 using MedContactApp.Helpers;
+using MedContactDb.Entities;
 
 
 namespace MedContactApp.Controllers
@@ -163,24 +161,6 @@ namespace MedContactApp.Controllers
                 Log.Error(ex, ex.Message);
                 return StatusCode(500);
             }
-        }
-
-        [HttpGet]
-        public  IActionResult DayTimeTable (string? id)
-        {
-            var result = Guid.TryParse(id, out Guid guid_id);
-            if (result)
-            {
-                var model = new DayTimeTableModel();
-                model.DoctorId = guid_id;
-                model.Date= DateTime.Now;
-                model.StartWorkTime = DateTime.Today.AddHours(8);
-                model.FinishWorkTime = DateTime.Today.AddHours(20);
-                return View(model);
-            }
-
-            ModelState.AddModelError("CustomError", $"Id {id} is invalid.");
-            return RedirectToAction("Index", "Home");
         }
 
         [AcceptVerbs("Get", "Post")]

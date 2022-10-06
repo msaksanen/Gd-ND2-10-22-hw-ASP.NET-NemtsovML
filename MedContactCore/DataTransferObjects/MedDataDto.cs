@@ -16,6 +16,7 @@ namespace MedContactCore.DataTransferObjects
         public string? TextData { get; set; }
         public string? FilePath { get; set; }
         public Guid? CustomerId { get; set; }
-        public CustomerDto? Customer { get; set; }
+        
+        //public CustomerDto? Customer { get; set; }
     }
 }

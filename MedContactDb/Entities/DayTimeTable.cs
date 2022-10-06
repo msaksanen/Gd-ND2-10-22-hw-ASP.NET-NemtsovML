@@ -9,6 +9,7 @@ namespace MedContactDb.Entities
     public class DayTimeTable : IBaseEntity
     {
         public Guid Id { get; set; }
+        public DateTime  CreationDate { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? StartWorkTime { get; set; }
         public DateTime? FinishWorkTime { get; set; }

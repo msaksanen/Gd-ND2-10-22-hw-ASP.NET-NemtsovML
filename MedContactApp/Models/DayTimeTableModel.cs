@@ -6,7 +6,7 @@ namespace MedContactApp.Models
     public class DayTimeTableModel
     {
         public Guid? Id { get; set; }
-        
+        public DateTime CreationDate { get; set; }
         [Required]
         public DateTime? Date { get; set; }
         [Required]

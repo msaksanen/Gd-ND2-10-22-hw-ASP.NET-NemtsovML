@@ -10,6 +10,7 @@ namespace MedContactCore.DataTransferObjects
     public class RecommendationDto : MedDataDto 
     { 
         public Guid? DoctorId { get; set; }
-        public DoctorDto? Doctor { get; set; }
+
+        //public DoctorDto? Doctor { get; set; }
     }
 }

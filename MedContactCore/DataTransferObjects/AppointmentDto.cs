@@ -9,6 +9,7 @@ namespace MedContactCore.DataTransferObjects
     public class AppointmentDto
     {
         public Guid Id { get; set; }
+        public DateTime CreationDate { get; set; }
         public DateTime? StartTime { get; set; }
         public Guid? CustomerId { get; set; }
         public CustomerDto? Customer { get; set; }
