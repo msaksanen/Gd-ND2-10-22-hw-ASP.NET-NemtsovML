@@ -14,6 +14,7 @@ namespace MedContactApp.Models
         [Required]
         public DateTime? FinishWorkTime { get; set; }
         [Required]
+        [Range(1, 60)]
         public int? ConsultDuration { get; set; }
         public int? TotalTicketQty { get; set; }
         public int? FreeTicketQty { get; set; }

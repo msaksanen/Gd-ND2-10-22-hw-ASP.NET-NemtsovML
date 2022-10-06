@@ -4,11 +4,12 @@
     ViewData["Title"] = "DayTimeTable";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="container">
 
-<h1>DayTimeTable</h1>
+<h1>Day Time Table</h1>
 
-<hr />
-<div class="row">
+<br />
+
     <div class="col-md-4">
         <form asp-action="DayTimeTable">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -32,24 +33,28 @@
                 <input asp-for="ConsultDuration" id="ConsultDuration" type="number" class="form-control" />
                 <span asp-validation-for="ConsultDuration" class="text-danger"></span>
             </div>
-            <div id="calctext"></div>
             <div class="form-group">
                 <input type ="hidden" asp-for="DoctorId" class="form-control" />
             </div>
-            <div class="form-group">
-                <button type="button" id="calc" class="btn btn-primary">Calculate</button>
-            </div>
-            <br />
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <br/>
+                <div class="row">
+                    <div class="col-6 form-group">
+                        <button type="button" id="calc" class="btn btn-primary">Calculate Tickets Quantity</button>
+                    </div>
+                    <div class="col-6" id="calctext"></div>
+                </div>      
+                <br/>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>  
         </form>
+    </div>
+    <br/>
+    <div>
+    <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
