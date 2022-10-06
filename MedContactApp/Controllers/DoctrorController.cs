@@ -186,13 +186,6 @@ namespace MedContactApp.Controllers
         [AcceptVerbs("Get", "Post")]
         public   async Task<IActionResult> CheckEmail(string email)
         {
-            //string str = "ok";
-            //var result = await _emailChecker.CheckEmail(email.ToLower());
-            //if (result) return Json(false, email);
-            //else return Json(true, str);
-
-            //Json(result, string str = $" email exists");
-
             return Json(await _emailChecker.CheckEmail(email.ToLower()));
         }
         private async Task<DoctorDto?> GetDoctorDtoByIdAsync(string? id)
