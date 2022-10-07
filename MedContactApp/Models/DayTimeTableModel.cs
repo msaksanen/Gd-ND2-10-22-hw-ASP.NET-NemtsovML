@@ -7,6 +7,11 @@ namespace MedContactApp.Models
     {
         public Guid? Id { get; set; }
         public DateTime CreationDate { get; set; }
+        public string? DoctorName { get; set; }
+        public string? DoctorMidName { get; set; }
+        public string? DoctorSurname { get; set; }
+        public string? DoctorSpeciality { get; set; }
+
         [Required]
         public DateTime? Date { get; set; }
         [Required]

@@ -43,9 +43,42 @@ namespace MedContactBusiness.ServicesImplementations
             else
             {
                     throw new ArgumentException(nameof(dto));
+            }          
+        }
+        public async Task<List<DayTimeTableDto>> GetDayTimeTableByPageNumberAndPageSizeAsync(int pageNumber, int pageSize)
+        {
+           
+                var list = await _unitOfWork.DayTimeTableRepository
+                                  .Get()
+                                  .Skip(pageNumber * pageSize)
+                                  .Take(pageSize)
+                                  .Select(DayTimeTable => _mapper.Map<DayTimeTableDto>(DayTimeTable))
+                                  .ToListAsync();
+                return list;
+            
+        }
+        public async Task<int> GetDayTimeTableEntitiesCountAsync()
+        {
+           
+                return await _unitOfWork.DayTimeTableRepository.Get().CountAsync();
+        }
+
+        public async Task<DoctorInfo> GetDoctorInfoById(Guid? doctorId)
+        {
+            var dtt = await _unitOfWork.DayTimeTableRepository
+                .FindBy(dtt => dtt.DoctorId.Equals(doctorId),
+                    dtt => dtt.Doctor!)
+                .FirstOrDefaultAsync();
+           
+            if (dtt!=null && dtt?.Doctor != null)
+            {
+                var doctInfo= _mapper.Map<DoctorInfo>(dtt.Doctor);
+                return doctInfo;
             }
-           
-           
+            else
+            {
+                throw new ArgumentException(nameof(dtt));
+            }
         }
     }
 }

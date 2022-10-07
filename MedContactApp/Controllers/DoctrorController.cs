@@ -39,15 +39,15 @@ namespace MedContactApp.Controllers
                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                if (result) _pageSize=pageSize;
 
-               var customers = await _doctorService
+               var customersDto = await _doctorService
                     .GetBaseUsersByPageNumberAndPageSizeAsync(page, _pageSize);
 
-                if (customers.Any())
+                if (customersDto.Any())
                 {
                     var count= await _doctorService.GetBaseUserEntitiesCountAsync();
                     int pageCount = (int)Math.Ceiling((double)(count/ _pageSize))+1;
                     ViewBag.pageCount = pageCount;
-                    return View(customers);
+                    return View(customersDto);
                 }
                 else
                 {

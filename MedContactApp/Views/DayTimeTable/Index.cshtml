@@ -1,0 +1,87 @@
+﻿@model IEnumerable<MedContactApp.Models.DayTimeTableModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Day Time Table Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="delivery">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DoctorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DoctorMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DoctorSurname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DoctorSpeciality)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartWorkTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinishWorkTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConsultDuration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalTicketQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FreeTicketQty)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td area-label="Doctor Name">
+                @Html.DisplayFor(modelItem => item.DoctorName)
+            </td>
+            <td area-label="Doctor MidName">
+                @Html.DisplayFor(modelItem => item.DoctorMidName)
+            </td>
+            <td area-label="Doctor Surname">
+                @Html.DisplayFor(modelItem => item.DoctorSurname)
+            </td>
+            <td area-label="Doctor Speciality">
+                @Html.DisplayFor(modelItem => item.DoctorSpeciality)
+            </td>
+            <td area-label="Date">
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td area-label="Start Work Time">
+                @Html.DisplayFor(modelItem => item.StartWorkTime)
+            </td>
+            <td area-label="Finish Work Time">
+                @Html.DisplayFor(modelItem => item.FinishWorkTime)
+            </td>
+            <td area-label="Consult Duration">
+                @Html.DisplayFor(modelItem => item.ConsultDuration)
+            </td>
+            <td area-label="Total Ticket Quantity">
+                @Html.DisplayFor(modelItem => item.TotalTicketQty)
+            </td>
+            <td area-label="Free Ticket Quantity">
+                @Html.DisplayFor(modelItem => item.FreeTicketQty)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
