@@ -13,11 +13,17 @@ namespace MedContactApp.Models
         public string? DoctorSpeciality { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime? Date { get; set; }
+
         [Required]
+        [DataType(DataType.Time)]
         public DateTime? StartWorkTime { get; set; }
+
         [Required]
+        [DataType(DataType.Time)]
         public DateTime? FinishWorkTime { get; set; }
+
         [Required]
         [Range(1, 60)]
         public int? ConsultDuration { get; set; }

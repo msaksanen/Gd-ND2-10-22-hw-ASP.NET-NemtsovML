@@ -19,8 +19,8 @@ body {
 
 table.delivery {
     width: 100%;
-    border: 0px;  
-    border-collapse:separate;
+    border: 0px;
+    border-collapse: separate;   
 }
 
     table.delivery thead {
@@ -30,15 +30,25 @@ table.delivery {
     table.delivery th {
         padding: 0.6rem 1rem;
         border-bottom: 1px solid #e8e9eb;
-        border-right: 1px solid #e8e9eb;
+        /*border-right: 1px solid #e8e9eb;*/
         text-align:center;
     }
 
     table.delivery td {
         padding: 0.6rem 1rem;
         border-bottom: 1px solid #e8e9eb;
-        border-right: 1px solid #e8e9eb;
+        /* border-right: 1px solid #e8e9eb;*/
         text-align: center;
+        white-space: nowrap;
+        min-height: 3em;
+    }
+
+    table.delivery th:not(:last-child) {
+        border-right: 1px solid #e8e9eb;
+    }
+
+    table.delivery td:not(:last-child) {
+        border-right: 1px solid #e8e9eb;
     }
 
 @media screen and (max-width: 800px) {
@@ -58,9 +68,12 @@ table.delivery {
         font-size: 12px;
     }
 
-        table.delivery td:before {
+   
+    table.delivery td:before {
             content: attr(area-label);
             float: left;
             font-weight: bold;
-        }
+            height:fit-content
+    }
+
 }

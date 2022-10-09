@@ -10,8 +10,9 @@
 
 <a href="~/customer/create">Add customer</a>
 
-<Table class="table table-bordered">
+<Table class="delivery">   @*" table table-bordered"*@
     <caption>Customers Info Table</caption>
+    <thead>
     <tr>
         <th>
            Username
@@ -44,6 +45,8 @@
            Details
         </th>
     </tr>
+    <thead>
+    <tbody>
     
         
 
@@ -55,8 +58,8 @@
     }
 }
 
+    </tbody>
 </Table>
-
 @Html.GeneratePagintator((int)ViewBag.pageCount, (string)ViewBag.pageRoute)
 
 @section CssStyles
