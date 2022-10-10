@@ -19,7 +19,8 @@ namespace MedContactDb.Entities
         public int? Age { get; set; }
         public string? Sex { get; set; }
         public string? Address { get; set; }
-        public string? Role { get; set; }
+        public List<Role>? Roles { get; set; }
+        public List<RoleAllUser>? RoleAllUsers { get; set; }
         public DateTime RegistrationDate { get; set; }
     }
 }
