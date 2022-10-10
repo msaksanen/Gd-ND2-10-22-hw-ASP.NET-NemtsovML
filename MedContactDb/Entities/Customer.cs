@@ -9,5 +9,6 @@ namespace MedContactDb.Entities
     public class Customer : BaseUser
     {
         public List<Appointment>? Appointments { get; set; }
+        public List<MedData>? MedData { get; set; }
     }
 }
