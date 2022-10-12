@@ -36,7 +36,7 @@ namespace MedContactBusiness.ServicesImplementations
             entity.PasswordHash = CreateMd5(dto.PasswordHash);
             if (_unitOfWorkRepos != null)
             {
-                if (entity != null)
+                if (entity!= null)
                 {
                     await _unitOfWorkRepos.AddAsync(entity);
                     var addingResult = await _unitOfWork.Commit();
@@ -66,6 +66,21 @@ namespace MedContactBusiness.ServicesImplementations
                 throw new NullReferenceException (nameof(_unitOfWorkRepos));
             }
 
+        }
+
+        public async Task<DTO> GetBaseUserByEmailAsync(string email)
+        {
+            if (_unitOfWorkRepos != null)
+            {
+                var entity = await _unitOfWorkRepos.Get().AnyAsync
+                           (user => user.Email != null && user.Email.Equals(email));
+                var dto = _mapper.Map<DTO>(entity);
+                return dto;
+            }
+            else
+            {
+                throw new NullReferenceException(nameof(_unitOfWorkRepos));
+            }
         }
 
         public async Task<int> GetBaseUserEntitiesCountAsync()
@@ -142,6 +157,53 @@ namespace MedContactBusiness.ServicesImplementations
                 var hashBytes = md5.ComputeHash(inputBytes);
 
                 return Convert.ToHexString(hashBytes);
+            }
+        }
+
+       
+
+        public async Task<bool> IsBaseUserExists(Guid userId)
+        {
+            if (_unitOfWorkRepos != null)
+                return await _unitOfWorkRepos.Get().AnyAsync(user => user.Id.Equals(userId));
+            else
+            {
+                throw new NullReferenceException(nameof(_unitOfWorkRepos));
+            }
+        }
+
+        public async Task<bool> CheckBaseUserPassword(string email, string password)
+        {
+            if (_unitOfWorkRepos != null)
+            {
+                var dbPasswordHash = (await _unitOfWorkRepos.Get()
+                .FirstOrDefaultAsync(user => user.Email!=null && user.Email.Equals(email))) ?.PasswordHash;
+
+                return
+                    dbPasswordHash != null
+                    && CreateMd5(password).Equals(dbPasswordHash);
+            }
+            else
+            {
+                throw new NullReferenceException(nameof(_unitOfWorkRepos));
+            }
+
+        }
+
+        public async Task<bool> CheckBaseUserPassword(Guid userId, string password)
+        {
+            if (_unitOfWorkRepos != null)
+            {
+                var dbPasswordHash = (await _unitOfWorkRepos.Get()
+                .FirstOrDefaultAsync(user => user.Id.Equals(userId)))?.PasswordHash;
+
+                return
+                    dbPasswordHash != null
+                    && CreateMd5(password).Equals(dbPasswordHash);
+            }
+            else
+            {
+                throw new NullReferenceException(nameof(_unitOfWorkRepos));
             }
         }
 

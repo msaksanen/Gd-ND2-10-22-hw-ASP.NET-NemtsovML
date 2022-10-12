@@ -19,7 +19,9 @@ namespace MedContactCore.DataTransferObjects
             public int? Age { get; set; }
             public string? Sex { get; set; }
             public string? Address { get; set; }
-            public string? Role { get; set; }
+            public bool? IsBlocked { get; set; }
+            public Guid? RoleId { get; set; }
+            public string? RoleName { get; set; }
             public DateTime RegistrationDate { get; set; }
        
     }

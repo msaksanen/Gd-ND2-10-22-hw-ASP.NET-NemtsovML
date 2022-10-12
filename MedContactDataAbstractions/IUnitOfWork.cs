@@ -9,6 +9,8 @@ public interface IUnitOfWork
     IBaseUserRepository<User> UserRepository { get; }
     IBaseUserRepository<Doctor> DoctorRepository { get; }
     IRepository<DayTimeTable> DayTimeTableRepository { get; }
+    IRepository<Role> RoleRepository { get; }
+    IRepository<RoleAllUser> RoleAllUserRepository { get; }
 
     Task<int> Commit();
 }

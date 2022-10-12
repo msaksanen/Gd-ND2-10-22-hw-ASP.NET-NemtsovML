@@ -1,6 +1,7 @@
 ﻿using MedContactDataAbstractions.Repositories;
 using MedContactDb;
 using MedContactDb.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace MedContactDataRepositories
     {
         public BaseUserRepository(MedContactContext database) : base(database)
         {
-        }
+           
+        } 
     }
 }

@@ -2,8 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\MedContactApp",
-    "\\MedContactApp\\Helpers"
+    "\\MedContactApp\\wwwroot",
+    "\\MedContactApp\\wwwroot\\css",
+    "\\MedContactDb",
+    "\\MedContactDb\\Diagram",
+    "\\MedContactDb\\Entities"
   ],
-  "SelectedNode": "\\MedContactApp\\Helpers\\PaginatorHelper.cs",
+  "SelectedNode": "\\MedContactApp\\wwwroot\\css\\site.css",
   "PreviewInSolutionExplorer": false
 }

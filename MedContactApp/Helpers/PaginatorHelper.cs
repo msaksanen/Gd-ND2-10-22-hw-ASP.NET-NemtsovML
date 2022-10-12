@@ -9,18 +9,31 @@ namespace MedContactApp.Helpers
 {
     public static class PaginatorHelper
     {
-        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount, string pageRoute)
+        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount, int currentPage, string pageRoute)
         {
-            var sb = new StringBuilder(@"<Table class=""table table-bordered""><tr>");
+            var sb = new StringBuilder(@"<nav aria-label=""Paginator""> <ul class=""pagination"">");
+            if (currentPage>0)
+                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{currentPage-1}"">Previous</a></li>");
+            else
+                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}/{currentPage}"">Previous</a></li>");
 
             if (pageCount>1)
             {
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    sb.Append(@$"<th><a href=""{pageRoute}/{i - 1}"" class=""text-decoration-none"">Page &nbsp {i} &nbsp</a></th>");
+                    if (i == currentPage + 1)
+                        sb.Append($@" <li class=""page-item active"" aria-current=""page""><a class=""page-link"" href=""{pageRoute}/{i - 1}"">Page &nbsp {i} &nbsp</a></li>");
+                    else
+                        sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{i - 1}"">Page &nbsp {i} &nbsp</a></li>");
                 }
             }
-            sb.Append("</tr></Table>");
+
+            if (currentPage + 1 < pageCount)
+                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{currentPage+1}"">Next</a></li>");
+            else
+                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}/{currentPage}"">Next</a></li>");
+
+            sb.Append("</ul></nav>");
 
             return new HtmlString(sb.ToString());
         }

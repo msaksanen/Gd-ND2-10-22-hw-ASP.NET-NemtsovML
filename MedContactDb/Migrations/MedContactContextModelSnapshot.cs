@@ -64,6 +64,9 @@ namespace MedContactDb.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("IsBlocked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("MidName")
                         .HasColumnType("nvarchar(max)");
 
@@ -144,6 +147,9 @@ namespace MedContactDb.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsBlocked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MidName")
                         .HasColumnType("nvarchar(max)");
@@ -276,6 +282,9 @@ namespace MedContactDb.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsBlocked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MidName")
                         .HasColumnType("nvarchar(max)");

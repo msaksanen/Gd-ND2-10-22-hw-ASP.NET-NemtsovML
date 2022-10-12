@@ -1,4 +1,5 @@
 ﻿using MedContactCore.DataTransferObjects;
+using MedContactDb.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,12 @@ namespace MedContactCore.Abstractions
        (int pageNumber, int pageSize);
         Task<int> GetBaseUserEntitiesCountAsync();
         List<DTO> GetNewBaseUsersFromExternalSources();
+
+        Task<bool> IsBaseUserExists(Guid userId);
+        Task<bool> CheckBaseUserPassword(string email, string password);
+        Task<bool> CheckBaseUserPassword(Guid userId, string password);
+       //Task<int> RegisterBaseUser(DTO dto);
+        Task<DTO> GetBaseUserByEmailAsync(string email);
 
         //Task<List<CustomerDto>> GetNewCustomersFromExternalSourcesAsync();
 

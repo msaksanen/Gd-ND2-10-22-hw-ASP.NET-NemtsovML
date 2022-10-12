@@ -41,14 +41,23 @@ namespace MedContactApp
             builder.Services.AddScoped<IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
             builder.Services.AddScoped<IBaseUserRepository<User>, BaseUserRepository<User>>();
             builder.Services.AddScoped<IBaseUserRepository<Doctor>, BaseUserRepository<Doctor>>();
+
             builder.Services.AddScoped<IRepository<DayTimeTable>, Repository<DayTimeTable>>();
+            builder.Services.AddScoped<IRepository<Role>, Repository<Role>>();
+            builder.Services.AddScoped<IRepository<RoleAllUser>, Repository<RoleAllUser>>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+
+            builder.Services.AddScoped<IRoleAllUserService<CustomerDto>, RoleAllUserService<CustomerDto, Customer>>();
+            builder.Services.AddScoped<IRoleAllUserService<DoctorDto>, RoleAllUserService<DoctorDto, Doctor>>();
+            builder.Services.AddScoped<IRoleAllUserService<UserDto>, RoleAllUserService<UserDto, User>>();
+
             builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
             builder.Services.AddScoped<IBaseUserService<UserDto>, BaseUserService<UserDto, User>>();
             builder.Services.AddScoped<IBaseUserService<DoctorDto>, BaseUserService<DoctorDto, Doctor>>();
-            builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();
-            
+
+            builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();    
             builder.Services.AddScoped<EmailChecker<DoctorDto>>();
 
 

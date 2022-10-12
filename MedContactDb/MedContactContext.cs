@@ -11,7 +11,7 @@ namespace MedContactDb
         public DbSet<Role>? Roles { get; set; }
         public DbSet<RoleAllUser>? RoleAllUsers { get; set; }
         public DbSet<MedData>? MedData { get; set; }
-        public DbSet<Recommendation>? Recommendations{ get; set; }
+        public DbSet<Recommendation>? Recommendations { get; set; }
         public DbSet<Appointment>? Appointments { get; set; }
         public DbSet<DayTimeTable>? DayTimeTables { get; set; }
 
@@ -34,12 +34,7 @@ namespace MedContactDb
                     .HasOne(pt => pt.Role) //Course
                     .WithMany(p => p.RoleAllUsers) //Enrollments
                     .HasForeignKey(pt => pt.RoleId)); //CourseId
-                //j =>
-                //{
-                //    j.HasKey(t => new { t.RoleId, t.CustomerId });
-                //    j.ToTable("RoleAllUsers");
-                //});
-           
+                                                     
             modelBuilder
                 .Entity<Role>()
                 .HasMany(c => c.Users)
@@ -53,7 +48,7 @@ namespace MedContactDb
                     .HasOne(pt => pt.Role) //Course
                     .WithMany(p => p.RoleAllUsers) //Enrollments
                     .HasForeignKey(pt => pt.RoleId)); //CourseId
-            
+
             modelBuilder
                .Entity<Role>()
                .HasMany(c => c.Doctors)

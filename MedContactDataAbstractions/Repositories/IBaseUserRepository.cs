@@ -9,6 +9,5 @@ namespace MedContactDataAbstractions.Repositories
 {
     public interface IBaseUserRepository<B>: IRepository<B> where B : BaseUser
     {
-
     }
 }

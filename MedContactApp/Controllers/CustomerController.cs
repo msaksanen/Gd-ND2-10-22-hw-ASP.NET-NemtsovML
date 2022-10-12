@@ -17,13 +17,17 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
+        private readonly IRoleService _roleService;
+        private readonly IRoleAllUserService<CustomerDto> _roleAllUserService;
 
         public CustomerController (IBaseUserService<CustomerDto> customerService, IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> roleAllUserService)
         {
             _customerService = customerService;
             _mapper = mapper;
             _configuration = configuration;
+            _roleService = roleService;
+            _roleAllUserService = roleAllUserService;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -37,9 +41,10 @@ namespace MedContactApp.Controllers
 
                 if (customers.Any())
                 {
-                    var count= await _customerService.GetBaseUserEntitiesCountAsync();
-                    int pageCount = (int)Math.Ceiling((double)(count/ _pageSize))+1;
+                    double count= await _customerService.GetBaseUserEntitiesCountAsync();
+                    double pageCount = Math.Ceiling(count/ _pageSize);
                     ViewBag.pageCount = pageCount;
+                    ViewBag.currentPage = page;
                     return View(customers);
                 }
                 else
@@ -67,13 +72,14 @@ namespace MedContactApp.Controllers
             {
                 try 
                 {
-                    // var userRoleId = await _roleService.GetRoleIdByNameAsync("User");
-                    model.Role = "Customer";
+                    var customerRole = await _roleService.GetRoleByNameAsync("Customer");    
                     var customerDto = _mapper.Map<CustomerDto>(model);
-                    if (customerDto != null) // && userRoleId != null
+                    if (customerDto != null && customerRole!= null)
                     {
-                        //userDto.RoleId = userRoleId.Value;
-                        var result = await _customerService.CreateBaseUserAsync(customerDto);
+                        customerDto.RoleName = "Customer";
+                        customerDto.RoleId = customerRole.Id;
+                        //var result = await _customerService.CreateBaseUserAsync(customerDto);
+                        var result = await _roleAllUserService.RegisterWithRoleAsync(customerDto);
                         if (result > 0)
                         {
                             //await Authenticate(model.Email);

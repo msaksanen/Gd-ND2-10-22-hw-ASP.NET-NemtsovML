@@ -65,7 +65,7 @@
 </Table>
 
 
-@Html.GeneratePagintator((int)ViewBag.pageCount, (string)ViewBag.pageRoute)
+@Html.GeneratePagintator((int)ViewBag.pageCount, (int)ViewBag.currentPage, (string)ViewBag.pageRoute)
 
 @section CssStyles
     {

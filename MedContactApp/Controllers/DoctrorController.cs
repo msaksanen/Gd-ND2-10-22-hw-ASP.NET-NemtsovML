@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Linq;
 using MedContactApp.Helpers;
 using MedContactDb.Entities;
+using MedContactBusiness.ServicesImplementations;
 
 
 namespace MedContactApp.Controllers
@@ -23,14 +24,19 @@ namespace MedContactApp.Controllers
         private readonly EmailChecker<DoctorDto> _emailChecker;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
+        private readonly IRoleService _roleService;
+        private readonly IRoleAllUserService<DoctorDto> _roleAllUserService;
 
         public DoctorController (IBaseUserService<DoctorDto> doctorService, IConfiguration configuration,
-            IMapper mapper, EmailChecker<DoctorDto> emailChecker)
+            IMapper mapper, EmailChecker<DoctorDto> emailChecker, IRoleService roleService, 
+            IRoleAllUserService<DoctorDto> roleAllUserService)
         {
             _doctorService = doctorService;
             _mapper = mapper;
             _configuration = configuration;
             _emailChecker = emailChecker;
+            _roleService = roleService;
+            _roleAllUserService = roleAllUserService;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -39,15 +45,16 @@ namespace MedContactApp.Controllers
                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                if (result) _pageSize=pageSize;
 
-               var customersDto = await _doctorService
+               var doctorsDto = await _doctorService
                     .GetBaseUsersByPageNumberAndPageSizeAsync(page, _pageSize);
 
-                if (customersDto.Any())
+                if (doctorsDto.Any())
                 {
-                    var count= await _doctorService.GetBaseUserEntitiesCountAsync();
-                    int pageCount = (int)Math.Ceiling((double)(count/ _pageSize))+1;
+                    double count= await _doctorService.GetBaseUserEntitiesCountAsync();
+                    double pageCount = Math.Ceiling(count/ _pageSize);
                     ViewBag.pageCount = pageCount;
-                    return View(customersDto);
+                    ViewBag.currentPage = page;
+                    return View(doctorsDto);
                 }
                 else
                 {
@@ -74,13 +81,14 @@ namespace MedContactApp.Controllers
             {
                 try 
                 {
-                    // var userRoleId = await _roleService.GetRoleIdByNameAsync("User");
-                    model.Role = "Doctor";
+                    var doctorRole = await _roleService.GetRoleByNameAsync("Doctor"); 
                     var doctorDto = _mapper.Map<DoctorDto>(model);
-                    if (doctorDto != null) // && userRoleId != null
+                    if (doctorDto != null && doctorRole != null)
                     {
-                        //userDto.RoleId = userRoleId.Value;
-                        var result = await _doctorService.CreateBaseUserAsync(doctorDto);
+                        doctorDto.RoleName = "Doctor";
+                        doctorDto.RoleId = doctorRole.Id;
+                        //var result = await _doctorService.CreateBaseUserAsync(doctorDto);
+                        var result = await _roleAllUserService.RegisterWithRoleAsync(doctorDto);
                         if (result > 0)
                         {
                             //await Authenticate(model.Email);
