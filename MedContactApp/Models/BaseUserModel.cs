@@ -46,7 +46,8 @@ namespace MedContactApp.Models
         public string? Address { get; set; }
         public bool? IsBlocked { get; set; }
         public Guid? RoleId { get; set; }
-        public string? RoleName { get; set; }
+        public virtual string? RoleName { get; set; }
+        public virtual string? EntityName { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
     }

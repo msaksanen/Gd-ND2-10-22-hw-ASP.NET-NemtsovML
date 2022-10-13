@@ -59,10 +59,12 @@ namespace MedContactApp
 
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();    
             builder.Services.AddScoped<EmailChecker<DoctorDto>>();
+            builder.Services.AddScoped<EmailChecker<CustomerDto>>();
+            builder.Services.AddScoped<EmailChecker<UserDto>>();
 
 
 
-           var app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

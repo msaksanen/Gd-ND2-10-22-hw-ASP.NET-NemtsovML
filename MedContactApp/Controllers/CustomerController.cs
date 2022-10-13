@@ -8,6 +8,7 @@ using Serilog;
 using System.ComponentModel.Design;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
+using MedContactApp.Helpers;
 
 namespace MedContactApp.Controllers
 {
@@ -17,17 +18,20 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
+        private readonly EmailChecker<CustomerDto> _emailChecker;
         private readonly IRoleService _roleService;
         private readonly IRoleAllUserService<CustomerDto> _roleAllUserService;
 
         public CustomerController (IBaseUserService<CustomerDto> customerService, IConfiguration configuration,
-            IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> roleAllUserService)
+            IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> roleAllUserService, 
+            EmailChecker<CustomerDto> emailChecker)
         {
             _customerService = customerService;
             _mapper = mapper;
             _configuration = configuration;
             _roleService = roleService;
             _roleAllUserService = roleAllUserService;
+            _emailChecker = emailChecker;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -94,6 +98,12 @@ namespace MedContactApp.Controllers
                 }               
             }
             return View(model);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> CheckEmail(string email)
+        {
+            return Json(await _emailChecker.CheckEmail(email.ToLower()));
         }
 
     }
