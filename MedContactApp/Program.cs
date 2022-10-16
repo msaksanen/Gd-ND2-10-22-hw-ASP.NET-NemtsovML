@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using Serilog;
 using Serilog.Events;
 using MedContactApp.Helpers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace MedContactApp
 {
@@ -30,6 +31,16 @@ namespace MedContactApp
                    @"D:\Logs\medcontact\data.log",
                    LogEventLevel.Information)
                    .WriteTo.Console(LogEventLevel.Verbose));
+
+            builder.Services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    options.LoginPath = new PathString(@"/Account/Login");
+                    options.LogoutPath = new PathString(@"/Account/Logout");
+                    //options.AccessDeniedPath = new PathString(@"/Account/Login");
+                });
 
             var connectionString = builder.Configuration.GetConnectionString("Default");
 
@@ -79,6 +90,7 @@ namespace MedContactApp
 
             app.UseRouting();
 
+            app.UseAuthentication(); // Set HttpContext.User
             app.UseAuthorization();
 
             app.MapControllerRoute(

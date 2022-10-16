@@ -12,6 +12,9 @@ using Microsoft.Extensions.Configuration;
 using MedContactDb.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MedContactBusiness.ServicesImplementations;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace MedContactApp.Controllers
 {
@@ -23,17 +26,20 @@ namespace MedContactApp.Controllers
         private readonly IRoleService _roleService;
         private readonly IRoleAllUserService<CustomerDto> _cusRoleAllUserService;
         private readonly IRoleAllUserService<DoctorDto> _docRoleAllUserService;
+        private readonly IRoleAllUserService<UserDto> _usrRoleAllUserService;
 
         public AccountController(IBaseUserService<CustomerDto> customerService,
             IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> cusRoleAllUserService,
-            IBaseUserService<DoctorDto> doctorService, IRoleAllUserService<DoctorDto> docRoleAllUserService)
+            IBaseUserService<DoctorDto> doctorService, IRoleAllUserService<DoctorDto> docRoleAllUserService, 
+            IRoleAllUserService<UserDto> usrRoleAllUserService)
         {
             _customerService = customerService;
+            _doctorService = doctorService;
             _mapper = mapper;
             _roleService = roleService;
             _cusRoleAllUserService = cusRoleAllUserService;
             _docRoleAllUserService = docRoleAllUserService;
-            _doctorService = doctorService;
+            _usrRoleAllUserService = usrRoleAllUserService; 
         }
 
         [HttpGet]
@@ -95,7 +101,38 @@ namespace MedContactApp.Controllers
             return View(model);
         }
 
-        private async Task<int> RegBaseUserAsync<BM, DTO>(BM bModel) 
+        private async Task Authenticate<DTO> (string email)
+                      where DTO : BaseUserDto
+        {
+            DTO? dto = (DTO)new BaseUserDto();
+            if (typeof(DTO).Equals(typeof(CustomerDto)))
+            {
+                CustomerDto? cdto = new CustomerDto();
+                cdto= await _customerService.GetBaseUserByEmailAsync(email);
+                dto = cdto as DTO;
+            }
+           
+            if (dto!=null && dto.Email != null && dto.RoleName!=null)
+            {
+                var claims = new List<Claim>()
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Email),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, dto.RoleName)
+            };
+
+                var identity = new ClaimsIdentity(claims,
+                    "ApplicationCookie",
+                    ClaimsIdentity.DefaultNameClaimType,
+                    ClaimsIdentity.DefaultRoleClaimType
+                );
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(identity));
+            }
+           
+        }
+
+        private async Task<int> RegBaseUserAsync<BM,DTO> (BM bModel) 
                        where BM : BaseUserModel
                        where DTO : BaseUserDto
         {
@@ -119,6 +156,11 @@ namespace MedContactApp.Controllers
                     {
                         DoctorDto? dDto = dto as DoctorDto;
                         result = await _docRoleAllUserService.RegisterWithRoleAsync(dDto!);
+                    }
+                    if (typeof(DTO).Equals(typeof(UserDto)) && dto != null)
+                    {
+                        UserDto? uDto = dto as UserDto;
+                        result = await _usrRoleAllUserService.RegisterWithRoleAsync(uDto!);
                     }
                 }
 
