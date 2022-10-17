@@ -31,6 +31,6 @@ namespace MedContactApp.Models
         public int? FreeTicketQty { get; set; }
        
         [Required]
-        public Guid? DoctorId { get; set; }
+        public Guid? DoctorDataId { get; set; }
     }
 }

@@ -12,6 +12,5 @@ namespace MedContactCore.Abstractions
       Task<int> CreateDayTimeTableAsync(DayTimeTableDto dto);
       Task<List<DayTimeTableDto>> GetDayTimeTableByPageNumberAndPageSizeAsync(int pageNumber, int pageSize);
       Task<int> GetDayTimeTableEntitiesCountAsync();
-      Task<DoctorInfo> GetDoctorInfoById(Guid? doctorId);
     }
 }

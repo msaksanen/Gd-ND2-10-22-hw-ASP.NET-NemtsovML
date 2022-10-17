@@ -38,7 +38,7 @@ namespace MedContactApp.Models
         [Required]
         [Range(1, 110)]
         public int? Age { get; set; }
-        public string? Sex { get; set; }
+        public string? Gender { get; set; }
 
         [Required]
         [MinLength(3)]
@@ -47,7 +47,6 @@ namespace MedContactApp.Models
         public bool? IsBlocked { get; set; }
         public Guid? RoleId { get; set; }
         public virtual string? RoleName { get; set; }
-        public virtual string? EntityName { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
     }

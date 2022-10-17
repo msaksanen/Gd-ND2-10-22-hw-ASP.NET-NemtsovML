@@ -20,26 +20,16 @@ namespace MedContactApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IBaseUserService<CustomerDto> _customerService;
-        private readonly IBaseUserService<DoctorDto> _doctorService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
-        private readonly IRoleAllUserService<CustomerDto> _cusRoleAllUserService;
-        private readonly IRoleAllUserService<DoctorDto> _docRoleAllUserService;
-        private readonly IRoleAllUserService<UserDto> _usrRoleAllUserService;
 
-        public AccountController(IBaseUserService<CustomerDto> customerService,
-            IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> cusRoleAllUserService,
-            IBaseUserService<DoctorDto> doctorService, IRoleAllUserService<DoctorDto> docRoleAllUserService, 
-            IRoleAllUserService<UserDto> usrRoleAllUserService)
+        public AccountController(IUserService userService,
+            IMapper mapper, IRoleService roleService)
         {
-            _customerService = customerService;
-            _doctorService = doctorService;
+            _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
-            _cusRoleAllUserService = cusRoleAllUserService;
-            _docRoleAllUserService = docRoleAllUserService;
-            _usrRoleAllUserService = usrRoleAllUserService; 
         }
 
         [HttpGet]
@@ -55,11 +45,16 @@ namespace MedContactApp.Controllers
             {
                 try
                 {
-                    var newres = await RegBaseUserAsync<CustomerModel, CustomerDto>(model);
-                    if (newres > 0)
+                    //var customerRole = await _roleService.GetRoleByNameAsync("Customer");
+                    var customerDto = _mapper.Map<UserDto>(model);
+                    if (customerDto != null) // && customerRole != null)
                     {
-                        //await Authenticate(model.Email);
-                        return RedirectToAction("Index", "Home");
+                        var result = await _userService.CreateUserWithRoleAsync(customerDto, "Customer");
+                        if (result > 0)
+                        {
+                            //await Authenticate(model.Email);
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
                 catch (Exception e)
@@ -82,15 +77,19 @@ namespace MedContactApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.IsBlocked = true;
                 try
                 {
-                        var newres = await RegBaseUserAsync<DoctorModel, DoctorDto>(model);
-                        if (newres > 0)
+                    //var customerRole = await _roleService.GetRoleByNameAsync("Doctor");
+                    var customerDto = _mapper.Map<UserDto>(model);
+                    if (customerDto != null) // && customerRole != null)
+                    {
+                        var result = await _userService.CreateUserWithRoleAsync(customerDto, "Doctor");
+                        if (result > 0)
                         {
                             //await Authenticate(model.Email);
                             return RedirectToAction("Index", "Home");
                         }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -101,30 +100,26 @@ namespace MedContactApp.Controllers
             return View(model);
         }
 
-        private async Task Authenticate<DTO> (string email)
-                      where DTO : BaseUserDto
+        private async Task Authenticate (string email)
         {
-            DTO? dto = (DTO)new BaseUserDto();
-            if (typeof(DTO).Equals(typeof(CustomerDto)))
-            {
-                CustomerDto? cdto = new CustomerDto();
-                cdto= await _customerService.GetBaseUserByEmailAsync(email);
-                dto = cdto as DTO;
-            }
-           
-            if (dto!=null && dto.Email != null && dto.RoleName!=null)
+            var dto= await _userService.GetUserByEmailAsync(email);
+            var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
+
+            if (dto.Email != null && roleList!=null)
             {
                 var claims = new List<Claim>()
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, dto.RoleName)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Email)
             };
+
+                foreach (var role in roleList)
+                    if (role.Name != null)
+                    claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
 
                 var identity = new ClaimsIdentity(claims,
                     "ApplicationCookie",
                     ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType
-                );
+                    ClaimsIdentity.DefaultRoleClaimType);
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(identity));
@@ -132,40 +127,5 @@ namespace MedContactApp.Controllers
            
         }
 
-        private async Task<int> RegBaseUserAsync<BM,DTO> (BM bModel) 
-                       where BM : BaseUserModel
-                       where DTO : BaseUserDto
-        {
-            int result = -1;
-            string roleName =bModel!.RoleName!;
-
-            if (!String.IsNullOrEmpty(roleName))
-            {
-                var role = await _roleService.GetRoleByNameAsync(roleName);
-                var dto = _mapper.Map<DTO>(bModel);
-                if (dto != null && role != null)
-                {
-                    dto.RoleName = role.Name;
-                    dto.RoleId = role.Id;
-                    if (typeof(DTO).Equals(typeof(CustomerDto)) && dto!=null)
-                    {
-                        CustomerDto? cDto = dto as CustomerDto;
-                        result = await _cusRoleAllUserService.RegisterWithRoleAsync(cDto!);
-                    }
-                    if (typeof(DTO).Equals(typeof(DoctorDto)) && dto != null)
-                    {
-                        DoctorDto? dDto = dto as DoctorDto;
-                        result = await _docRoleAllUserService.RegisterWithRoleAsync(dDto!);
-                    }
-                    if (typeof(DTO).Equals(typeof(UserDto)) && dto != null)
-                    {
-                        UserDto? uDto = dto as UserDto;
-                        result = await _usrRoleAllUserService.RegisterWithRoleAsync(uDto!);
-                    }
-                }
-
-            }
-            return result;
-        }
     }
 }

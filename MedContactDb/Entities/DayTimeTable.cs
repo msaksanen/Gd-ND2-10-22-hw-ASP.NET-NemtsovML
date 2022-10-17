@@ -16,8 +16,8 @@ namespace MedContactDb.Entities
         public int? ConsultDuration { get; set; }
         public int? TotalTicketQty { get; set; }
         public int? FreeTicketQty { get; set; }
-        public Doctor? Doctor { get; set; }
-        public Guid? DoctorId { get; set; }
+        public DoctorData? DoctorData { get; set; }
+        public Guid? DoctorDataId { get; set; }
         public List<Appointment>? Appointments { get; set; }
 
     }

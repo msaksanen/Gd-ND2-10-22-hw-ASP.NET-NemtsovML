@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using MedContactCore.Abstractions;
+using MedContactCore.DataTransferObjects;
 using MedContactDataAbstractions;
 using MedContactDb.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,11 @@ namespace MedContactBusiness.ServicesImplementations
     public class RoleService: IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public RoleService(IUnitOfWork unitOfWork)
+        public RoleService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-
+            _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
 
@@ -37,10 +40,29 @@ namespace MedContactBusiness.ServicesImplementations
             return role?.Id;
         }
 
-        public async Task<Role?> GetRoleByNameAsync(string name)
+        public async Task<RoleDto?> GetRoleByNameAsync(string name)
         {
-           return await _unitOfWork.RoleRepository.FindBy(role1 => role1.Name != null && role1.Name.Equals(name))
-              .FirstOrDefaultAsync();
+           var role = await _unitOfWork.RoleRepository.FindBy(role1 => role1.Name != null && role1.Name.Equals(name))
+                      .FirstOrDefaultAsync();
+           var dto = _mapper.Map<RoleDto>(role);
+          
+           return dto;
         }
+        public async Task<List<RoleDto>?> GetRoleListByUserIdAsync (Guid id)
+        {
+           
+                var list = await _unitOfWork.RoleRepository
+                       .Get()
+                       .Include(role => role.Users)
+                       .Where(user => user.Id.Equals(id))
+                       .Select(role => _mapper.Map<RoleDto>(role))
+                       .ToListAsync();
+
+                return list;
+          
+             
+           
+        }
+
     }
 }

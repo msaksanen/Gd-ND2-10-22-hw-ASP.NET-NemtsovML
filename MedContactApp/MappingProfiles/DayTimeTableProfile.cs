@@ -15,6 +15,7 @@ namespace MedContactApp.MappingProfiles
                  .ForMember(dto => dto.Id,
                   opt => opt.MapFrom(model => model.Id ?? Guid.NewGuid()));
 
+            //from two dto in one model
             CreateMap<(DayTimeTableDto, DoctorInfo), DayTimeTableModel>()
                  .ForMember(model => model.Id, m => m.MapFrom(dto => dto.Item1.Id))
                  .ForMember(model => model.CreationDate, m => m.MapFrom(dto => dto.Item1.CreationDate))

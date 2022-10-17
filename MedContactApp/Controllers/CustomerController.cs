@@ -14,23 +14,23 @@ namespace MedContactApp.Controllers
 {
     public class CustomerController : Controller
     {
-        private readonly IBaseUserService<CustomerDto> _customerService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
-        private readonly EmailChecker<CustomerDto> _emailChecker;
+        private readonly EmailChecker _emailChecker;
         private readonly IRoleService _roleService;
-        private readonly IRoleAllUserService<CustomerDto> _roleAllUserService;
+       // private readonly IRoleAllUserService<CustomerDto> _roleAllUserService;
 
-        public CustomerController (IBaseUserService<CustomerDto> customerService, IConfiguration configuration,
-            IMapper mapper, IRoleService roleService, IRoleAllUserService<CustomerDto> roleAllUserService, 
-            EmailChecker<CustomerDto> emailChecker)
+        public CustomerController (IUserService userService, IConfiguration configuration,
+            IMapper mapper, IRoleService roleService,
+            EmailChecker emailChecker)
         {
-            _customerService = customerService;
+            _userService = userService;
             _mapper = mapper;
             _configuration = configuration;
             _roleService = roleService;
-            _roleAllUserService = roleAllUserService;
+            //_roleAllUserService = roleAllUserService;
             _emailChecker = emailChecker;
         }
         public async Task<IActionResult> Index(int page)
@@ -40,12 +40,12 @@ namespace MedContactApp.Controllers
                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                if (result) _pageSize=pageSize;
 
-               var customers = await _customerService
-                    .GetBaseUsersByPageNumberAndPageSizeAsync(page, _pageSize);
+               var customers = await _userService
+                    .GetUsersByPageNumberAndPageSizeAsync(page, _pageSize);
 
                 if (customers.Any())
                 {
-                    double count= await _customerService.GetBaseUserEntitiesCountAsync();
+                    double count= await _userService.GetUserEntitiesCountAsync();
                     double pageCount = Math.Ceiling(count/ _pageSize);
                     ViewBag.pageCount = pageCount;
                     ViewBag.currentPage = page;
@@ -76,14 +76,11 @@ namespace MedContactApp.Controllers
             {
                 try 
                 {
-                    var customerRole = await _roleService.GetRoleByNameAsync("Customer");    
-                    var customerDto = _mapper.Map<CustomerDto>(model);
-                    if (customerDto != null && customerRole!= null)
+                    //var customerRole = await _roleService.GetRoleByNameAsync("Customer");    
+                    var customerDto = _mapper.Map<UserDto>(model);
+                    if (customerDto != null) //&& customerRole!= null
                     {
-                        customerDto.RoleName = "Customer";
-                        customerDto.RoleId = customerRole.Id;
-                        //var result = await _customerService.CreateBaseUserAsync(customerDto);
-                        var result = await _roleAllUserService.RegisterWithRoleAsync(customerDto);
+                        var result = await _userService.CreateUserWithRoleAsync(customerDto, "Customer");
                         if (result > 0)
                         {
                             //await Authenticate(model.Email);

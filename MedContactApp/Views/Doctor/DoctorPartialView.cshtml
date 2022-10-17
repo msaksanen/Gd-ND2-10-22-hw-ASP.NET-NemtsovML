@@ -1,4 +1,4 @@
-﻿@model DoctorDto
+﻿@model UserDto
 
 <tr>
 
@@ -24,10 +24,7 @@
         @Html.DisplayFor(modelItem => Model.Age) years
     </td>
     <td area-label="Sex">
-        @Html.DisplayFor(modelItem => Model.Sex)
-    </td>
-    <td area-label="Speciality">
-        @Html.DisplayFor(modelItem => Model.Speciality)
+        @Html.DisplayFor(modelItem => Model.Gender)
     </td>
     <td area-label="Address">
         @Html.DisplayFor(modelItem => Model.Address)

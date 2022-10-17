@@ -9,7 +9,7 @@ namespace MedContactDb.Entities
 {
     public class Recommendation : MedData 
     { 
-        public Guid? DoctorId { get; set; }
-        public Doctor? Doctor { get; set; }
+        public Guid? DoctorDataId { get; set; }
+        public DoctorData? DoctorData { get; set; }
     }
 }

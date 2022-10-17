@@ -10,7 +10,6 @@ namespace MedContactApp.Models
         [Remote(action: "CheckEmail", controller: "Customer", ErrorMessage = "Email is already in use")]
         public override string? Email { get; set; }
         public override string? RoleName { get; set; } = "Customer";
-        public override string? EntityName { get; set; } = "Customer";
 
     }
 }

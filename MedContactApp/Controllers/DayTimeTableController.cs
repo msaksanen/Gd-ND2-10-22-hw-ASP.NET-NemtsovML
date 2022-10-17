@@ -20,15 +20,17 @@ namespace MedContactApp.Controllers
     {
         private readonly IDayTimeTableService _dayTimeTableService;
         private readonly IMapper _mapper;
+        private readonly IDoctorDataService _doctorDataService;
         private readonly IConfiguration _configuration;
         private int _pageSize = 7;
 
         public DayTimeTableController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper, IDoctorDataService doctorDataService)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
             _configuration = configuration;
+            _doctorDataService = doctorDataService;
         }
 
         public async Task<IActionResult> Index(int page)
@@ -49,7 +51,7 @@ namespace MedContactApp.Controllers
                     List <DayTimeTableModel> modelList = new();
                     for (int i = 0; i < DttDtoList.Count; i++) 
                     {
-                        var doctDto = await _dayTimeTableService.GetDoctorInfoById(DttDtoList[i].DoctorId);
+                        var doctDto = await _doctorDataService.GetDoctorInfoById(DttDtoList[i].DoctorDataId);
                         var combiModel = _mapper.Map<DayTimeTableModel>((DttDtoList[i], doctDto));
                         modelList.Add(combiModel);
                     }
@@ -74,7 +76,7 @@ namespace MedContactApp.Controllers
             if (result)
             {
                 var model = new DayTimeTableModel();
-                model.DoctorId = guid_id;
+                model.DoctorDataId = guid_id;
                 model.Date = DateTime.Now;
                 model.StartWorkTime = DateTime.Today.AddHours(8);
                 model.FinishWorkTime = DateTime.Today.AddHours(20);

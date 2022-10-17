@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MedContactDb.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,7 @@ namespace MedContactCore.DataTransferObjects
         public int? ConsultDuration { get; set; }
         public int? TotalTicketQty { get; set; }
         public int? FreeTicketQty { get; set; }  
-        public Guid? DoctorId { get; set; }
-
-        //public List<AppointmentDto>? Appointments { get; set; }
-
+        public Guid? DoctorDataId { get; set; }
+        public List<Appointment>? Appointments { get; set; }
     }
 }

@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedContactApp.Helpers
 {
-    public class EmailChecker<DTO> where DTO : BaseUserDto
+    public class EmailChecker
     {
-        private readonly IBaseUserService<DTO> _baseUserService;
+        private readonly IUserService _userService;
 
-        public EmailChecker(IBaseUserService<DTO> baseUserService)
+        public EmailChecker(IUserService userService)
         {
-            _baseUserService=baseUserService;
+            _userService= userService;
         }
         public async Task <bool> CheckEmail(string email)
         {
-            if (await _baseUserService.CheckBaseUserEmailAsync(email))
+            if (await _userService.CheckUserEmailAsync(email))
                 return false;
             return true;
         }

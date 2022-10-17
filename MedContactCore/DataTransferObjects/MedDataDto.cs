@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MedContactDb.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +16,6 @@ namespace MedContactCore.DataTransferObjects
         public string? ShortSummary { get; set; }
         public string? TextData { get; set; }
         public string? FilePath { get; set; }
-        public Guid? CustomerId { get; set; }
-        
-        //public CustomerDto? Customer { get; set; }
+        public Guid? CustomerDataId { get; set; }
     }
 }

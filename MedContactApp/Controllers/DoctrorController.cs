@@ -19,24 +19,22 @@ namespace MedContactApp.Controllers
 {
     public class DoctorController : Controller
     {
-        private readonly IBaseUserService<DoctorDto> _doctorService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        private readonly EmailChecker<DoctorDto> _emailChecker;
+        private readonly EmailChecker _emailChecker;
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
         private readonly IRoleService _roleService;
-        private readonly IRoleAllUserService<DoctorDto> _roleAllUserService;
+        //private readonly IRoleAllUserService<DoctorDto> _roleAllUserService;
 
-        public DoctorController (IBaseUserService<DoctorDto> doctorService, IConfiguration configuration,
-            IMapper mapper, EmailChecker<DoctorDto> emailChecker, IRoleService roleService, 
-            IRoleAllUserService<DoctorDto> roleAllUserService)
+        public DoctorController (IUserService userService, IConfiguration configuration,
+            IMapper mapper, EmailChecker emailChecker, IRoleService roleService)
         {
-            _doctorService = doctorService;
+            _userService = userService;
             _mapper = mapper;
             _configuration = configuration;
             _emailChecker = emailChecker;
             _roleService = roleService;
-            _roleAllUserService = roleAllUserService;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -45,12 +43,12 @@ namespace MedContactApp.Controllers
                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                if (result) _pageSize=pageSize;
 
-               var doctorsDto = await _doctorService
-                    .GetBaseUsersByPageNumberAndPageSizeAsync(page, _pageSize);
+               var doctorsDto = await _userService
+                    .GetUsersByPageNumberAndPageSizeAsync(page, _pageSize);
 
                 if (doctorsDto.Any())
                 {
-                    double count= await _doctorService.GetBaseUserEntitiesCountAsync();
+                    double count= await _userService.GetUserEntitiesCountAsync();
                     double pageCount = Math.Ceiling(count/ _pageSize);
                     ViewBag.pageCount = pageCount;
                     ViewBag.currentPage = page;
@@ -81,14 +79,11 @@ namespace MedContactApp.Controllers
             {
                 try 
                 {
-                    var doctorRole = await _roleService.GetRoleByNameAsync("Doctor"); 
-                    var doctorDto = _mapper.Map<DoctorDto>(model);
-                    if (doctorDto != null && doctorRole != null)
+                    //var doctorRole = await _roleService.GetRoleByNameAsync("Doctor"); 
+                    var doctorDto = _mapper.Map<UserDto>(model);
+                    if (doctorDto != null) // && doctorRole != null)
                     {
-                        doctorDto.RoleName = "Doctor";
-                        doctorDto.RoleId = doctorRole.Id;
-                        //var result = await _doctorService.CreateBaseUserAsync(doctorDto);
-                        var result = await _roleAllUserService.RegisterWithRoleAsync(doctorDto);
+                        var result = await _userService.CreateUserWithRoleAsync(doctorDto, "Doctor");
                         if (result > 0)
                         {
                             //await Authenticate(model.Email);
@@ -134,13 +129,13 @@ namespace MedContactApp.Controllers
             {
                 if (model != null)
                 {
-                    var dto = _mapper.Map<DoctorDto>(model);
+                    var dto = _mapper.Map<UserDto>(model);
 
-                    var sourceDto = await _doctorService.GetBaseUserByIdAsync(dto.Id);
+                    var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
 
                     //should be sure that dto property naming is the same with entity property naming
                     var patchList = new List<PatchModel>();
-                    Type myType = typeof(DoctorDto);
+                    Type myType = typeof(UserDto);
                     var propList = myType?.GetProperties();
                     if (propList!=null)
                     {
@@ -156,7 +151,7 @@ namespace MedContactApp.Controllers
                             }
                         }
                     }
-                    await _doctorService.PatchAsync(dto.Id, patchList);
+                    await _userService.PatchAsync(dto.Id, patchList);
                     return RedirectToAction("Index","Doctor");
                 }
                 else
@@ -176,14 +171,14 @@ namespace MedContactApp.Controllers
         {
             return Json(await _emailChecker.CheckEmail(email.ToLower()));
         }
-        private async Task<DoctorDto?> GetDoctorDtoByIdAsync(string? id)
+        private async Task<UserDto?> GetDoctorDtoByIdAsync(string? id)
         {
             var result = Guid.TryParse(id, out Guid guid_id);
 
             if (result)
             {
-                var doctor = await _doctorService.GetBaseUserByIdAsync(guid_id);
-                var doctorDto = _mapper.Map<DoctorDto>(doctor);
+                var doctor = await _userService.GetUserByIdAsync(guid_id);
+                var doctorDto = _mapper.Map<UserDto>(doctor);
                 return doctorDto;
             }
             return null;

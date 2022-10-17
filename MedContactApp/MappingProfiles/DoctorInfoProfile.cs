@@ -9,9 +9,12 @@ namespace MedContactApp.MappingProfiles
     {
         public DoctorInfoProfile()
         {
-            CreateMap<DoctorDto, DoctorInfo>();
-            CreateMap<Doctor, DoctorInfo>();
+            CreateMap<(User, Speciality), DoctorInfo>()
+                 .ForMember(info => info.Name, d => d.MapFrom(dt => dt.Item1.Name))
+                 .ForMember(info => info.MidName, d => d.MapFrom(dt => dt.Item1.MidName))
+                 .ForMember(info => info.Surname, d => d.MapFrom(dt => dt.Item1.Surname))
+                 .ForMember(info => info.Speciality, d => d.MapFrom(dt => dt.Item2.Name));
+
         }
     }
 }
-                

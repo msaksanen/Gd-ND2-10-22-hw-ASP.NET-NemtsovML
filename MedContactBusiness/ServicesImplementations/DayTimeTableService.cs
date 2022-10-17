@@ -63,22 +63,5 @@ namespace MedContactBusiness.ServicesImplementations
                 return await _unitOfWork.DayTimeTableRepository.Get().CountAsync();
         }
 
-        public async Task<DoctorInfo> GetDoctorInfoById(Guid? doctorId)
-        {
-            var dtt = await _unitOfWork.DayTimeTableRepository
-                .FindBy(dtt => dtt.DoctorId.Equals(doctorId),
-                    dtt => dtt.Doctor!)
-                .FirstOrDefaultAsync();
-           
-            if (dtt!=null && dtt?.Doctor != null)
-            {
-                var doctInfo= _mapper.Map<DoctorInfo>(dtt.Doctor);
-                return doctInfo;
-            }
-            else
-            {
-                throw new ArgumentException(nameof(dtt));
-            }
-        }
     }
 }
