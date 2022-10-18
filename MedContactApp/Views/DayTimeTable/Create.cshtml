@@ -1,4 +1,4 @@
-﻿@model MedContactApp.Models.DayTimeTableModel
+﻿@model DayTimeTableModel
 
 @{
     ViewData["Title"] = "DayTimeTable";
@@ -34,7 +34,7 @@
                 <span asp-validation-for="ConsultDuration" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type ="hidden" asp-for="DoctorId" class="form-control" />
+                <input type ="hidden" asp-for="DoctorDataId" class="form-control" />
             </div>
             <br/>
                 <div class="row">

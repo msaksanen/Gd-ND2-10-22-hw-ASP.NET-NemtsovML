@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,17 +49,21 @@ namespace MedContactBusiness.ServicesImplementations
           
            return dto;
         }
-        public async Task<List<RoleDto>?> GetRoleListByUserIdAsync (Guid id)
+        public async Task<IEnumerable<RoleDto>?> GetRoleListByUserIdAsync (Guid id)
         {
-           
-                var list = await _unitOfWork.RoleRepository
-                       .Get()
-                       .Include(role => role.Users)
-                       .Where(user => user.Id.Equals(id))
-                       .Select(role => _mapper.Map<RoleDto>(role))
-                       .ToListAsync();
 
-                return list;
+            var list = await _unitOfWork.RoleRepository.Get().Include(r => r.Users).ToListAsync();
+            var lst = from role in list
+                      from user in role.Users!
+                      where user.Id.Equals(id)
+                      select  _mapper.Map<RoleDto>(role);
+                   
+            //List<RoleDto> rlist = new();
+
+            //foreach (var item in lst)
+            //    rlist.Add(_mapper.Map<RoleDto>(item));
+
+            return lst;
           
              
            

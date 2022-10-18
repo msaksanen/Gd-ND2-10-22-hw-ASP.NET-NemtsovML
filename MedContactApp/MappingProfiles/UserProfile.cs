@@ -11,7 +11,9 @@ namespace MedContactApp.MappingProfiles
         public UserProfile()
         {
 
-            CreateMap<User, UserDto>();
+            CreateMap<User, UserDto>()
+                .ForMember(dto => dto.CustomerDataId,
+                     opt => opt.MapFrom(e => e.CustomerData!.Id!));
 
             CreateMap<UserDto, User>().ReverseMap();
 
@@ -29,6 +31,7 @@ namespace MedContactApp.MappingProfiles
             CreateMap<UserModel, UserDto>();
             CreateMap<CustomerModel, UserDto>();
             CreateMap<DoctorModel, UserDto>();
+            CreateMap<UserDto, UserDataModel>();
 
         }
     }

@@ -77,7 +77,7 @@ namespace MedContactBusiness.ServicesImplementations
 
         public async Task<UserDto> GetUserByEmailAsync(string email)
         {
-                var entity = await _unitOfWork.UserRepository.Get().AnyAsync
+                var entity = await _unitOfWork.UserRepository.Get().FirstOrDefaultAsync
                            (user => user.Email != null && user.Email.Equals(email));
                 var dto = _mapper.Map<UserDto>(entity);
                 return dto;
@@ -98,9 +98,8 @@ namespace MedContactBusiness.ServicesImplementations
                                   .Take(pageSize)
                                   .Select(customer => _mapper.Map<UserDto>(customer))
                                   .ToListAsync();
-
-                return list;
-           
+     
+                return list;       
         }
 
         public List<UserDto> GetNewUsersFromExternalSources()

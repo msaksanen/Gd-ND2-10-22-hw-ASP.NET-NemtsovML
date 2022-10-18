@@ -7,7 +7,8 @@ namespace MedContactDb
     {
         public DbSet<User>? Users { get; set; }
         public DbSet<Role>? Roles { get; set; }
-        
+        public DbSet<Family>? Families { get; set; }
+
         public DbSet<DoctorData>? DoctorDatas { get; set; }
         public DbSet<CustomerData>? CustomerDatas { get; set; }
         public DbSet<AcsData>? AcsDatas { get; set; }

@@ -203,6 +203,20 @@ namespace MedContactDb.Migrations
                     b.ToTable("ExtraDatas");
                 });
 
+            modelBuilder.Entity("MedContactDb.Entities.Family", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MainUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Families");
+                });
+
             modelBuilder.Entity("MedContactDb.Entities.MedData", b =>
                 {
                     b.Property<Guid>("Id")
@@ -286,8 +300,14 @@ namespace MedContactDb.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("FamilyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDependent")
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsFullBlocked")
                         .HasColumnType("bit");
@@ -314,6 +334,8 @@ namespace MedContactDb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
 
                     b.ToTable("Users");
                 });
@@ -445,6 +467,15 @@ namespace MedContactDb.Migrations
                         .HasForeignKey("CustomerDataId");
 
                     b.Navigation("CustomerData");
+                });
+
+            modelBuilder.Entity("MedContactDb.Entities.User", b =>
+                {
+                    b.HasOne("MedContactDb.Entities.Family", "Family")
+                        .WithMany()
+                        .HasForeignKey("FamilyId");
+
+                    b.Navigation("Family");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
