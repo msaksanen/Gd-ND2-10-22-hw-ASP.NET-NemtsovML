@@ -6,10 +6,8 @@
 @if (Model == null)
 {
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Login
-        </a>
-        <ul class="dropdown-menu">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Login</a>
+        <ul class="dropdown-menu" style="min-width: fit-content">
             <li><a class="dropdown-item" asp-action="Login" asp-controller="Account">Login</a></li>
             <li><a class="dropdown-item" asp-action="Register" asp-controller="Account">Register</a></li>
         </ul>
@@ -17,8 +15,14 @@
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-action="GetUserData" asp-controller="Account">Hello @Model.Username! (@Model.Email)</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hello @Model.Username! (@Model.Email)</a>
+        <ul class="dropdown-menu" style="min-width: fit-content">
+            <li><a class="dropdown-item" asp-action="Family" asp-controller="UserPanel">My Family</a></li>
+            <li><a class="dropdown-item" asp-action="Appointment" asp-controller="UserPanel">My Appointments</a></li>
+            <li><a class="dropdown-item" asp-action="Data" asp-controller="UserPanel">My Data</a></li>
+            <li><a class="dropdown-item" asp-action="Settings" asp-controller="UserPanel">My Settings</a></li>
+        </ul>
     </li>
     <li class="nav-item">
         <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>

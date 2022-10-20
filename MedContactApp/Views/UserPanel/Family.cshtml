@@ -1,0 +1,63 @@
+﻿@using MedContactApp.Helpers;
+
+@model IEnumerable<UserDto>?
+
+@{
+    ViewData["Title"] = "My family account";
+    ViewBag.pageRoute = "/family/userpanel";
+}
+
+
+<a href="~/userpanel/addrelative">Add relative</a>
+
+@if (Model!=null)
+{
+    <Table class="delivery">   @*" table table-bordered"*@
+        <caption>List of my family</caption>
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Middle Name
+                </th>
+                <th>
+                    Surname
+                </th>
+                <th>
+                    Age
+                </th>
+                <th>
+                    Gender
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Details
+                </th>
+            </tr>
+            <thead>
+                <tbody>
+
+            @foreach (var item in Model)
+            {
+                await Html.RenderPartialAsync("RelativePartialView", item);
+            }
+              
+                </tbody>
+    </Table>
+}
+<p>You can add your relatives to your account here</p>
+
+@section CssStyles
+    {
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}
+    </style>
+}

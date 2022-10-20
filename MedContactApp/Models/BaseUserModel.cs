@@ -44,7 +44,10 @@ namespace MedContactApp.Models
         [MinLength(3)]
         [MaxLength(256)]
         public string? Address { get; set; }
-        public bool? IsBlocked { get; set; }
+        public Guid? FamilyId { get; set; }
+        public Guid? CustomerDataId { get; set; }
+        public bool? IsDependent { get; set; }
+        public bool? IsFullBlocked { get; set; }
         public Guid? RoleId { get; set; }
         public virtual string? RoleName { get; set; }
         public DateTime? RegistrationDate { get; set; }

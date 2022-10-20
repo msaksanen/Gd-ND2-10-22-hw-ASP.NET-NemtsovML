@@ -51,6 +51,7 @@ namespace MedContactApp
 
             //builder.Services.AddScoped<IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
             builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+            builder.Services.AddScoped<IRepository<Family>, Repository<Family>>();
             //builder.Services.AddScoped<IBaseUserRepository<Doctor>, BaseUserRepository<Doctor>>();
 
             builder.Services.AddScoped<IRepository<DoctorData>, Repository<DoctorData>>();
@@ -67,6 +68,7 @@ namespace MedContactApp
 
             //builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IFamilyService, FamilyService>();
             //builder.Services.AddScoped<IBaseUserService<DoctorDto>, BaseUserService<DoctorDto, Doctor>>();
 
             builder.Services.AddScoped<IDoctorDataService, DoctorDataService>();
@@ -94,6 +96,10 @@ namespace MedContactApp
 
             app.UseAuthentication(); // Set HttpContext.User
             app.UseAuthorization();
+
+            //app.MapControllerRoute(
+            //    name: "default",
+            //    pattern: "{action}/{controller}");
 
             app.MapControllerRoute(
                 name: "default",

@@ -1,0 +1,27 @@
+﻿@model UserDto
+
+<tr>
+
+    <td area-label="Name">
+        @Html.DisplayFor(modelItem => Model.Name)
+    </td>
+    <td area-label="MidName">
+        @Html.DisplayFor(modelItem => Model.MidName)
+    </td>
+    <td area-label="Surname">
+        @Html.DisplayFor(modelItem => Model.Surname)
+    </td>
+    <td area-label="Age">
+        @Html.DisplayFor(modelItem => Model.Age) years
+    </td>
+    <td area-label="Gender">
+        @Html.DisplayFor(modelItem => Model.Gender)
+    </td>
+    <td area-label="Address">
+        @Html.DisplayFor(modelItem => Model.Address)
+    </td>
+    <td>
+        <span> <a class="btn btn-primary" href="~/userpanel/details/@Model.Id">View details</a></span>
+    </td>
+
+</tr>

@@ -13,20 +13,24 @@ namespace MedContactDataRepositories
         public IRepository<DoctorData> DoctorDataRepository { get; }
         //public IBaseUserRepository<Doctor> DoctorRepository { get; }
         public IRepository<DayTimeTable> DayTimeTableRepository { get; }
-        public IRepository<Role> RoleRepository { get; }
+        public IRepository<Role> RoleRepository { get; }              
+        public IRepository<Family> FamilyRepository { get; }
+
         //public IRepository<RoleAllUser> RoleAllUserRepository { get; }
 
 
         public UnitOfWork(MedContactContext database,
                IRepository<User> userRepository, 
-               IRepository<DayTimeTable> dayTimeTableRepository, 
-               IRepository<Role> roleRepository, IRepository<DoctorData> doctorDataRepository)
+               IRepository<DayTimeTable> dayTimeTableRepository,
+               IRepository<Role> roleRepository, IRepository<DoctorData> doctorDataRepository, 
+               IRepository<Family> familyRepository)
         {
             _database = database;
             UserRepository = userRepository;
             DayTimeTableRepository = dayTimeTableRepository;
-            DoctorDataRepository= doctorDataRepository;
+            DoctorDataRepository = doctorDataRepository;
             RoleRepository = roleRepository;
+            FamilyRepository = familyRepository;
         }
 
         public async Task<int> Commit()

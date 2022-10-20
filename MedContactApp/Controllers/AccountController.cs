@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Runtime.InteropServices;
 
 namespace MedContactApp.Controllers
 {
@@ -88,7 +89,7 @@ namespace MedContactApp.Controllers
                         if (result > 0)
                         {
                             await Authenticate(model.Email);
-                            return RedirectToAction("Index", "Home");
+                            return RedirectToAction("Welcome", "UserPanel");
                         }
                     }
                 }
@@ -211,22 +212,31 @@ namespace MedContactApp.Controllers
 
             if (dto.Email != null && dto.Username!=null  && roleList!=null)
             {
+                string id = dto.Id.ToString();
                 var claims = new List<Claim>()
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
-                new Claim(ClaimTypes.Email, dto.Email)
+                new Claim(ClaimTypes.Email, dto.Email),
+                new Claim("MUId",id),
+                new Claim("UId",id)
             };
-               
-                foreach (var role in roleList)
+
+                //if (dto.FamilyId != null)
+                //{
+                //    string fId = dto.FamilyId.GetValueOrDefault().ToString();
+                //    claims.Add(new Claim("FId", fId));
+                //}
+                   
+            foreach (var role in roleList)
                     if (role.Name != null)
                     claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
 
-                var identity = new ClaimsIdentity(claims,
+            var identity = new ClaimsIdentity(claims,
                     "ApplicationCookie",
                     ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(identity));
             }
            

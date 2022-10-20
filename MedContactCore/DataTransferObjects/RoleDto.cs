@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MedContactDb.Entities
 {
-    public class RoleDto : IBaseEntity
+    public class RoleDto 
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
