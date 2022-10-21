@@ -17,7 +17,9 @@ namespace MedContactCore.Abstractions
         Task<bool> IsUserExists(Guid userId);
         Task<bool> CheckUserPassword(string email, string password);
         Task<bool> CheckUserPassword(Guid userId, string password);
+        Task<Guid?> GetIdByEmailUserPassword(string email, string password);
         Task<UserDto> GetUserByEmailAsync(string email);
+        Task<UserDto> GetUserByIdEmailAsync(string email, Guid id);
         Task<UserDto> GetUserByIdAsync(Guid id);
         Task<int> CreateUserAsync(UserDto dto);
         Task<int> CreateUserWithRoleAsync(UserDto dto,string roleName);

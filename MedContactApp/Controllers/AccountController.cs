@@ -88,7 +88,7 @@ namespace MedContactApp.Controllers
                         var result = await _userService.CreateUserWithRoleAsync(customerDto, "Customer");
                         if (result > 0)
                         {
-                            await Authenticate(model.Email);
+                            await Authenticate(model.Email,customerDto.Id );
                             return RedirectToAction("Welcome", "UserPanel");
                         }
                     }
@@ -141,15 +141,68 @@ namespace MedContactApp.Controllers
         {
             if (User.Identities.Any(identity => identity.IsAuthenticated))
             {
-                var userEmail = User.FindFirst(ClaimTypes.Email);
-                if (string.IsNullOrEmpty(userEmail?.Value))
+
+                var sUserId = User.FindFirst("UId");
+                var sMainUserId = User.FindFirst("MUId");
+
+                if (sUserId == null)
                 {
                     return BadRequest();
                 }
+
+                if (sMainUserId == null)
+                {
+                    return BadRequest();
+                }
+
+                if (sUserId!= null && sMainUserId != null)
+                {
+                    if (sUserId.Value.Equals(sMainUserId.Value)) 
+                    {
+                        if (Guid.TryParse(sUserId!.Value, out Guid userId)) 
+                        {
+                            var user = await _userService.GetUserByIdAsync(userId);
+                            if (user != null)
+                            {
+                                string fName = user.Name + " " + user.Surname;
+                                UserDataModel model = new() { ActiveEmail = user.Email, ActiveFullName = fName,
+                                MainEmail = user.Email, MainFullName = fName};
+                                return View(model);
+                            }                           
+                        }      
+                    }
+                    else
+                    {
+                        UserDataModel model = new UserDataModel();
+                       
+                        if (Guid.TryParse(sUserId!.Value, out Guid userId))
+                        {
+                            var user = await _userService.GetUserByIdAsync(userId);
+                            if (user != null)
+                            {
+                                string fName = user.Name + " " + user.Surname;
+                                model.ActiveFullName = fName;
+                                model.ActiveEmail = user.Email;
+                            }
+                        }
+                        if (Guid.TryParse(sMainUserId!.Value, out Guid mainUserId))
+                        {
+                            var mainUser = await _userService.GetUserByIdAsync(mainUserId);
+                            if (mainUser != null)
+                            {
+                                string fName = mainUser.Name + " " + mainUser.Surname;
+                                model.MainFullName = fName;
+                                model.MainEmail = mainUser.Email;
+                            }
+                        }
+                        return View(model);
+                    }
+                }
+
+               
                 //var user = await _userService.GetUserByEmailAsync(userEmail);
-                var user = _mapper.Map<UserDataModel>(await _userService.GetUserByEmailAsync(userEmail.Value));
-                //var roleList = await _roleService.GetRoleListByUserIdAsync(user.Id);
-                return View(user);
+                //var user = _mapper.Map<UserDataModel>(await _userService.GetUserByEmailAsync(userEmail.Value));
+                //var roleList = await _roleService.GetRoleListByUserIdAsync(user.Id);           
             }
 
             return View();
@@ -160,15 +213,17 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> GetUserData()
         {
             var userEmail = User.FindFirst(ClaimTypes.Email);
-            if (string.IsNullOrEmpty(userEmail?.Value))
+            var userId = User.FindFirst("UId");
+            var result = Guid.TryParse(userId!.Value, out Guid usrId);
+            if (string.IsNullOrEmpty(userEmail?.Value) && !result)
             {
                 return BadRequest();
             }
-
-            var user = _mapper.Map<UserDataModel>(await _userService.GetUserByEmailAsync(userEmail.Value));
-            return Ok(user);
-
+           
+                var user = _mapper.Map<UserDataModel>(await _userService.GetUserByIdAsync(usrId));
+                return Ok(user);
         }
+               
 
         [HttpGet]
         public IActionResult Login()
@@ -181,10 +236,11 @@ namespace MedContactApp.Controllers
         {
            if (model.Email != null && model.Password != null)
            {
-                var isPasswordCorrect = await _userService.CheckUserPassword(model.Email, model.Password);
-            if (isPasswordCorrect)
+                //var isPasswordCorrect = await _userService.CheckUserPassword(model.Email, model.Password);
+                var id = await _userService.GetIdByEmailUserPassword(model.Email, model.Password);
+            if (id != null)             //(isPasswordCorrect)
             {
-                await Authenticate(model.Email);
+                await Authenticate(model.Email, (Guid)id);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -205,9 +261,9 @@ namespace MedContactApp.Controllers
 
         }
 
-        private async Task Authenticate (string email)
+        private async Task Authenticate (string email, Guid userId)
         {
-            var dto= await _userService.GetUserByEmailAsync(email);
+            var dto = await _userService.GetUserByIdAsync(userId);
             var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
 
             if (dto.Email != null && dto.Username!=null  && roleList!=null)
@@ -216,6 +272,8 @@ namespace MedContactApp.Controllers
                 var claims = new List<Claim>()
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
+                //new Claim(ClaimTypes.Name, dto.Name!),
+                //new Claim(ClaimTypes.Surname, dto.Surname!),
                 new Claim(ClaimTypes.Email, dto.Email),
                 new Claim("MUId",id),
                 new Claim("UId",id)
@@ -226,10 +284,12 @@ namespace MedContactApp.Controllers
                 //    string fId = dto.FamilyId.GetValueOrDefault().ToString();
                 //    claims.Add(new Claim("FId", fId));
                 //}
-                   
-            foreach (var role in roleList)
+                //if (dto.Name != null) claims.Add(new Claim(ClaimTypes.Name, dto.Name));
+                //if (dto.Surname != null) claims.Add(new Claim(ClaimTypes.Surname, dto.Surname));
+
+                foreach (var role in roleList)
                     if (role.Name != null)
-                    claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
 
             var identity = new ClaimsIdentity(claims,
                     "ApplicationCookie",

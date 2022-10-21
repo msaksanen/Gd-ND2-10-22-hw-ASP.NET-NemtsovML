@@ -10,6 +10,8 @@ using System.Configuration;
 using Newtonsoft.Json.Linq;
 using MedContactApp.Helpers;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace MedContactApp.Controllers
 {
@@ -115,10 +117,54 @@ namespace MedContactApp.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SetActiveRelative(string id)
+        {
+            var result= Guid.TryParse(id, out Guid relativeId);
+            if (result)
+            {
+                var relativeDto= await _userService.GetUserByIdAsync(relativeId);
+                if(relativeDto != null)
+                {
+                   await ChangeClaims(relativeDto);
+                }
+            }
+            return RedirectToAction("Family", "UserPanel");
+
+        }
+
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckEmail(string email)
         {
             return Json(await _emailChecker.CheckEmail(email.ToLower()));
         }
+
+        private async Task ChangeClaims(UserDto relativeDto)
+        {
+            if (User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                var userId = claimsIdentity.FindFirst("UId");
+                if (claimsIdentity.TryRemoveClaim(userId))
+                    claimsIdentity.AddClaim(new Claim("UId", relativeDto.Id.ToString()));
+
+                var username = claimsIdentity.FindFirst(ClaimsIdentity.DefaultNameClaimType);
+                if (claimsIdentity.TryRemoveClaim(username) && relativeDto.Username !=null)
+                    claimsIdentity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, relativeDto.Username));
+                 
+                var name = claimsIdentity.FindFirst(ClaimTypes.Name);
+                if (claimsIdentity.TryRemoveClaim(name) && relativeDto.Name != null)
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, relativeDto.Name));
+
+                var surname = claimsIdentity.FindFirst(ClaimTypes.Surname);
+                if (claimsIdentity.TryRemoveClaim(surname) && relativeDto.Surname != null)
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Surname, relativeDto.Surname));
+
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                await HttpContext.SignInAsync(claimsPrincipal);
+     
+            }
+            
+        }
+
     }
 }

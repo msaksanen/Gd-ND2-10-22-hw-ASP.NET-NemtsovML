@@ -16,8 +16,9 @@
 else
 {
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hello @Model.Username! (@Model.Email)</a>
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hello @Model.ActiveFullName! (@Model.ActiveEmail)</a>
         <ul class="dropdown-menu" style="min-width: fit-content">
+            <li><a class="dropdown-item" href="#">Main User: @Model.MainFullName (@Model.MainEmail)</a></li>
             <li><a class="dropdown-item" asp-action="Family" asp-controller="UserPanel">My Family</a></li>
             <li><a class="dropdown-item" asp-action="Appointment" asp-controller="UserPanel">My Appointments</a></li>
             <li><a class="dropdown-item" asp-action="Data" asp-controller="UserPanel">My Data</a></li>
