@@ -134,23 +134,25 @@ namespace MedContactApp.Controllers
                     var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
 
                     //should be sure that dto property naming is the same with entity property naming
-                    var patchList = new List<PatchModel>();
-                    Type myType = typeof(UserDto);
-                    var propList = myType?.GetProperties();
-                    if (propList!=null)
-                    {
-                        foreach (var prop in propList)
-                        {
-                            var propName = myType?.GetProperty($"{prop.Name}");
-                            var propValueModel = propName?.GetValue(dto);
-                            var propValueSource = propName?.GetValue(sourceDto);
-                            if (propValueSource != propValueModel && propValueModel != null)
-                            {
-                                PatchModel patchModel = new() { PropertyName = prop.Name, PropertyValue = propValueModel };
-                                patchList.Add(patchModel);
-                            }
-                        }
-                    }
+                    //var patchList = new List<PatchModel>();
+                    //Type myType = typeof(UserDto);
+                    //var propList = myType?.GetProperties();
+                    //if (propList!=null)
+                    //{
+                    //    foreach (var prop in propList)
+                    //    {
+                    //        var propName = myType?.GetProperty($"{prop.Name}");
+                    //        var propValueModel = propName?.GetValue(dto);
+                    //        var propValueSource = propName?.GetValue(sourceDto);
+                    //        if (propValueSource != propValueModel && propValueModel != null)
+                    //        {
+                    //            PatchModel patchModel = new() { PropertyName = prop.Name, PropertyValue = propValueModel };
+                    //            patchList.Add(patchModel);
+                    //        }
+                    //    }
+                    //}
+                    PatchMaker<UserDto> patchMaker = new PatchMaker<UserDto>();
+                    var patchList = patchMaker.Make(dto, sourceDto);
                     await _userService.PatchAsync(dto.Id, patchList);
                     return RedirectToAction("Index","Doctor");
                 }

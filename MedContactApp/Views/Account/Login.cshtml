@@ -21,9 +21,17 @@
 
         </div>
 
+        @if (Model != null)
+        {
+            <div>
+                <p>@Model.SystemInfo</p>
+            </div>
+        }
+
         <input type="submit" class="btn btn-primary" value="Submit">
 
     </form>
+   
 </div>
 
 @section Scripts

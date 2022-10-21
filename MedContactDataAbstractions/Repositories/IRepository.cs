@@ -8,6 +8,7 @@ namespace MedContactDataAbstractions.Repositories
     {
         //READ
         Task<T?> GetByIdAsync(Guid id);
+        Task<T?> GetByIdTrackAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
         IQueryable<T> Get();
 

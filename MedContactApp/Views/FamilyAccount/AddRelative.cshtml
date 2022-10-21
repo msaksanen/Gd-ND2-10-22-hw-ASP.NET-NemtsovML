@@ -1,45 +1,20 @@
-﻿@model MedContactApp.Models.CustomerModel
+﻿@model RelativeModel
 
 @{
-    ViewData["Title"] = "Customer Registration";
+    ViewData["Title"] = "Add relative";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" href="~/account/regcustomer/">Customer Registration</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="~/account/regdoctor/">Doctor Registration</a>
-    </li>
- </ul>
 
-<h1>Create customer profile</h1>
+<h1>Add relative profile</h1>
 <hr/>
 <div class="row">
     <div class="col-md-4">
-        <form asp-controller="Account" asp-action="RegCustomer" method="post">
+        <form asp-controller="UserPanel" asp-action="AddRelative" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" asp-for="Password" class="form-control" id="password">
-                <span asp-validation-for="Password" class="text-danger"></span>
-
-            </div>
-            <div class="form-group">
-                <label for="password-confirmation" class="form-label">Password Confirmation</label>
-                <input type="password" asp-for="PasswordConfirmation" class="form-control" id="password-confirmation">
-                <span asp-validation-for="PasswordConfirmation" class="text-danger"></span>
-
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
@@ -85,7 +60,7 @@
 </div>
 
 <div>
-    <a asp-controller="Home"  asp-action="Index">Back to Homepage</a>
+    <a asp-action="Family">Back to List</a>
 </div>
 
 @section Scripts {

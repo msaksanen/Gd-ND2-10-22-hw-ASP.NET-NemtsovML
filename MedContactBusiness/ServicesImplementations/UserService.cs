@@ -133,10 +133,6 @@ namespace MedContactBusiness.ServicesImplementations
 
         private string CreateMd5(string? password)
         {
-            //if (string.IsNullOrEmpty(password))
-            //{
-            //    return String.Empty;
-            //}
             var passwordSalt = _configuration["UserSecrets:PasswordSalt"];
 
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
@@ -147,8 +143,6 @@ namespace MedContactBusiness.ServicesImplementations
                 return Convert.ToHexString(hashBytes);
             }
         }
-
-       
 
         public async Task<bool> IsUserExists(Guid userId)
         {
@@ -174,6 +168,22 @@ namespace MedContactBusiness.ServicesImplementations
                 return
                     dbPasswordHash != null
                     && CreateMd5(password).Equals(dbPasswordHash);
+        }
+        
+        public async Task<int> ChangeUserPasswordAsync (Guid id, string password)
+        {
+            var sourceUser = await _unitOfWork.UserRepository.GetByIdTrackAsync(id);
+            if (sourceUser != null)
+            {
+                string pwdHash = CreateMd5(password);
+                sourceUser.PasswordHash = pwdHash;
+                var addingResult = await _unitOfWork.Commit();
+                return addingResult;
+            }
+            else
+            {
+                throw new ArgumentException(nameof(password));
+            }
         }
         public async Task<Guid?> GetIdByEmailUserPassword(string email, string password)
         {

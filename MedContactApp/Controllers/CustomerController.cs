@@ -103,5 +103,7 @@ namespace MedContactApp.Controllers
             return Json(await _emailChecker.CheckEmail(email.ToLower()));
         }
 
+       
+
     }
 }

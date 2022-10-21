@@ -28,6 +28,12 @@ namespace MedContactDataRepositories
                 .FirstOrDefaultAsync(entity => entity.Id.Equals(id));
         }
 
+        public virtual async Task<T?> GetByIdTrackAsync(Guid id)
+        {
+            return await DbSet
+                .FirstOrDefaultAsync(entity => entity.Id.Equals(id));
+        }
+
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await DbSet.ToListAsync();

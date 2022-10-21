@@ -15,31 +15,25 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace MedContactApp.Controllers
 {
-    public class UserPanelController : Controller
+    public class FamilyAccountController : Controller
     {
         private readonly IUserService _userService;
         private readonly IFamilyService _familyService;
         private readonly IMapper _mapper;
-        //private int _pageSize = 7;
         private readonly IConfiguration _configuration;
-        private readonly EmailChecker _emailChecker;
         private readonly IRoleService _roleService;
 
-        public UserPanelController(IUserService userService, IConfiguration configuration,
+        public FamilyAccountController(IUserService userService, IConfiguration configuration,
             IMapper mapper, IRoleService roleService,
-            EmailChecker emailChecker, IFamilyService familyService)
+            IFamilyService familyService)
         {
             _userService = userService;
             _mapper = mapper;
             _configuration = configuration;
             _roleService = roleService;
-            _emailChecker = emailChecker;
             _familyService = familyService;
         }
-        public IActionResult Welcome()
-        {
-            return View();
-        }
+       
 
         [HttpGet]
         public async Task<IActionResult> Family()
@@ -62,13 +56,20 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> AddRelative()
         {
             var mainUserId = User.FindFirst("MUId");
-            Guid MUid = Guid.Parse(mainUserId!.Value);
-            var mainUserDto = await _userService.GetUserByIdAsync(MUid);
+            if (Guid.TryParse(mainUserId!.Value, out Guid MUid))
+            {
+                var mainUserDto = await _userService.GetUserByIdAsync(MUid);
 
-            RelativeModel model = new() { Email = mainUserDto.Email, Surname = mainUserDto.Surname, 
-                          Address = mainUserDto.Address, PhoneNumber = mainUserDto.PhoneNumber };
-
-            return View(model);
+                RelativeModel model = new()
+                {
+                    Email = mainUserDto.Email,
+                    Surname = mainUserDto.Surname,
+                    Address = mainUserDto.Address,
+                    PhoneNumber = mainUserDto.PhoneNumber
+                };
+                return View(model);
+            }
+            return View();
         }
 
         [HttpPost]
@@ -133,11 +134,6 @@ namespace MedContactApp.Controllers
 
         }
 
-        [AcceptVerbs("Get", "Post")]
-        public async Task<IActionResult> CheckEmail(string email)
-        {
-            return Json(await _emailChecker.CheckEmail(email.ToLower()));
-        }
 
         private async Task ChangeClaims(UserDto relativeDto)
         {

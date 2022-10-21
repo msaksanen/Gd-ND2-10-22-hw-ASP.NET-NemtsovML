@@ -19,10 +19,10 @@ else
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hello @Model.ActiveFullName! (@Model.ActiveEmail)</a>
         <ul class="dropdown-menu" style="min-width: fit-content">
             <li><a class="dropdown-item" href="#">Main User: @Model.MainFullName (@Model.MainEmail)</a></li>
-            <li><a class="dropdown-item" asp-action="Family" asp-controller="UserPanel">My Family</a></li>
+            <li><a class="dropdown-item" asp-action="Family" asp-controller="FamilyAccount">My Family</a></li>
             <li><a class="dropdown-item" asp-action="Appointment" asp-controller="UserPanel">My Appointments</a></li>
-            <li><a class="dropdown-item" asp-action="Data" asp-controller="UserPanel">My Data</a></li>
-            <li><a class="dropdown-item" asp-action="Settings" asp-controller="UserPanel">My Settings</a></li>
+            <li><a class="dropdown-item" asp-action="MainUserData" asp-controller="UserPanel">My Data</a></li>
+            <li><a class="dropdown-item" asp-action="AccSettings" asp-controller="Account">My Settings</a></li>
         </ul>
     </li>
     <li class="nav-item">
