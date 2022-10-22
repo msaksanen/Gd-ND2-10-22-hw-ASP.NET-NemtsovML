@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MedContactDb.Entities
+namespace MedContactCore.DataTransferObjects
 {
     public  class SpecialityDto
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
-        public List<DoctorData>? DoctorDatas { get; set; }
+
+        //public List<DoctorData>? DoctorDatas { get; set; }
     }
 }

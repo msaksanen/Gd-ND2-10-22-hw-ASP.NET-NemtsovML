@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactApp", "MedContact
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDb", "MedContactDb\MedContactDb.csproj", "{6361394F-2212-4AF9-A10C-7E4BC3C43848}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactBusiness", "MedContactBusiness\MedContactBusiness.csproj", "{1164793E-F6F2-484C-A82F-FB8C07A224C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactBusiness", "MedContactBusiness\MedContactBusiness.csproj", "{1164793E-F6F2-484C-A82F-FB8C07A224C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactCore", "MedContactCore\MedContactCore.csproj", "{EADEE4F4-A041-4BC0-9015-9D4F01147A31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactCore", "MedContactCore\MedContactCore.csproj", "{EADEE4F4-A041-4BC0-9015-9D4F01147A31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactDataAbstractions", "MedContactDataAbstractions\MedContactDataAbstractions.csproj", "{34E87B99-17D5-4CF4-888F-1C1CCFCDF7D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataAbstractions", "MedContactDataAbstractions\MedContactDataAbstractions.csproj", "{34E87B99-17D5-4CF4-888F-1C1CCFCDF7D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactDataRepositories", "MedContactDataRepositories\MedContactDataRepositories.csproj", "{EFEE04AF-34B3-4FBA-9AB5-104B9B1F9144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataRepositories", "MedContactDataRepositories\MedContactDataRepositories.csproj", "{EFEE04AF-34B3-4FBA-9AB5-104B9B1F9144}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

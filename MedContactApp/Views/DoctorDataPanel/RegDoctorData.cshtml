@@ -1,0 +1,48 @@
+﻿@model RegDoctorDataModel
+
+@{
+    ViewData["Title"] = "Doctor Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Doctor Registration</h1>
+
+<h4>RegDoctorDataModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="RegDoctorData">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div>
+                <select id="SpecialityIds" multiple="multiple" name="SpecialityIds">
+                    <option>Please select your specialities</option>
+                    @if (Model.Specialities!=null)
+                    {
+                        foreach (var item in Model.Specialities)
+                        {
+                            await Html.RenderPartialAsync("SpecialityPartialView", item);
+                        }
+                    }
+                   
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+        <p>Your doctor special data accounts will be inactive untill administration approval</p>
+    </div>
+</div>
+
+<div>
+    <a asp-action="AccSettings">Back to Settings</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

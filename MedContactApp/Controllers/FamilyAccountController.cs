@@ -130,7 +130,7 @@ namespace MedContactApp.Controllers
                    await ChangeClaims(relativeDto);
                 }
             }
-            return RedirectToAction("Family", "UserPanel");
+            return RedirectToAction("Family", "FamilyAccount");
 
         }
 
