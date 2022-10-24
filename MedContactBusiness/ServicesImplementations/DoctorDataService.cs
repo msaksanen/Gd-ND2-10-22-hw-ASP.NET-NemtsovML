@@ -43,5 +43,49 @@ namespace MedContactBusiness.ServicesImplementations
                 throw new ArgumentException(nameof(dData));
             }
         }
+
+        public async Task<int> CreateDoctorDataAsync(DoctorDataDto dto)
+        {
+            var entity = _mapper.Map<DoctorData>(dto);
+            int result = 0;
+           
+            if (entity != null && !await IsDoctorDataExists(entity.UserId, entity.SpecialityId))
+            {
+                await _unitOfWork.DoctorDataRepository.AddAsync(entity);
+                result = await _unitOfWork.Commit();   
+            }
+            return result;
+        }
+
+        public async Task<int> DeleteDoctorDataAsync(DoctorDataDto dto) 
+        {
+            var entity = _mapper.Map<DoctorData>(dto);
+            _unitOfWork.DoctorDataRepository.Remove(entity);
+            var result = await _unitOfWork.Commit();
+            return result;
+        }
+
+        public async Task<bool> IsDoctorDataExists(Guid? userId, Guid? specId)
+        {
+            if (userId == null && specId == null)
+                return false;
+
+            else
+                return await _unitOfWork.DoctorDataRepository.Get()
+                       .AnyAsync(dd => dd.UserId.Equals(userId) && dd.SpecialityId.Equals(specId));
+        }
+
+        public async Task<List<DoctorDataDto>> GetDoctorDataByUserId(Guid userId)
+        {
+             var list= await _unitOfWork.DoctorDataRepository
+                    .Get()
+                    .AsNoTracking()
+                    .Where(dd => dd.UserId.Equals(userId))
+                    .Select(dd => _mapper.Map<DoctorDataDto>(dd))
+                    .ToListAsync();
+
+
+            return list;
+        }
     }
 }

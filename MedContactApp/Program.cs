@@ -49,32 +49,25 @@ namespace MedContactApp
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //builder.Services.AddScoped<IBaseUserRepository<Customer>, BaseUserRepository<Customer>>();
+            
             builder.Services.AddScoped<IRepository<User>, Repository<User>>();
             builder.Services.AddScoped<IRepository<Family>, Repository<Family>>();
-            //builder.Services.AddScoped<IBaseUserRepository<Doctor>, BaseUserRepository<Doctor>>();
-
+     
             builder.Services.AddScoped<IRepository<DoctorData>, Repository<DoctorData>>();
+            builder.Services.AddScoped<IRepository<Speciality>, Repository<Speciality>>();
             builder.Services.AddScoped<IRepository<DayTimeTable>, Repository<DayTimeTable>>();
             builder.Services.AddScoped<IRepository<Role>, Repository<Role>>();
-            //builder.Services.AddScoped<IRepository<RoleAllUser>, Repository<RoleAllUser>>();
-
+          
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IRoleService, RoleService>();
 
-            //builder.Services.AddScoped<IRoleAllUserService<CustomerDto>, RoleAllUserService<CustomerDto, Customer>>();
-            //builder.Services.AddScoped<IRoleAllUserService<DoctorDto>, RoleAllUserService<DoctorDto, Doctor>>();
-            //builder.Services.AddScoped<IRoleAllUserService<UserDto>, RoleAllUserService<UserDto, User>>();
-
-            //builder.Services.AddScoped<IBaseUserService<CustomerDto>, BaseUserService<CustomerDto, Customer>>();
+           
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IFamilyService, FamilyService>();
-            //builder.Services.AddScoped<IBaseUserService<DoctorDto>, BaseUserService<DoctorDto, Doctor>>();
-
+           
             builder.Services.AddScoped<IDoctorDataService, DoctorDataService>();
+            builder.Services.AddScoped<ISpecialityService, SpecialityService>();
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();    
-            //builder.Services.AddScoped<EmailChecker<DoctorDto>>();
-            //builder.Services.AddScoped<EmailChecker<CustomerDto>>();
             builder.Services.AddScoped<EmailChecker>();
 
 

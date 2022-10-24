@@ -8,22 +8,19 @@ namespace MedContactDataRepositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly MedContactContext _database;
-        //public IBaseUserRepository<Customer> CustomerRepository { get; }
         public IRepository<User> UserRepository { get; }
         public IRepository<DoctorData> DoctorDataRepository { get; }
-        //public IBaseUserRepository<Doctor> DoctorRepository { get; }
+        public IRepository<Speciality> SpecialityRepository { get; }
         public IRepository<DayTimeTable> DayTimeTableRepository { get; }
         public IRepository<Role> RoleRepository { get; }              
         public IRepository<Family> FamilyRepository { get; }
-
-        //public IRepository<RoleAllUser> RoleAllUserRepository { get; }
 
 
         public UnitOfWork(MedContactContext database,
                IRepository<User> userRepository, 
                IRepository<DayTimeTable> dayTimeTableRepository,
                IRepository<Role> roleRepository, IRepository<DoctorData> doctorDataRepository, 
-               IRepository<Family> familyRepository)
+               IRepository<Family> familyRepository, IRepository<Speciality> specialityRepository)
         {
             _database = database;
             UserRepository = userRepository;
@@ -31,6 +28,7 @@ namespace MedContactDataRepositories
             DoctorDataRepository = doctorDataRepository;
             RoleRepository = roleRepository;
             FamilyRepository = familyRepository;
+            SpecialityRepository = specialityRepository;
         }
 
         public async Task<int> Commit()

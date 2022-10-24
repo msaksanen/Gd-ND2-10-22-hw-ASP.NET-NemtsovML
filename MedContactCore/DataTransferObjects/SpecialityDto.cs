@@ -10,6 +10,7 @@ namespace MedContactCore.DataTransferObjects
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
+        public bool? IsSelected { get; set; }
 
         //public List<DoctorData>? DoctorDatas { get; set; }
     }

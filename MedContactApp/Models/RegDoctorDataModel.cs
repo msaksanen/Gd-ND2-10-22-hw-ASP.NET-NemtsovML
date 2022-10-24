@@ -5,8 +5,6 @@ namespace MedContactApp.Models
 {
     public class RegDoctorDataModel
     {
-        public int Id { get; set; }
-
         [Required]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
@@ -15,5 +13,6 @@ namespace MedContactApp.Models
         public bool? IsBlocked { get; set; }
         public Guid[]? SpecialityIds { get; set; }
         public List <SpecialityDto>? Specialities { get; set; }
+        public string? SystemInfo { get; set; }
     }
 }

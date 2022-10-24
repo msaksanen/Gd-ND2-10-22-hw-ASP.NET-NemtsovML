@@ -1,0 +1,9 @@
+﻿@model SpecialityDto
+@if (Model.IsSelected!=true)
+{
+    <option label="@Model.Name" value="@Model.Id">@Model.Name</option>
+}
+else
+{
+    <option label="@Model.Name" selected value="@Model.Id">@Model.Name</option>
+}
