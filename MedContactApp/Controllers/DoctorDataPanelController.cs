@@ -44,9 +44,9 @@ namespace MedContactApp.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> RegDoctorData()
+        public async Task<IActionResult> EditDoctorData()
         {
-            RegDoctorDataModel model = new();
+            EditDoctorDataModel model = new();
            //model.Specialities = await _specialityService.GetSpecialitiesListAsync();
             var UserIdClaim = User.FindFirst("MUId");
             var userId = UserIdClaim!.Value;
@@ -58,7 +58,7 @@ namespace MedContactApp.Controllers
             return View(model);
         }
 
-        private async Task<RegDoctorDataModel> DoctorDataModelBuildAsync(RegDoctorDataModel model, Guid Uid)
+        private async Task<EditDoctorDataModel> DoctorDataModelBuildAsync(EditDoctorDataModel model, Guid Uid)
         {
             model.Specialities = await _specialityService.GetSpecialitiesListAsync();
             if (model.Specialities != null)
@@ -74,7 +74,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegDoctorData(RegDoctorDataModel model)
+        public async Task<IActionResult> EditDoctorData(EditDoctorDataModel model)
         {
             var UserIdClaim = User.FindFirst("MUId");
             var userId = UserIdClaim!.Value;
@@ -139,126 +139,126 @@ namespace MedContactApp.Controllers
             return View (model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> AccSettings(string? id)
-        {
-            string userId;
-            if (string.IsNullOrEmpty(id))
-            {
-                var UserIdClaim = User.FindFirst("MUId");
-                userId = UserIdClaim!.Value;
-            }
-            else
-            {
-                userId = id;
-            }
-            if (Guid.TryParse(userId, out Guid Uid))
-            {
-                var UserDto = await _userService.GetUserByIdAsync(Uid);
-                return View(UserDto);
-            }
-            return View();
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> AccSettings(string? id)
+        //{
+        //    string userId;
+        //    if (string.IsNullOrEmpty(id))
+        //    {
+        //        var UserIdClaim = User.FindFirst("MUId");
+        //        userId = UserIdClaim!.Value;
+        //    }
+        //    else
+        //    {
+        //        userId = id;
+        //    }
+        //    if (Guid.TryParse(userId, out Guid Uid))
+        //    {
+        //        var UserDto = await _userService.GetUserByIdAsync(Uid);
+        //        return View(UserDto);
+        //    }
+        //    return View();
+        //}
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> AccSettingsEdit(string? id)
-        {
-            var userDto = await GetUserDtoByIdAsync(id);
-            if (userDto != null)
-                return View(userDto);
+        //[HttpGet]
+        //public async Task<IActionResult> AccSettingsEdit(string? id)
+        //{
+        //    var userDto = await GetUserDtoByIdAsync(id);
+        //    if (userDto != null)
+        //        return View(userDto);
 
-            ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
-            return RedirectToAction("Index", "Home");
-        }
+        //    ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+        //    return RedirectToAction("Index", "Home");
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> AccSettingsEdit(CustomerModel model)
-        {
-            try
-            {
-                if (model != null)
-                {
-                    var dto = _mapper.Map<UserDto>(model);
-                    var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
-                    dto.RegistrationDate = sourceDto.RegistrationDate;
-                    PatchMaker<UserDto> patchMaker = new();
-                    var patchList = patchMaker.Make(dto, sourceDto);
-                    await _userService.PatchAsync(dto.Id, patchList);
-                    return RedirectToAction("AccSettings", "UserPanel");
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, ex.Message);
-                return StatusCode(500);
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> AccSettingsEdit(CustomerModel model)
+        //{
+        //    try
+        //    {
+        //        if (model != null)
+        //        {
+        //            var dto = _mapper.Map<UserDto>(model);
+        //            var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
+        //            dto.RegistrationDate = sourceDto.RegistrationDate;
+        //            PatchMaker<UserDto> patchMaker = new();
+        //            var patchList = patchMaker.Make(dto, sourceDto);
+        //            await _userService.PatchAsync(dto.Id, patchList);
+        //            return RedirectToAction("AccSettings", "UserPanel");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Error(ex, ex.Message);
+        //        return StatusCode(500);
+        //    }
+        //}
 
-        [HttpGet]
-        public IActionResult ChangePassword(string id)
-        {
-            bool result = Guid.TryParse(id, out Guid userId);
-            if (result)
-            {
-                ChangePasswordModel model = new() { Id = userId };
-                return View(model);
-            }
+        //[HttpGet]
+        //public IActionResult ChangePassword(string id)
+        //{
+        //    bool result = Guid.TryParse(id, out Guid userId);
+        //    if (result)
+        //    {
+        //        ChangePasswordModel model = new() { Id = userId };
+        //        return View(model);
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
-        {
-            if (model != null && model.Id != null && model.Password != null && model.OldPassword != null)
-            {
-                try
-                {
-                    if (await _userService.CheckUserPassword((Guid)model.Id, model.OldPassword))
-                    {
-                        var result = await _userService.ChangeUserPasswordAsync((Guid)model.Id, model.Password);
-                        if (result > 0)
-                        {
-                            model.SystemInfo = "The password has been changed successfully.";
-                            return View(model);
-                        }
-                    }
-                    else
-                    {
-                        model.OldPwdInfo = "You have entered incorrect password";
-                        return View(model);
-                    }
+        //[HttpPost]
+        //public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        //{
+        //    if (model != null && model.Id != null && model.Password != null && model.OldPassword != null)
+        //    {
+        //        try
+        //        {
+        //            if (await _userService.CheckUserPassword((Guid)model.Id, model.OldPassword))
+        //            {
+        //                var result = await _userService.ChangeUserPasswordAsync((Guid)model.Id, model.Password);
+        //                if (result > 0)
+        //                {
+        //                    model.SystemInfo = "The password has been changed successfully.";
+        //                    return View(model);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                model.OldPwdInfo = "You have entered incorrect password";
+        //                return View(model);
+        //            }
 
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                    return BadRequest();
-                }
-            }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+        //            return BadRequest();
+        //        }
+        //    }
 
-            ChangePasswordModel model1 = new() { SystemInfo = "Something went wrong (." };
-            return View(model1);
-        }
+        //    ChangePasswordModel model1 = new() { SystemInfo = "Something went wrong (." };
+        //    return View(model1);
+        //}
 
-        private async Task<UserDto?> GetUserDtoByIdAsync(string? id)
-        {
-            var result = Guid.TryParse(id, out Guid guid_id);
+        //private async Task<UserDto?> GetUserDtoByIdAsync(string? id)
+        //{
+        //    var result = Guid.TryParse(id, out Guid guid_id);
 
-            if (result)
-            {
-                var usr = await _userService.GetUserByIdAsync(guid_id);
-                var usrDto = _mapper.Map<UserDto>(usr);
-                return usrDto;
-            }
-            return null;
-        }
+        //    if (result)
+        //    {
+        //        var usr = await _userService.GetUserByIdAsync(guid_id);
+        //        var usrDto = _mapper.Map<UserDto>(usr);
+        //        return usrDto;
+        //    }
+        //    return null;
+        //}
 
     }
 }

@@ -39,17 +39,18 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> AccSettings(string? id)
         {
-            string userId;
-            if (string.IsNullOrEmpty(id))
-            {
-                var UserIdClaim = User.FindFirst("MUId");
-                userId = UserIdClaim!.Value;
-            }
-            else
-            {
-                userId = id;
-            }
-            if (Guid.TryParse(userId, out Guid Uid))
+            //string userId;
+            //if (string.IsNullOrEmpty(id))
+            //{
+            //    var UserIdClaim = User.FindFirst("MUId");
+            //    userId = UserIdClaim!.Value;
+            //}
+            //else
+            //{
+            //    userId = id;
+            //}
+            //if (Guid.TryParse(userId, out Guid Uid))
+            if (UserIdResolver(id, out Guid Uid))
             {
                 var UserDto = await _userService.GetUserByIdAsync(Uid);
                 return View(UserDto);
@@ -62,11 +63,15 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> AccSettingsEdit(string? id)
         {
-            var userDto = await GetUserDtoByIdAsync(id);
-            if (userDto != null)
-                return View(userDto);
+            if (UserIdResolver(id, out Guid Uid))
+            {
+                var userDto = await GetUserDtoByIdAsync(id);
+                if (userDto != null)
+                    return View(userDto);
+            }
+               
 
-            ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+            ModelState.AddModelError("CustomError", $"User with id {id} is not found.");
             return RedirectToAction("Index", "Home");
         }
 
@@ -98,12 +103,12 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangePassword(string id)
+        public IActionResult ChangePassword(string? id)
         {
-            bool result = Guid.TryParse(id, out Guid userId);
-            if (result)
+            //bool result = Guid.TryParse(id, out Guid userId);
+            if (UserIdResolver(id, out Guid Uid))
             {
-                ChangePasswordModel model = new() { Id = userId };
+                ChangePasswordModel model = new() { Id = Uid };
                 return View(model);
             }
 
@@ -155,6 +160,22 @@ namespace MedContactApp.Controllers
                 return usrDto;
             }
             return null;
+        }
+
+        private bool UserIdResolver(string? id, out Guid guid)
+        {
+            string userId;
+            if (string.IsNullOrEmpty(id))
+            {
+                var UserIdClaim = User.FindFirst("MUId");
+                userId = UserIdClaim!.Value;
+            }
+            else
+            {
+                userId = id;
+            }
+            return Guid.TryParse(userId, out guid);
+
         }
 
     }

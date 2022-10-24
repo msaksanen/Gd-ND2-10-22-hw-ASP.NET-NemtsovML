@@ -1,16 +1,30 @@
-﻿@model RegDoctorDataModel
+﻿@model EditDoctorDataModel
 
 @{
-    ViewData["Title"] = "Doctor Registration";
+    ViewData["Title"] = "Add/Remove Doctor Specialities";
     Layout = "~/Views/DoctorDataPanel/_Layout.cshtml";
 }
-
-<h1>Doctor Registration</h1>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="~/userpanel/accsettingsedit/">Account Details</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="~/userpanel/changepassword/">Password Change</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="~/doctordatapanel/regdoctordata/">Doctor Registration</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="~/doctordatapanel/editdoctordata/">Edit Doctor Data</a>
+    </li>
+</ul>
+<br />
+<h4>Add/Remove Doctor Specialities</h4>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="RegDoctorData">
+        <form asp-action="EditDoctorData">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label">Confirm your password</label>
