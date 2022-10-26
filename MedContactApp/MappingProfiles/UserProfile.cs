@@ -29,7 +29,10 @@ namespace MedContactApp.MappingProfiles
                      opt => opt.MapFrom(model => model.Password));
 
             CreateMap<UserModel, UserDto>();
+
             CreateMap<CustomerModel, UserDto>();
+            CreateMap<UserDto,CustomerModel>().ReverseMap();
+
             CreateMap<DoctorModel, UserDto>();
             CreateMap<UserDto, UserDataModel>();
 

@@ -171,7 +171,7 @@ namespace MedContactApp.Controllers
         [AcceptVerbs("Get", "Post")]
         public   async Task<IActionResult> CheckEmail(string email)
         {
-            return Json(await _emailChecker.CheckEmail(email.ToLower()));
+            return Json(await _emailChecker.CheckEmail(email.ToLower(),HttpContext));
         }
         private async Task<UserDto?> GetDoctorDtoByIdAsync(string? id)
         {

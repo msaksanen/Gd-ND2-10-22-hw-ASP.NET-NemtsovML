@@ -1,9 +1,12 @@
 ﻿using MedContactDb.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace MedContactCore.DataTransferObjects
 {
@@ -17,7 +20,11 @@ namespace MedContactCore.DataTransferObjects
             public string? Name { get; set; }
             public string? Surname { get; set; }
             public string? MidName { get; set; }
-            public int? Age { get; set; }
+            
+            [DataType(DataType.Date)]   
+            public DateTime? BirthDate { get; set; }
+
+           // public int? Age { get; set; }
             public string? Gender { get; set; }
             public string? Address { get; set; }
             public Guid? FamilyId { get; set; }

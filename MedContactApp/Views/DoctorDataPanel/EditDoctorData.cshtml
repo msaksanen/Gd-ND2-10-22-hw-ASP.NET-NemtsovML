@@ -6,10 +6,10 @@
 }
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" href="~/userpanel/accsettingsedit/">Account Details</a>
+        <a class="nav-link" href="~/userpanel/accsettingsedit/@Model.UserId">Account Details</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="~/userpanel/changepassword/">Password Change</a>
+        <a class="nav-link" href="~/userpanel/changepassword/@Model.UserId">Password Change</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="~/doctordatapanel/regdoctordata/">Doctor Registration</a>
@@ -57,12 +57,14 @@
             </div>
         </form>
         <br />
-        <p>Your doctor special data accounts will be inactive untill administration approval</p>
+        <p>Your doctor special data account changes will be inactive untill administration approval</p>
     </div>
     @if (Model.SystemInfo != null)
     {
         <div>
-            <p><b>@Model.SystemInfo</b></p>
+            <p>
+                @Html.Raw(@Model.SystemInfo)
+            </p>            
         </div>
     }
 </div>

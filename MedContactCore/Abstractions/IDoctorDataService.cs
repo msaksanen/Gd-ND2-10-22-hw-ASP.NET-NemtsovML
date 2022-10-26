@@ -12,8 +12,8 @@ namespace MedContactCore.Abstractions
     {
       Task<DoctorInfo> GetDoctorInfoById(Guid? doctorDataId);
       Task<int> CreateDoctorDataAsync(DoctorDataDto dto);
-      Task<bool> IsDoctorDataExists(Guid? userId, Guid? specId);
-      Task<List<DoctorDataDto>> GetDoctorDataByUserId(Guid userId);
-      Task<int> DeleteDoctorDataAsync(DoctorDataDto dto);
+      Task<DoctorData?> GetsDoctorDataByUserIdSpecId(Guid? userId, Guid? specId);
+      Task<List<DoctorDataDto>> GetDoctorDataListByUserId(Guid userId);
+      Task<int> MarkForDeleteDoctorDataAsync(DoctorDataDto dto);
     }
 }

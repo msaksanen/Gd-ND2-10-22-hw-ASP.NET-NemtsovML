@@ -152,6 +152,9 @@ namespace MedContactDb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool?>("ForDeletion")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsBlocked")
                         .HasColumnType("bit");
 
@@ -294,8 +297,8 @@ namespace MedContactDb.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Age")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");

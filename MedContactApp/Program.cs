@@ -41,6 +41,8 @@ namespace MedContactApp
                     options.LogoutPath = new PathString(@"/Account/Logout");
                     //options.AccessDeniedPath = new PathString(@"/Account/Login");
                 });
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
 
             var connectionString = builder.Configuration.GetConnectionString("Default");
 
@@ -69,6 +71,7 @@ namespace MedContactApp
             builder.Services.AddScoped<ISpecialityService, SpecialityService>();
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();    
             builder.Services.AddScoped<EmailChecker>();
+            builder.Services.AddScoped<BirthDateChecker>();
 
 
 
@@ -82,6 +85,7 @@ namespace MedContactApp
                 app.UseHsts();
             }
 
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

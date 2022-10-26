@@ -56,9 +56,10 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> AddRelative()
         {
             var mainUserId = User.FindFirst("MUId");
-            if (Guid.TryParse(mainUserId!.Value, out Guid MUid))
+            if (Guid.TryParse(mainUserId?.Value, out Guid MUid))
             {
                 var mainUserDto = await _userService.GetUserByIdAsync(MUid);
+                HttpContext.Session.SetInt32("isDependent", 1);
 
                 RelativeModel model = new()
                 {
@@ -94,7 +95,11 @@ namespace MedContactApp.Controllers
                                 relativeDto.FamilyId = mainUserDto.FamilyId;
                                 result += await _userService.CreateUserWithRoleAsync(relativeDto, "Customer");
                                 if (result > 0)
+                                {
+                                    if (HttpContext.Session.Keys.Contains("isDependent"))
+                                        HttpContext.Session.SetInt32("isDependent", 0);
                                     return RedirectToAction("Family", "UserPanel");
+                                }       
                             }
                             else
                             {
@@ -106,7 +111,11 @@ namespace MedContactApp.Controllers
                             }
                         }
                         if (result > 3)
+                        {
+                            if (HttpContext.Session.Keys.Contains("isDependent"))
+                                HttpContext.Session.SetInt32("isDependent", 0);
                             return RedirectToAction("Family", "UserPanel");
+                        }   
                     }
                 }
                 catch (Exception e)

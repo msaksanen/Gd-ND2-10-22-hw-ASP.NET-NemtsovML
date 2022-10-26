@@ -52,10 +52,11 @@ namespace MedContactApp.Controllers
             //if (Guid.TryParse(userId, out Guid Uid))
             if (UserIdResolver(id, out Guid Uid))
             {
-                var UserDto = await _userService.GetUserByIdAsync(Uid);
-                return View(UserDto);
+                var userDto = await _userService.GetUserByIdAsync(Uid);
+                if  (userDto != null)            
+                     return View(userDto);
             }
-            return View();
+            return NotFound();
         }
 
 
@@ -66,13 +67,17 @@ namespace MedContactApp.Controllers
             if (UserIdResolver(id, out Guid Uid))
             {
                 var userDto = await GetUserDtoByIdAsync(id);
-                if (userDto != null)
-                    return View(userDto);
-            }
                
-
-            ModelState.AddModelError("CustomError", $"User with id {id} is not found.");
-            return RedirectToAction("Index", "Home");
+                if (userDto != null)
+                {
+                    CustomerModel model = _mapper.Map<CustomerModel>(userDto);
+                    if (userDto.IsDependent == true)
+                        HttpContext.Session.SetInt32("isDependent", 1);
+                    return View(model);
+                }
+                   
+            }
+            return NotFound();
         }
 
         [HttpPost]
@@ -88,7 +93,10 @@ namespace MedContactApp.Controllers
                     PatchMaker<UserDto> patchMaker = new();
                     var patchList = patchMaker.Make(dto, sourceDto);
                     await _userService.PatchAsync(dto.Id, patchList);
-                    return RedirectToAction("AccSettings", "UserPanel");
+                    if (HttpContext.Session.Keys.Contains("isDependent"))
+                        HttpContext.Session.SetInt32("isDependent", 0);
+
+                    return RedirectToAction("AccSettings", "UserPanel", new { id = model.Id });
                 }
                 else
                 {

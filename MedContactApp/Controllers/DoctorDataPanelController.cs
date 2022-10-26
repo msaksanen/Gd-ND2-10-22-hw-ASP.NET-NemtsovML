@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using MedContactApp.Helpers;
 using Microsoft.CodeAnalysis.Differencing;
 using System.Linq;
+using System.Text;
 
 namespace MedContactApp.Controllers
 {
@@ -61,14 +62,24 @@ namespace MedContactApp.Controllers
         private async Task<EditDoctorDataModel> DoctorDataModelBuildAsync(EditDoctorDataModel model, Guid Uid)
         {
             model.Specialities = await _specialityService.GetSpecialitiesListAsync();
+            StringBuilder sb = new();
+            string init = "<b>Marked for deletion specialities:<br/>";
+            sb = sb.Append(init);
+            model.UserId = Uid;
             if (model.Specialities != null)
             {
-                var doctorData = await _doctorDataService.GetDoctorDataByUserId(Uid);
+                var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
                 foreach (var item in doctorData)
                 {
                     var spec = model.Specialities.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
-                    if (spec != null) spec.IsSelected = true;
+                    if (spec != null && item.ForDeletion != true) spec.IsSelected = true;
+                    if (spec != null && item.ForDeletion == true) sb.Append(spec.Name +"<br/>");
                 }
+            }
+            if (sb.Length > init.Length)
+            {
+                sb.Append("</b>");
+                model.SystemInfo = sb.ToString();
             }
             return model;
         }
@@ -91,7 +102,7 @@ namespace MedContactApp.Controllers
                 {
                     if (model.SpecialityIds!=null)
                     {
-                        var doctorData = await _doctorDataService.GetDoctorDataByUserId(Uid);
+                        var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
 
                         foreach (var spec in model.SpecialityIds)
                         {
@@ -119,23 +130,23 @@ namespace MedContactApp.Controllers
                                 var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
                                 if (specModel != null) specModel.IsSelected = false;
 
-                                subtract += await _doctorDataService.DeleteDoctorDataAsync(dd);
+                                subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
                             }
                         }
 
-                        model.SystemInfo = $"Specialities: {addresult} were added; {subtract} were deleted";
+                        model.SystemInfo = $"<b>Specialities:<br/>{addresult} were added<br/>{subtract} were marked for deletion</b>";
                         return View(model);
                     }
                     else 
                     {
-                        model.SystemInfo = "You have not chosen any speciality";
+                        model.SystemInfo = $"<b>You have not chosen any speciality</b>";
                         return View(model);
                     }
                 }
                 model.SystemInfo = "You have entered incorrect password";
                 return View(model);
             }
-            model.SystemInfo = "Something went wrong (.";
+            model.SystemInfo = "</b>Something went wrong (</b>";
             return View (model);
         }
 

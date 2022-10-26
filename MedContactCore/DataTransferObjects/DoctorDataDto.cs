@@ -12,6 +12,7 @@ namespace MedContactDb.Entities
         public Guid? RoleId { get; set; }   
         public Guid? UserId { get; set; }
         public bool? IsBlocked { get; set; }
+        public bool? ForDeletion { get; set; }
         public Guid? SpecialityId { get; set; }
         public List<DayTimeTable>? DayTimeTables { get; set; }
     }

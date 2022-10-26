@@ -19,12 +19,13 @@ namespace MedContactApp.Controllers
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
         private readonly EmailChecker _emailChecker;
+        private readonly BirthDateChecker _birthDateChecker;    
         private readonly IRoleService _roleService;
        // private readonly IRoleAllUserService<CustomerDto> _roleAllUserService;
 
         public CustomerController (IUserService userService, IConfiguration configuration,
             IMapper mapper, IRoleService roleService,
-            EmailChecker emailChecker)
+            EmailChecker emailChecker, BirthDateChecker birthDateChecker)
         {
             _userService = userService;
             _mapper = mapper;
@@ -32,6 +33,7 @@ namespace MedContactApp.Controllers
             _roleService = roleService;
             //_roleAllUserService = roleAllUserService;
             _emailChecker = emailChecker;
+            _birthDateChecker = birthDateChecker;
         }
         public async Task<IActionResult> Index(int page)
         {
@@ -100,10 +102,25 @@ namespace MedContactApp.Controllers
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckEmail(string email)
         {
-            return Json(await _emailChecker.CheckEmail(email.ToLower()));
+            return Json(await _emailChecker.CheckEmail(email.ToLower(), HttpContext));
         }
 
-       
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult  CheckBirthDate(DateTime? birthdate)
+        {
+
+            var result =_birthDateChecker.Check(birthdate, HttpContext);
+            if (result == 1)
+                return Json(true);
+            if (result == 2)
+                return Json("Registration is for adults only");
+
+            return Json("Input correct date of birth");
+
+            // return Json(_birthDateChecker.Check(birthdate));
+        }
+
+
 
     }
 }

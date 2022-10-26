@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MedContactApp.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedContactApp.Models
@@ -14,6 +15,7 @@ namespace MedContactApp.Models
 
         [Required]
         [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}")]
+        [Remote(action: "CheckEmail", controller: "Customer", ErrorMessage = "Email is already in use")]
         public virtual  string? Email { get; set; }
 
         [Required]
@@ -35,9 +37,14 @@ namespace MedContactApp.Models
         public string? Surname { get; set; }
         public string? MidName { get; set; }
 
+        //[Required]
+        //[Range(1, 110)]
+        //public int? Age { get; set; }
+
         [Required]
-        [Range(1, 110)]
-        public int? Age { get; set; }
+        [DataType(DataType.Date)]
+        [Remote(action: "CheckBirthDate", controller: "Customer", ErrorMessage = "Input correct date of birth")]
+        public DateTime? BirthDate { get; set; }
         public string? Gender { get; set; }
 
         [Required]

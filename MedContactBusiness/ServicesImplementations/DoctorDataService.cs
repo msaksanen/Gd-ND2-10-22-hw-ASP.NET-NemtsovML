@@ -30,7 +30,7 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<DoctorInfo> GetDoctorInfoById(Guid? doctorDataId)
         {
             var dData = await _unitOfWork.DoctorDataRepository
-                .FindBy(t => t.Id.Equals(doctorDataId),t => t.User!, t => t.Speciality!)
+                .FindBy(t => t.Id.Equals(doctorDataId) && t.ForDeletion != true ,t => t.User!, t => t.Speciality!)
                 .FirstOrDefaultAsync();
            
             if (dData?.Speciality != null && dData?.User != null)
@@ -48,34 +48,43 @@ namespace MedContactBusiness.ServicesImplementations
         {
             var entity = _mapper.Map<DoctorData>(dto);
             int result = 0;
-           
-            if (entity != null && !await IsDoctorDataExists(entity.UserId, entity.SpecialityId))
+            var dData = await GetsDoctorDataByUserIdSpecId(entity.UserId, entity.SpecialityId);
+
+            if (entity != null &&  dData == null)
             {
                 await _unitOfWork.DoctorDataRepository.AddAsync(entity);
                 result = await _unitOfWork.Commit();   
             }
+            else if (entity != null && dData != null && dData.ForDeletion == true)
+            {
+                dData.ForDeletion = false;
+                result = await _unitOfWork.Commit();
+            }
             return result;
         }
 
-        public async Task<int> DeleteDoctorDataAsync(DoctorDataDto dto) 
+        public async Task<int> MarkForDeleteDoctorDataAsync(DoctorDataDto dto) 
         {
             var entity = _mapper.Map<DoctorData>(dto);
-            _unitOfWork.DoctorDataRepository.Remove(entity);
+            entity.ForDeletion = true;
+            _unitOfWork.DoctorDataRepository.Update(entity);
             var result = await _unitOfWork.Commit();
             return result;
         }
 
-        public async Task<bool> IsDoctorDataExists(Guid? userId, Guid? specId)
+        public async Task<DoctorData?> GetsDoctorDataByUserIdSpecId(Guid? userId, Guid? specId)
         {
             if (userId == null && specId == null)
-                return false;
+                return null;
 
             else
-                return await _unitOfWork.DoctorDataRepository.Get()
-                       .AnyAsync(dd => dd.UserId.Equals(userId) && dd.SpecialityId.Equals(specId));
+                return await _unitOfWork.DoctorDataRepository.Get().FirstOrDefaultAsync
+                    (dd => dd.UserId.Equals(userId) && dd.SpecialityId.Equals(specId));
+           
         }
+                 
 
-        public async Task<List<DoctorDataDto>> GetDoctorDataByUserId(Guid userId)
+        public async Task<List<DoctorDataDto>> GetDoctorDataListByUserId(Guid userId)
         {
              var list= await _unitOfWork.DoctorDataRepository
                     .Get()
