@@ -1,28 +1,5 @@
 ﻿using MedContactCore.Abstractions;
-//using MedContactDb.Entities;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using MedContactDb.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using MedContactCore;
-
-using MedContactCore.DataTransferObjects;
-using MedContactApp.Models;
-using AutoMapper;
-using Serilog;
-using System.ComponentModel.Design;
-using System.Configuration;
-using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Configuration;
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using MedContactBusiness.ServicesImplementations;
-
-using System.Runtime.InteropServices;
-using MedContactApp.Helpers;
-using Microsoft.CodeAnalysis.Differencing;
 
 namespace MedContactApp.Helpers
 {

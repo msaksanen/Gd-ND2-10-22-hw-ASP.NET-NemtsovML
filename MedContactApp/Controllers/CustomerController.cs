@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MedContactCore;
+﻿using AutoMapper;
+using MedContactApp.Helpers;
+using MedContactApp.Models;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
-using MedContactApp.Models;
-using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.ComponentModel.Design;
-using System.Configuration;
-using Newtonsoft.Json.Linq;
-using MedContactApp.Helpers;
 
 namespace MedContactApp.Controllers
 {

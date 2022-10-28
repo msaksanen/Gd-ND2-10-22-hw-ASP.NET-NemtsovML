@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using AutoMapper;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
@@ -52,21 +53,50 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<IEnumerable<RoleDto>?> GetRoleListByUserIdAsync (Guid id)
         {
 
-            var list = await _unitOfWork.RoleRepository.Get().Include(r => r.Users).ToListAsync();
+            var list = await _unitOfWork.RoleRepository
+                             .Get()
+                             .AsNoTracking()
+                             .Include(r => r.Users)
+                             .AsNoTracking()
+                             .ToListAsync();
+
             var lst = from role in list
                       from user in role.Users!
                       where user.Id.Equals(id)
                       select  _mapper.Map<RoleDto>(role);
-                   
-            //List<RoleDto> rlist = new();
 
-            //foreach (var item in lst)
-            //    rlist.Add(_mapper.Map<RoleDto>(item));
+            await _unitOfWork.Commit();
 
             return lst;
           
-             
-           
+        }
+
+        public async Task<int> AddRoleByNameToUser (Guid userId, string roleName)
+        {
+            int result = 0;
+            var userRoleList = await GetRoleListByUserIdAsync(userId);
+            if (userRoleList != null && !userRoleList.Any(r => r.Name != null && r.Name.Equals(roleName)))
+            {
+                var role = await _unitOfWork.RoleRepository
+                      .Get()
+                      .FirstOrDefaultAsync(r => r.Name != null && r.Name.Equals(roleName));
+
+                var user = await _unitOfWork.UserRepository.GetByIdTrackAsync(userId);
+
+               _unitOfWork.RoleRepository
+                           .Get()
+                           .Include(r => r.Users)
+                           .Load();
+
+                if (role != null && user != null)
+                {
+                    role.Users?.Add(user);
+                    result = await _unitOfWork.Commit();
+                }
+            }
+
+            return result;
+
         }
 
     }

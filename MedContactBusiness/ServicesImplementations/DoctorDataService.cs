@@ -48,7 +48,7 @@ namespace MedContactBusiness.ServicesImplementations
         {
             var entity = _mapper.Map<DoctorData>(dto);
             int result = 0;
-            var dData = await GetsDoctorDataByUserIdSpecId(entity.UserId, entity.SpecialityId);
+            var dData = await GetDoctorDataByUserIdSpecId(entity.UserId, entity.SpecialityId);
 
             if (entity != null &&  dData == null)
             {
@@ -72,7 +72,7 @@ namespace MedContactBusiness.ServicesImplementations
             return result;
         }
 
-        public async Task<DoctorData?> GetsDoctorDataByUserIdSpecId(Guid? userId, Guid? specId)
+        public async Task<DoctorData?> GetDoctorDataByUserIdSpecId(Guid? userId, Guid? specId)
         {
             if (userId == null && specId == null)
                 return null;

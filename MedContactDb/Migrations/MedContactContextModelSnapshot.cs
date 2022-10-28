@@ -220,6 +220,31 @@ namespace MedContactDb.Migrations
                     b.ToTable("Families");
                 });
 
+            modelBuilder.Entity("MedContactDb.Entities.FileData", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FileDatas");
+                });
+
             modelBuilder.Entity("MedContactDb.Entities.MedData", b =>
                 {
                     b.Property<Guid>("Id")
@@ -463,6 +488,15 @@ namespace MedContactDb.Migrations
                     b.Navigation("AcsData");
                 });
 
+            modelBuilder.Entity("MedContactDb.Entities.FileData", b =>
+                {
+                    b.HasOne("MedContactDb.Entities.User", "User")
+                        .WithMany("FileDatas")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MedContactDb.Entities.MedData", b =>
                 {
                     b.HasOne("MedContactDb.Entities.CustomerData", "CustomerData")
@@ -546,6 +580,8 @@ namespace MedContactDb.Migrations
                     b.Navigation("CustomerData");
 
                     b.Navigation("DoctorDatas");
+
+                    b.Navigation("FileDatas");
                 });
 #pragma warning restore 612, 618
         }

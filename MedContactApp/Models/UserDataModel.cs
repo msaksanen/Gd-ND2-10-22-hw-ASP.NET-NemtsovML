@@ -7,7 +7,6 @@
         public string? ActiveEmail { get; set; }
         public string? MainFullName { get; set; }
         public string? MainEmail { get; set; }
-
-        //public string? RoleName { get; set; }
+        public List<string>? RoleNames { get; set; }
     }
 }

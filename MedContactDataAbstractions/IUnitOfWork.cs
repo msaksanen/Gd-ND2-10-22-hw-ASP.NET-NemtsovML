@@ -12,6 +12,9 @@ public interface IUnitOfWork
     IRepository<DayTimeTable> DayTimeTableRepository { get; }
     IRepository<Role> RoleRepository { get; }
     IRepository<Family> FamilyRepository { get; }
+    IRepository<AcsData> AcsDataRepository { get; }
+    IRepository<ExtraData> ExtraDataRepository { get; }
+    IRepository<FileData> FileDataRepository { get; }
 
     Task<int> Commit();
 }

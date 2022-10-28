@@ -13,5 +13,6 @@ namespace MedContactCore.Abstractions
         Task<Guid?> GetRoleIdByNameAsync(string name);
         Task<RoleDto?> GetRoleByNameAsync(string name);
         Task<IEnumerable<RoleDto>?> GetRoleListByUserIdAsync (Guid id);
+        Task<int> AddRoleByNameToUser (Guid userId, string roleName);
     }
 }

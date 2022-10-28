@@ -1,8 +1,9 @@
-﻿@model CustomerModel
+﻿@model BaseUserModel
 
 @{
     ViewData["Title"] = "Account Details Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 <ul class="nav nav-tabs">
 <li class="nav-item">
@@ -10,16 +11,20 @@
 </li>
 @if (Model.IsDependent != true)
 {
- <li class="nav-item">
-     <a class="nav-link" href="~/userpanel/changepassword/@Model.Id">Password Change</a>
- </li>
-<li class="nav-item">
-    <a class="nav-link" href="~/doctordatapanel/regdoctordata/">Doctor Registration</a>
- </li>
- <li class="nav-item">
+        <li class="nav-item">
+            <a class="nav-link" href="~/userpanel/changepassword/@Model.Id">Password Change</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="~/doctordatapanel/regdoctordata/">Doctor Registration</a>
+        </li>
+    @if (Model.RoleNames != null && Model.RoleNames.Any(r => r.Equals("Doctor")))
+    {
+    <li class="nav-item">
     <a class="nav-link" href="~/doctordatapanel/editdoctordata/">Edit Doctor Data</a>
- </li>
+    </li>
+    }
 }
+
 </ul>
 <br />
 @if (Model.IsDependent != true)

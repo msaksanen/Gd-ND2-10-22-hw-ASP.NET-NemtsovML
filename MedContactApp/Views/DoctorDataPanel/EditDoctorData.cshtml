@@ -24,7 +24,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditDoctorData">
+        <form asp-action="EditDoctorData" asp-controller="DoctorDataPanel" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label">Confirm your password</label>
@@ -32,16 +32,16 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <br />
-     
-           
+
+
             <div>
                 <label for="SpecialityIds">Select your specialities:</label>
-                <br /> 
-                
+                <br />
+
                 <select aria-label="Specialities"
                         id="SpecialityIds" multiple="multiple" name="SpecialityIds">
-                   
-                    @if (Model.Specialities!=null)
+
+                    @if (Model.Specialities != null)
                     {
                         foreach (var item in Model.Specialities)
                         {
@@ -50,8 +50,8 @@
                     }
                 </select>
             </div>
-        
-            <br/>
+
+            <br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -64,27 +64,29 @@
         <div>
             <p>
                 @Html.Raw(@Model.SystemInfo)
-            </p>            
+            </p>
         </div>
     }
 </div>
 
 
 <div>
-    <a asp-controller ="UserPanel" asp-action="AccSettings">Back to Settings</a>
+    <a asp-controller="UserPanel" asp-action="AccSettings">Back to Settings</a>
 </div>
 
-@section Scripts 
-{
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts
+    {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>document.multiselect('#SpecialityIds')</script>
  }
-  
+
 @section CssStyles
 {
     <style>
         #SpecialityIds_multiSelect {
-            width:max-content;
+            width: max-content;
         }
     </style>
 

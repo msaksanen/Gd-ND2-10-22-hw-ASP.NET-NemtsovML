@@ -2,21 +2,21 @@
 
 namespace MedContactApp.Models
 {
-    public class ChangePasswordModel
+    public class ChangePasswordModel : BaseUserModel
     {
-        public Guid? Id { get; set; }
+        //public Guid? Id { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         public string? OldPassword { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        public string? Password { get; set; }
+        //[Required]
+        //[DataType(DataType.Password)]
+        //public string? Password { get; set; }
 
-        [Compare(nameof(Password))]
-        [DataType(DataType.Password)]
-        public string? PasswordConfirmation { get; set; }
+        //[Compare(nameof(Password))]
+        //[DataType(DataType.Password)]
+        //public string? PasswordConfirmation { get; set; }
 
         public string? SystemInfo { get; set; }
 

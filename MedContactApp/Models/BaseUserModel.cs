@@ -56,7 +56,8 @@ namespace MedContactApp.Models
         public bool? IsDependent { get; set; }
         public bool? IsFullBlocked { get; set; }
         public Guid? RoleId { get; set; }
-        public virtual string? RoleName { get; set; }
+        public List<string>? RoleNames { get; set; }
+       // public virtual string? RoleName { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
     }

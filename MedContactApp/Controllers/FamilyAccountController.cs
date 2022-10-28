@@ -128,7 +128,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SetActiveRelative(string id)
+        public async Task<IActionResult> SetActiveRelative(string? id)
         {
             var result= Guid.TryParse(id, out Guid relativeId);
             if (result)
@@ -138,8 +138,15 @@ namespace MedContactApp.Controllers
                 {
                    await ChangeClaims(relativeDto);
                 }
+                return RedirectToAction("Family", "FamilyAccount");
             }
-            return RedirectToAction("Family", "FamilyAccount");
+
+                var mainUserId = User.FindFirst("MUId");
+                Guid MUid = Guid.Parse(mainUserId!.Value);
+                var mainUserDto = await _userService.GetUserByIdAsync(MUid);
+                await ChangeClaims(mainUserDto);
+
+            return Redirect(Request.Headers["Referer"].ToString());
 
         }
 

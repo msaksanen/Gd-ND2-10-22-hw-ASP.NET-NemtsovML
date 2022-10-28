@@ -4,9 +4,11 @@
     ViewData["Title"] = "Login";
 }
 
-<div>
-    <h1>Login</h1>
 
+<h1>Login</h1>
+<hr />
+ <div class="row">
+  <div class="col-md-4">
     <form asp-controller="Account" asp-action="Login" method="post">
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
@@ -31,7 +33,7 @@
         <input type="submit" class="btn btn-primary" value="Submit">
 
     </form>
-   
+ </div>  
 </div>
 
 @section Scripts

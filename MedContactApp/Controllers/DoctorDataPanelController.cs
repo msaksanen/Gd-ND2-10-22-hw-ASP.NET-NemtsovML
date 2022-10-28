@@ -21,6 +21,7 @@ using MedContactApp.Helpers;
 using Microsoft.CodeAnalysis.Differencing;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedContactApp.Controllers
 {
@@ -28,19 +29,26 @@ namespace MedContactApp.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly ModelUserBuilder _modelUserBuilder;
         private readonly IRoleService _roleService;
         private readonly IDoctorDataService _doctorDataService;
         private readonly ISpecialityService _specialityService;
+        private readonly IWebHostEnvironment _appEnvironment;
+        private readonly IFileDataService _fileDataService;
 
         public DoctorDataPanelController(IUserService userService,
-             IMapper mapper, IRoleService roleService, IDoctorDataService doctorDataService, 
-             ISpecialityService specialityService)
+             IMapper mapper, IRoleService roleService, IDoctorDataService doctorDataService,
+             ISpecialityService specialityService, IWebHostEnvironment appEnvironment,
+             IFileDataService fileDataService, ModelUserBuilder modelUserBuilder)
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
-            _doctorDataService = doctorDataService;  
+            _doctorDataService = doctorDataService;
             _specialityService = specialityService;
+            _appEnvironment = appEnvironment;
+            _fileDataService = fileDataService;
+            _modelUserBuilder = modelUserBuilder;   
         }
 
 
@@ -48,7 +56,7 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> EditDoctorData()
         {
             EditDoctorDataModel model = new();
-           //model.Specialities = await _specialityService.GetSpecialitiesListAsync();
+            //model.Specialities = await _specialityService.GetSpecialitiesListAsync();
             var UserIdClaim = User.FindFirst("MUId");
             var userId = UserIdClaim!.Value;
             if (Guid.TryParse(userId, out Guid Uid))
@@ -73,7 +81,7 @@ namespace MedContactApp.Controllers
                 {
                     var spec = model.Specialities.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
                     if (spec != null && item.ForDeletion != true) spec.IsSelected = true;
-                    if (spec != null && item.ForDeletion == true) sb.Append(spec.Name +"<br/>");
+                    if (spec != null && item.ForDeletion == true) sb.Append(spec.Name + "<br/>");
                 }
             }
             if (sb.Length > init.Length)
@@ -88,19 +96,19 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> EditDoctorData(EditDoctorDataModel model)
         {
             var UserIdClaim = User.FindFirst("MUId");
-            var userId = UserIdClaim!.Value;
+            var userId = UserIdClaim?.Value;
             var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
             //model.Specialities = await _specialityService.GetSpecialitiesListAsync();
             int addresult = 0;
             int subtract = 0;
 
-            if (Guid.TryParse(userId, out Guid Uid) && roleId!=null)
+            if (Guid.TryParse(userId, out Guid Uid) && roleId != null)
             {
                 model = await DoctorDataModelBuildAsync(model, Uid);
 
                 if (model.Password != null && await _userService.CheckUserPassword(Uid, model.Password))
                 {
-                    if (model.SpecialityIds!=null)
+                    if (model.SpecialityIds != null)
                     {
                         var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
 
@@ -120,12 +128,12 @@ namespace MedContactApp.Controllers
                                     RoleId = roleId
                                 };
                                 addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
-                            }  
+                            }
                         }
 
-                        foreach (var dd in doctorData) 
-                        { 
-                            if (model!.SpecialityIds.All(spec =>spec!=dd.SpecialityId ))
+                        foreach (var dd in doctorData)
+                        {
+                            if (model!.SpecialityIds.All(spec => spec != dd.SpecialityId))
                             {
                                 var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
                                 if (specModel != null) specModel.IsSelected = false;
@@ -137,7 +145,7 @@ namespace MedContactApp.Controllers
                         model.SystemInfo = $"<b>Specialities:<br/>{addresult} were added<br/>{subtract} were marked for deletion</b>";
                         return View(model);
                     }
-                    else 
+                    else
                     {
                         model.SystemInfo = $"<b>You have not chosen any speciality</b>";
                         return View(model);
@@ -146,130 +154,94 @@ namespace MedContactApp.Controllers
                 model.SystemInfo = "You have entered incorrect password";
                 return View(model);
             }
-            model.SystemInfo = "</b>Something went wrong (</b>";
-            return View (model);
+            model.SystemInfo = "<b>Something went wrong (</b>";
+            return View(model);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> AccSettings(string? id)
-        //{
-        //    string userId;
-        //    if (string.IsNullOrEmpty(id))
-        //    {
-        //        var UserIdClaim = User.FindFirst("MUId");
-        //        userId = UserIdClaim!.Value;
-        //    }
-        //    else
-        //    {
-        //        userId = id;
-        //    }
-        //    if (Guid.TryParse(userId, out Guid Uid))
-        //    {
-        //        var UserDto = await _userService.GetUserByIdAsync(Uid);
-        //        return View(UserDto);
-        //    }
-        //    return View();
-        //}
+        [HttpGet]
+        public async Task <IActionResult> RegDoctorData()
+        {
+            //RegDoctorDataModel model = new();
+            //var UserIdClaim = User.FindFirst("MUId");
+            //var userId = UserIdClaim?.Value;
+            //if (Guid.TryParse(userId, out Guid UId))
+            //{
+            //    model.UserId = UId; ;
+            //}
 
+            //return View(model);
 
+            var model = await _modelUserBuilder.BuildById(HttpContext);
+            if (model != null)
+            {
+                var regModel = _mapper.Map<RegDoctorDataModel>(model);
 
-        //[HttpGet]
-        //public async Task<IActionResult> AccSettingsEdit(string? id)
-        //{
-        //    var userDto = await GetUserDtoByIdAsync(id);
-        //    if (userDto != null)
-        //        return View(userDto);
+                return View(regModel);
+            }
+                
 
-        //    ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
-        //    return RedirectToAction("Index", "Home");
-        //}
+            return NotFound();
 
-        //[HttpPost]
-        //public async Task<IActionResult> AccSettingsEdit(CustomerModel model)
-        //{
-        //    try
-        //    {
-        //        if (model != null)
-        //        {
-        //            var dto = _mapper.Map<UserDto>(model);
-        //            var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
-        //            dto.RegistrationDate = sourceDto.RegistrationDate;
-        //            PatchMaker<UserDto> patchMaker = new();
-        //            var patchList = patchMaker.Make(dto, sourceDto);
-        //            await _userService.PatchAsync(dto.Id, patchList);
-        //            return RedirectToAction("AccSettings", "UserPanel");
-        //        }
-        //        else
-        //        {
-        //            return BadRequest();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error(ex, ex.Message);
-        //        return StatusCode(500);
-        //    }
-        //}
+        }
 
-        //[HttpGet]
-        //public IActionResult ChangePassword(string id)
-        //{
-        //    bool result = Guid.TryParse(id, out Guid userId);
-        //    if (result)
-        //    {
-        //        ChangePasswordModel model = new() { Id = userId };
-        //        return View(model);
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> RegDoctorData (RegDoctorDataModel model)
+        {
+            int result = 0;
+            if (model.Uploads == null || model.Uploads.Count==0)
+            {
+                model.SystemInfo = "<b>You have not uploaded files. Try again, please</b>";
+                return View(model);
+            }
+            var UserIdClaim = User.FindFirst("MUId");
+            var userId = UserIdClaim?.Value;
+            if (Guid.TryParse(userId, out Guid UId) && model.Password != null)
+            {
+                if (await _userService.CheckUserPassword(UId, model.Password))
+                { 
+                    result = await _roleService.AddRoleByNameToUser(UId, "Applicant");
+                 
+                    List<FileDataDto> list = new();
+                    if (result > 0)
+                        model.SystemInfo = "<b>You have been added to applicants<br/>";
+                    else
+                        model.SystemInfo = "<b>You have been added to applicants before<br/>";
 
-        //    return View();
-        //}
+                    foreach (var uploadedFile in model.Uploads)
+                    {
+                        string ext = Path.GetExtension(uploadedFile.FileName);
+                        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
+                        string path = "/files/cv/" + name + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}"+ext;
+                        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                        {
+                            await uploadedFile.CopyToAsync(fileStream);
+                        }
+                        FileDataDto file = new FileDataDto
+                        {
+                            Id = Guid.NewGuid(),
+                            UserId = UId,
+                            Name = uploadedFile.FileName,
+                            Path = path,
+                            Category = "Applicant"
+                        };
+                        list.Add(file);
+                    }
+                    var fileResult = await _fileDataService.AddListToFileData(list);
 
-        //[HttpPost]
-        //public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
-        //{
-        //    if (model != null && model.Id != null && model.Password != null && model.OldPassword != null)
-        //    {
-        //        try
-        //        {
-        //            if (await _userService.CheckUserPassword((Guid)model.Id, model.OldPassword))
-        //            {
-        //                var result = await _userService.ChangeUserPasswordAsync((Guid)model.Id, model.Password);
-        //                if (result > 0)
-        //                {
-        //                    model.SystemInfo = "The password has been changed successfully.";
-        //                    return View(model);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                model.OldPwdInfo = "You have entered incorrect password";
-        //                return View(model);
-        //            }
+                    if (fileResult > 1)
+                        model.SystemInfo = model.SystemInfo + $"{fileResult} files were uploaded</b>";
+                    else if (fileResult == 1)
+                        model.SystemInfo = model.SystemInfo + $"1 file was uploaded</b>";
+                    else
+                        model.SystemInfo = model.SystemInfo + $"No files were uploaded</b>";
 
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-        //            return BadRequest();
-        //        }
-        //    }
-
-        //    ChangePasswordModel model1 = new() { SystemInfo = "Something went wrong (." };
-        //    return View(model1);
-        //}
-
-        //private async Task<UserDto?> GetUserDtoByIdAsync(string? id)
-        //{
-        //    var result = Guid.TryParse(id, out Guid guid_id);
-
-        //    if (result)
-        //    {
-        //        var usr = await _userService.GetUserByIdAsync(guid_id);
-        //        var usrDto = _mapper.Map<UserDto>(usr);
-        //        return usrDto;
-        //    }
-        //    return null;
-        //}
-
+                    return View(model);
+                }
+                model.SystemInfo = "<b>You have entered incorrect password</b>";
+                return View(model);
+            }
+            model.SystemInfo = "<b>Something went wrong (</b>";
+            return View(model);
+        }
     }
 }

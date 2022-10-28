@@ -32,4 +32,8 @@
     <ProjectReference Include="..\MedContactDb\MedContactDb.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\files\cv\" />
+  </ItemGroup>
+
 </Project>

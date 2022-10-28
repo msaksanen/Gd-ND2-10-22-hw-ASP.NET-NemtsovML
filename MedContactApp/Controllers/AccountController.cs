@@ -167,7 +167,8 @@ namespace MedContactApp.Controllers
                         if (Guid.TryParse(sUserId!.Value, out Guid userId))
                         {
                             var user = await _userService.GetUserByIdAsync(userId);
-                            if (user != null)
+                            var roles = User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
+                            if (user != null && roles!=null)
                             {
                                 string fName = user.Name + " " + user.Surname;
                                 UserDataModel model = new()
@@ -175,7 +176,8 @@ namespace MedContactApp.Controllers
                                     ActiveEmail = user.Email,
                                     ActiveFullName = fName,
                                     MainEmail = user.Email,
-                                    MainFullName = fName
+                                    MainFullName = fName,
+                                    RoleNames = roles
                                 };
                                 return View(model);
                             }

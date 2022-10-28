@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Runtime.InteropServices;
 using MedContactApp.Helpers;
 using Microsoft.CodeAnalysis.Differencing;
+using System.Linq;
 
 namespace MedContactApp.Controllers
 {
@@ -27,35 +28,30 @@ namespace MedContactApp.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
+        private readonly ModelUserBuilder _modelBuilder;
 
         public UserPanelController(IUserService userService,
-            IMapper mapper, IRoleService roleService)
+            IMapper mapper, IRoleService roleService, ModelUserBuilder modelBuilder)
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
+            _modelBuilder = modelBuilder;
         }
 
         [HttpGet]
         public async Task<IActionResult> AccSettings(string? id)
         {
-            //string userId;
-            //if (string.IsNullOrEmpty(id))
+            //if (UserIdResolver(id, out Guid Uid))
             //{
-            //    var UserIdClaim = User.FindFirst("MUId");
-            //    userId = UserIdClaim!.Value;
+            //    var userDto = await _userService.GetUserByIdAsync(Uid);
+            //    if  (userDto != null)            
+            //         return View(userDto);
             //}
-            //else
-            //{
-            //    userId = id;
-            //}
-            //if (Guid.TryParse(userId, out Guid Uid))
-            if (UserIdResolver(id, out Guid Uid))
-            {
-                var userDto = await _userService.GetUserByIdAsync(Uid);
-                if  (userDto != null)            
-                     return View(userDto);
-            }
+            var model = await _modelBuilder.BuildById(id, HttpContext);
+            if (model!= null) 
+                return View(model);
+
             return NotFound();
         }
 
@@ -64,18 +60,27 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> AccSettingsEdit(string? id)
         {
-            if (UserIdResolver(id, out Guid Uid))
+            //if (UserIdResolver(id, out Guid Uid))
+            //{
+            //    var userDto = await GetUserDtoByIdAsync(id);
+
+            //    if (userDto != null)
+            //    {
+            //        CustomerModel model = _mapper.Map<CustomerModel>(userDto);
+            //        var roles = User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
+            //        if (roles != null) model.RoleNames = roles;
+            //        if (userDto.IsDependent == true)
+            //            HttpContext.Session.SetInt32("isDependent", 1);
+            //        return View(model);
+            //    }
+
+            //}
+            var model = await _modelBuilder.BuildById(id, HttpContext);
+            if (model != null)
             {
-                var userDto = await GetUserDtoByIdAsync(id);
-               
-                if (userDto != null)
-                {
-                    CustomerModel model = _mapper.Map<CustomerModel>(userDto);
-                    if (userDto.IsDependent == true)
-                        HttpContext.Session.SetInt32("isDependent", 1);
-                    return View(model);
-                }
-                   
+                if (model.IsDependent == true)
+                    HttpContext.Session.SetInt32("isDependent", 1);
+                return View(model);
             }
             return NotFound();
         }
@@ -111,15 +116,24 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangePassword(string? id)
+        public async Task <IActionResult> ChangePassword(string? id)
         {
-            //bool result = Guid.TryParse(id, out Guid userId);
-            if (UserIdResolver(id, out Guid Uid))
-            {
-                ChangePasswordModel model = new() { Id = Uid };
-                return View(model);
-            }
+            ////bool result = Guid.TryParse(id, out Guid userId);
+            //if (UserIdResolver(id, out Guid Uid))
+            //{
+            //    var roles = User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
 
+            //    ChangePasswordModel model = new() { Id = Uid };
+            //    if (roles != null) model.RoleNames = roles;
+            //    return View(model);
+            //}
+            var model = await _modelBuilder.BuildById(id, HttpContext);
+            if (model != null)
+            {
+                var chModel =_mapper.Map<ChangePasswordModel>(model);
+                return View(chModel);
+            }
+                
             return View();
         }
 
@@ -157,34 +171,59 @@ namespace MedContactApp.Controllers
             return View(model1);
         }
 
-        private async Task<UserDto?> GetUserDtoByIdAsync(string? id)
-        {
-            var result = Guid.TryParse(id, out Guid guid_id);
+        //private async Task<UserDto?> GetUserDtoByIdAsync(string? id)
+        //{
+        //    var result = Guid.TryParse(id, out Guid guid_id);
 
-            if (result)
-            {
-                var usr = await _userService.GetUserByIdAsync(guid_id);
-                var usrDto = _mapper.Map<UserDto>(usr);
-                return usrDto;
-            }
-            return null;
-        }
+        //    if (result)
+        //    {
+        //        var usr = await _userService.GetUserByIdAsync(guid_id);
+        //        var usrDto = _mapper.Map<UserDto>(usr);
+        //        return usrDto;
+        //    }
+        //    return null;
+        //}
 
-        private bool UserIdResolver(string? id, out Guid guid)
-        {
-            string userId;
-            if (string.IsNullOrEmpty(id))
-            {
-                var UserIdClaim = User.FindFirst("MUId");
-                userId = UserIdClaim!.Value;
-            }
-            else
-            {
-                userId = id;
-            }
-            return Guid.TryParse(userId, out guid);
+        //private bool UserIdResolver(string? id, out Guid guid)
+        //{
+        //    string userId;
+        //    if (string.IsNullOrEmpty(id))
+        //    {
+        //        var UserIdClaim = User.FindFirst("MUId");
+        //        userId = UserIdClaim!.Value;
+        //    }
+        //    else
+        //    {
+        //        userId = id;
+        //    }
+        //    return Guid.TryParse(userId, out guid);
 
-        }
+        //}
+
+        //private async Task<BaseUserModel?> BuildModelById(string? id)
+        //{
+        //    string userId;
+        //    if (string.IsNullOrEmpty(id))
+        //    {
+        //        var UserIdClaim = User.FindFirst("MUId");
+        //        userId = UserIdClaim!.Value;
+        //    }
+        //    else
+        //        userId = id;
+
+        //    var result = Guid.TryParse(userId, out Guid guid_id);
+
+        //    if (result)
+        //    {
+        //        var usr = await _userService.GetUserByIdAsync(guid_id);
+        //        var baseUserModel = _mapper.Map<BaseUserModel>(usr);
+        //        var roles = User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
+        //        if (roles != null) baseUserModel.RoleNames = roles;
+
+        //        return baseUserModel;
+        //    }
+        //    return null;
+        //}
 
     }
 }
