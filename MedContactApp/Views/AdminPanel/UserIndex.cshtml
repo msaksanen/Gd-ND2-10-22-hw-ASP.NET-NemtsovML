@@ -1,0 +1,139 @@
+﻿@using MedContactApp.Helpers;
+
+@model UserIndexViewModel
+
+@{
+    ViewData["Title"] = "Admin Users Table"; 
+   // ViewBag.ProcessOptions = $"&name={Model.FilterViewModel.SelectedName}&roleid={Model.FilterViewModel.SelectedRole}" +
+     //                        $"&sortorder={Model.SortViewModel.Current}";
+    //ViewBag.TotalPages = @Model.PageViewModel.TotalPages;
+    //ViewBag.PageNumber = @Model.PageViewModel.PageNumber;
+    //ViewBag.PageRoute =  @Model.PageViewModel.PageRoute;
+
+}
+
+
+
+<form method="get">
+    <label>Name: </label>
+    <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+
+    <label>Role: </label>
+    <select name="role" asp-items="Model.FilterViewModel.Roles"></select>
+
+    <input type="submit" value="Filter" />
+</form>
+
+<Table class="delivery">   @*" table table-bordered"*@
+    <caption>Customers Info Table</caption>
+    <thead>
+    <tr>
+        <th>
+          <a asp-action="UserIndex"
+             asp-route-sortOrder="@(Model.SortViewModel.EmailSort)"
+             asp-route-name="@(Model.FilterViewModel.SelectedName)"
+             asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Email</a>
+        </th>
+        <th>
+           <a asp-action="UserIndex"
+              asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+              asp-route-name="@(Model.FilterViewModel.SelectedName)"
+              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Name</a>
+        </th>
+        <th>
+           Middle Name
+        </th>
+        <th>
+           <a asp-action="UserIndex"
+              asp-route-sortOrder="@(Model.SortViewModel.SurnameSort)"
+              asp-route-name="@(Model.FilterViewModel.SelectedName)"
+              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Surname</a>
+        </th>
+        <th>
+           <a asp-action="UserIndex" 
+              asp-route-sortOrder="@(Model.SortViewModel.BirthDateSort)"
+              asp-route-name="@(Model.FilterViewModel.SelectedName)"
+              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Birth Date</a>
+        </th>
+        <th>
+           Roles
+        </th>
+        <th>
+           Address
+        </th>
+        <th>
+           Details
+         </th>
+    </tr>
+    <thead>
+    <tbody>
+    
+        
+
+@if (Model.Users.Any())
+{
+    foreach (var item in Model.Users)
+    {
+        await Html.RenderPartialAsync("UserPartialView", item);
+    }
+}
+
+    </tbody>
+</Table>
+
+
+@section Footer
+{
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="UserIndex"
+   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+   asp-route-name="@(Model.FilterViewModel.SelectedName)"
+   asp-route-roleid="@(Model.FilterViewModel.SelectedRole)"
+   asp-route-sortorder="@(Model.SortViewModel.Current)"
+   class="glyphicon glyphicon-chevron-left">Previous</a>
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="UserIndex"
+   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+   asp-route-name="@(Model.FilterViewModel.SelectedName)"
+   asp-route-roleid="@(Model.FilterViewModel.SelectedRole)"
+   asp-route-sortorder="@(Model.SortViewModel.Current)"
+   class="glyphicon glyphicon-chevron-right">Next</a>
+    }
+
+    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
+
+ }
+
+
+   
+
+
+
+@section CssStyles
+    {
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}
+
+        .glyphicon {
+            display: inline-block;
+            padding: 0 5px;
+        }
+
+        .glyphicon-chevron-right:after {
+            content: "\00BB";
+        }
+
+        .glyphicon-chevron-left:before {
+            content: "\00AB";
+        }
+        
+    </style>
+}

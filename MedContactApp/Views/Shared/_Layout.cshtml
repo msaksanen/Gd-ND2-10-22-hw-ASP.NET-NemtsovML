@@ -34,8 +34,10 @@
                         </li>
                     </ul>
                 </div>
+               
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end" style="margin-right:0.8rem">
-                <partial name="_LoginPartial"/>
+                    <partial name="_AdminPartial" />
+                    <partial name="_LoginPartial"/>
                 </div>    
             </div>
         </nav>
@@ -47,7 +49,11 @@
     </div>
 
     <footer class="border-top footer text-muted">
+      
         <div class="container">
+            
+                @await RenderSectionAsync("Footer", required: false)
+         
             &copy; 2022 - MedContactApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

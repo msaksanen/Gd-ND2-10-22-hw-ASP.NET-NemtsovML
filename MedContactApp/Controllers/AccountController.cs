@@ -167,7 +167,7 @@ namespace MedContactApp.Controllers
                         if (Guid.TryParse(sUserId!.Value, out Guid userId))
                         {
                             var user = await _userService.GetUserByIdAsync(userId);
-                            var roles = User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
+                            var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c =>c.Value).ToList();
                             if (user != null && roles!=null)
                             {
                                 string fName = user.Name + " " + user.Surname;

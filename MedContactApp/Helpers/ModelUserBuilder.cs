@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedContactApp.Models;
 using MedContactCore.Abstractions;
+using MedContactDb.Entities;
 using System.Security.Claims;
 
 namespace MedContactApp.Helpers
@@ -31,7 +32,7 @@ namespace MedContactApp.Helpers
             {
                 var usr = await _userService.GetUserByIdAsync(guid_id);
                 var baseUserModel = _mapper.Map<BaseUserModel>(usr);
-                var roles = context.User.Claims.Select(c => ClaimsIdentity.DefaultRoleClaimType).ToList();
+                var roles = context.User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
                 if (roles != null) baseUserModel.RoleNames = roles;
 
                 return baseUserModel;

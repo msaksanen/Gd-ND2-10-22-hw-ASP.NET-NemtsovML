@@ -33,7 +33,7 @@ namespace MedContactCore.DataTransferObjects
             public bool? IsFullBlocked { get; set; }
             public List<DoctorData>? DoctorData { get; set; }
             public List<AcsData>? AcsDatas { get; set; }
-            public List<Role>? Roles { get; set; }
+            public List<RoleDto>? Roles { get; set; }
             public DateTime RegistrationDate { get; set; }
             
     }

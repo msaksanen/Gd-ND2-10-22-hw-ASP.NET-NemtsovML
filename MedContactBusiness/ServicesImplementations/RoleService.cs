@@ -71,6 +71,11 @@ namespace MedContactBusiness.ServicesImplementations
           
         }
 
+        public IQueryable<Role> GetRoles()
+        {
+            return _unitOfWork.RoleRepository.Get();
+        }
+
         public async Task<int> AddRoleByNameToUser (Guid userId, string roleName)
         {
             int result = 0;

@@ -26,5 +26,6 @@ namespace MedContactCore.Abstractions
         Task<int> CreateUserWithRoleAsync(UserDto dto,string roleName);
         Task<bool> CheckUserEmailAsync(string email);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
+        IQueryable<User> GetUsers();
     }
 }

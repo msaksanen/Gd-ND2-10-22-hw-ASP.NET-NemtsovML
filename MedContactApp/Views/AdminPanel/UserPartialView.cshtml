@@ -1,0 +1,39 @@
+﻿@model UserDto
+
+<tr>
+    <td area-label="Email">
+        @Html.DisplayFor(modelItem => Model.Email)
+    </td>
+    <td area-label="Name">
+        @Html.DisplayFor(modelItem => Model.Name)
+    </td>
+    <td area-label="MidName">
+        @Html.DisplayFor(modelItem => Model.MidName)
+    </td>
+    <td area-label="Surname">
+        @Html.DisplayFor(modelItem => Model.Surname)
+    </td>
+    <td area-label="Birth Date">
+        @Html.DisplayFor(modelItem => Model.BirthDate) 
+    </td>
+    <td area-label="Roles">
+        @if (Model.Roles!=null && Model.Roles.Any())
+        {
+            foreach (var item in Model.Roles)
+            {
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                       @item.Name
+                   </li>
+               </ul>
+            }
+        }
+    </td>
+    <td area-label="Address">
+        @Html.DisplayFor(modelItem => Model.Address)
+    </td>
+    <td>
+        <span> <a class="btn btn-primary" href="~/customer/details/@Model.Id">View details</a></span>
+    </td>
+
+</tr>

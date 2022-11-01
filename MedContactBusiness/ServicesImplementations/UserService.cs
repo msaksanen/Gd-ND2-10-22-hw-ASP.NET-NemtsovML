@@ -112,6 +112,12 @@ namespace MedContactBusiness.ServicesImplementations
                 return list;       
         }
 
+        public IQueryable<User> GetUsers()
+        {
+            return _unitOfWork.UserRepository.Get();    
+        }
+
+
         public List<UserDto> GetNewUsersFromExternalSources()
         {
             var list = new List<UserDto>();
@@ -189,7 +195,7 @@ namespace MedContactBusiness.ServicesImplementations
         {
             string pwdHash = CreateMd5(password);
             var user1 = await _unitOfWork.UserRepository.Get()
-                        .FirstOrDefaultAsync(u => u.IsDependent != true 
+                        .FirstOrDefaultAsync(u => u.IsDependent != true
                         && u.Email != null && u.Email.Equals(email)
                         && u.PasswordHash != null && u.PasswordHash.Equals(pwdHash));
 

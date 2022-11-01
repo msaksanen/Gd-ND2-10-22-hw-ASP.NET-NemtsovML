@@ -9,29 +9,40 @@ namespace MedContactApp.Helpers
 {
     public static class PaginatorHelper
     {
-        public static HtmlString GeneratePagintator(this IHtmlHelper html, int pageCount, int currentPage, string pageRoute)
+        public static HtmlString GeneratePaginator(this IHtmlHelper html, int pageCount, int currentPage, string pageRoute, string processOptions="")
         {
-            var sb = new StringBuilder(@"<nav aria-label=""Paginator""> <ul class=""pagination"">");
-            if (currentPage>0)
-                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{currentPage-1}"">Previous</a></li>");
+            var sb = new StringBuilder(@"<nav aria-label=""Paginator""> <ul class=""pagination justify-content-center""  style=""line-height:initial"">");
+            if (currentPage>1) 
+                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{currentPage-1}{processOptions}"">Previous</a></li>");
             else
-                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}/{currentPage}"">Previous</a></li>");
+                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}{currentPage}{processOptions}"">Previous</a></li>");
 
-            if (pageCount>1)
+            if (pageCount>1)  
             {
+                if (currentPage == pageCount) ////shows 3 page links when last page is active
+                {
+                    sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{pageCount - 2}{processOptions}"">&nbsp {pageCount - 2} &nbsp</a></li>");
+                }
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    if (i == currentPage + 1)
-                        sb.Append($@" <li class=""page-item active"" aria-current=""page""><a class=""page-link"" href=""{pageRoute}/{i - 1}"">Page &nbsp {i} &nbsp</a></li>");
-                    else
-                        sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{i - 1}"">Page &nbsp {i} &nbsp</a></li>");
+                    if (currentPage == 1 && i == 3)  //shows 3 page links when current page is 1 
+                    {
+                        sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{i}{processOptions}"">&nbsp {i} &nbsp</a></li>");
+                    }
+
+                    if (i == currentPage) // active page link
+                        sb.Append($@" <li class=""page-item active"" aria-current=""page""><a class=""page-link"" href=""{pageRoute}/{i}{processOptions}"">&nbsp {i} &nbsp</a></li>");
+                   else if(i == currentPage+1 || i==currentPage-1) //shows links to next & previous pages
+                    {
+                        sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{i}{processOptions} "">&nbsp {i} &nbsp</a></li>");
+                   }
                 }
             }
 
-            if (currentPage + 1 < pageCount)
-                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}/{currentPage+1}"">Next</a></li>");
+            if (currentPage + 1 <= pageCount)
+                sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{currentPage+1}{processOptions}"">Next</a></li>");
             else
-                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}/{currentPage}"">Next</a></li>");
+                sb.Append($@" <li class=""page-item disabled""><a class=""page-link"" href=""{pageRoute}{currentPage}{processOptions}"">Next</a></li>");
 
             sb.Append("</ul></nav>");
 

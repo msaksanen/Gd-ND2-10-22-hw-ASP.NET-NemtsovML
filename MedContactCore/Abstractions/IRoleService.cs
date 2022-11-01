@@ -1,4 +1,5 @@
-﻿using MedContactDb.Entities;
+﻿using MedContactCore.DataTransferObjects;
+using MedContactDb.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace MedContactCore.Abstractions
         Task<RoleDto?> GetRoleByNameAsync(string name);
         Task<IEnumerable<RoleDto>?> GetRoleListByUserIdAsync (Guid id);
         Task<int> AddRoleByNameToUser (Guid userId, string roleName);
+        IQueryable<Role> GetRoles();
     }
 }
