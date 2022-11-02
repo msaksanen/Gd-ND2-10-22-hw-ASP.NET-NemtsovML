@@ -1,16 +1,15 @@
-﻿@using MedContactApp.Helpers;
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
 
 @model UserIndexViewModel
 
 @{
     ViewData["Title"] = "Admin Users Table"; 
-   // ViewBag.ProcessOptions = $"&name={Model.FilterViewModel.SelectedName}&roleid={Model.FilterViewModel.SelectedRole}" +
-     //                        $"&sortorder={Model.SortViewModel.Current}";
-    //ViewBag.TotalPages = @Model.PageViewModel.TotalPages;
-    //ViewBag.PageNumber = @Model.PageViewModel.PageNumber;
-    //ViewBag.PageRoute =  @Model.PageViewModel.PageRoute;
-
 }
+
 
 
 
@@ -24,36 +23,36 @@
     <input type="submit" value="Filter" />
 </form>
 
-<Table class="delivery">   @*" table table-bordered"*@
+<Table class="delivery">  
     <caption>Customers Info Table</caption>
     <thead>
     <tr>
         <th>
-          <a asp-action="UserIndex"
-             asp-route-sortOrder="@(Model.SortViewModel.EmailSort)"
-             asp-route-name="@(Model.FilterViewModel.SelectedName)"
-             asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Email</a>
+            <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+             current="@Model.SortViewModel.Current" property="@Model.SortViewModel.EmailSort">Email</sort-header>
+ 
         </th>
         <th>
-           <a asp-action="UserIndex"
-              asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
-              asp-route-name="@(Model.FilterViewModel.SelectedName)"
-              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Name</a>
+            <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Name</sort-header>
+     
         </th>
         <th>
            Middle Name
         </th>
         <th>
-           <a asp-action="UserIndex"
-              asp-route-sortOrder="@(Model.SortViewModel.SurnameSort)"
-              asp-route-name="@(Model.FilterViewModel.SelectedName)"
-              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Surname</a>
+              <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
+
         </th>
         <th>
-           <a asp-action="UserIndex" 
-              asp-route-sortOrder="@(Model.SortViewModel.BirthDateSort)"
-              asp-route-name="@(Model.FilterViewModel.SelectedName)"
-              asp-route-roleid="@(Model.FilterViewModel.SelectedRole)">Birth Date</a>
+              <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth Date</sort-header>
+     
         </th>
         <th>
            Roles
@@ -84,28 +83,9 @@
 
 @section Footer
 {
-    @if (Model.PageViewModel.HasPreviousPage)
-    {
-        <a asp-action="UserIndex"
-   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
-   asp-route-name="@(Model.FilterViewModel.SelectedName)"
-   asp-route-roleid="@(Model.FilterViewModel.SelectedRole)"
-   asp-route-sortorder="@(Model.SortViewModel.Current)"
-   class="glyphicon glyphicon-chevron-left">Previous</a>
-    }
-    @if (Model.PageViewModel.HasNextPage)
-    {
-        <a asp-action="UserIndex"
-   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
-   asp-route-name="@(Model.FilterViewModel.SelectedName)"
-   asp-route-roleid="@(Model.FilterViewModel.SelectedRole)"
-   asp-route-sortorder="@(Model.SortViewModel.Current)"
-   class="glyphicon glyphicon-chevron-right">Next</a>
-    }
 
     @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
-                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
-
+                             @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
  }
 
 
@@ -114,26 +94,12 @@
 
 
 @section CssStyles
-    {
+{
     <style>
        caption {
           caption-side: top;
           text-align: center;
           padding: 10px 0;
-          font-size: 14px;}
-
-        .glyphicon {
-            display: inline-block;
-            padding: 0 5px;
-        }
-
-        .glyphicon-chevron-right:after {
-            content: "\00BB";
-        }
-
-        .glyphicon-chevron-left:before {
-            content: "\00AB";
-        }
-        
+          font-size: 14px;}        
     </style>
 }

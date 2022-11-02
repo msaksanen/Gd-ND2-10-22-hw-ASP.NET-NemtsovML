@@ -98,8 +98,7 @@ namespace MedContactApp.Controllers
                     users = users.Where(p => p.Surname!.Contains(surname));
                 }
 
-                
-
+              
                 switch (sortOrder)
                 {
                     case SortState.EmailDesc:

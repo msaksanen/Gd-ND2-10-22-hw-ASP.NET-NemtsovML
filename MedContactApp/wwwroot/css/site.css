@@ -18,9 +18,9 @@ body {
 }
 
 table.delivery {
-    width: 100%;
+    width: max-content;
     border: 0px;
-    border-collapse: separate;   
+    border-collapse: separate;
 }
 
     table.delivery thead {
