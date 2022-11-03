@@ -11,7 +11,7 @@ namespace MedContactApp.Helpers
     {
         public static HtmlString GeneratePaginator(this IHtmlHelper html, int pageCount, int currentPage, string pageRoute, string processOptions="")
         {
-            var sb = new StringBuilder(@"<nav aria-label=""Paginator""> <ul class=""pagination justify-content-center""  style=""line-height:initial"">");
+            var sb = new StringBuilder(@"<nav aria-label=""Paginator""> <ul class=""pagination justify-content-center""  style=""line-height:initial; margin-block: auto;"">");
             if (currentPage>1) 
                 sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{currentPage-1}{processOptions}"">Previous</a></li>");
             else

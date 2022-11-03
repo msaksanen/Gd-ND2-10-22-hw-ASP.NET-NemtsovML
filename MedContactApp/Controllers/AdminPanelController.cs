@@ -27,6 +27,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using MedContactApp.FilterSortPageHelpers;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
+using Microsoft.Build.Framework;
 
 namespace MedContactApp.Controllers
 {
@@ -36,15 +37,17 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
         private readonly IConfiguration _configuration;
+        private readonly ModelUserBuilder _modelBuilder;
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
-            IMapper mapper, IRoleService roleService, IConfiguration configuration)
+            IMapper mapper, IRoleService roleService, IConfiguration configuration, ModelUserBuilder modelBuilder)
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
             _configuration = configuration;
+            _modelBuilder = modelBuilder;
         }
 
         [HttpGet]
@@ -91,7 +94,7 @@ namespace MedContactApp.Controllers
                 }
                 if (!string.IsNullOrEmpty(name))
                 {
-                    users = users.Where(p => p.Name!.Contains(name));
+                    users = users.Where(p => p.Name!.Contains(name) || p.MidName!.Contains(name));
                 }
                 if (!string.IsNullOrEmpty(surname))
                 {
@@ -122,6 +125,37 @@ namespace MedContactApp.Controllers
                     case SortState.BirthDateDesc:
                         users = users.OrderByDescending(s => s.BirthDate);
                         break;
+                    case SortState.LastLoginAsc:
+                        users = users.OrderBy(s => s.LastLogin);
+                        break;
+                    case SortState.LastLoginDesc:
+                        users = users.OrderByDescending(s => s.LastLogin);
+                        break;
+                    case SortState.IsFullBlockedAsc:
+                        users = users.OrderBy(s => s.IsFullBlocked);
+                        break;
+                    case SortState.IsFullBlockedDesc:
+                        users = users.OrderByDescending(s => s.IsFullBlocked);
+                        break;
+                    case SortState.IsFamilyDependentAsc:
+                        users = users.OrderBy(s => s.IsDependent);
+                        break;
+                    case SortState.IsFamilyDependentDesc:
+                        users = users.OrderByDescending(s => s.IsDependent);
+                        break;
+                    case SortState.IsOnlineAsc:
+                        users = users.OrderBy(s => s.IsOnline);
+                        break;
+                    case SortState.IsOnlineDesc:
+                        users = users.OrderByDescending(s => s.IsOnline);
+                        break;
+                    case SortState.GenderAsc:
+                        users = users.OrderBy(s => s.Gender);
+                        break;
+                    case SortState.GenderDesc:
+                        users = users.OrderByDescending(s => s.Gender);
+                        break;
+
                     default:
                         users = users.OrderBy(s => s.Email);
                         break;
@@ -149,6 +183,128 @@ namespace MedContactApp.Controllers
                 return BadRequest();
             }
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserDetails(string? id)
+        {
+            var baseModel = await _modelBuilder.BuildByIdAdmin(id);
+            var model = _mapper.Map<AdminUserEditModel>(baseModel);
+
+            var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
+
+            if (model != null && allroles!=null && model.RoleNames!=null)
+            {
+                if (model.IsFullBlocked == true)
+                {
+                    var item = model?.BlockState?.First(x => x.IntId == 2);
+                    item!.IsSelected = true;
+
+                }
+                else if (model.IsFullBlocked == false)
+                {
+                    var item = model?.BlockState?.First(x => x.IntId == 1);
+                    item!.IsSelected = true;
+                }
+                else
+                {
+                    var item = model?.BlockState?.First(x => x.IntId == 0);
+                    item!.IsSelected = true;
+                }
+
+                model!.AllRoles = allroles;
+
+                foreach (var item in model.AllRoles)
+                {
+                    if (model.RoleNames.Any(x => x.Equals(item.Name)))
+                    {
+                        item.IsSelected = true;
+                    }
+                }
+               
+                return View(model);
+            }
+                
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserDetails(AdminUserEditModel model)
+        {
+            if (model == null || model.Id==null)
+                return BadRequest();
+            int addresult = 0;
+            int subtract = 0;
+            int changeRes = 0;
+           try
+           {
+                var baseModel = await _modelBuilder.BuildByIdAdmin(model.Id.ToString());
+                var modelFull = _mapper.Map<AdminUserEditModel>(baseModel);
+                var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
+                modelFull.AllRoles = allroles;
+
+                if (model.BlockStateIds != null)
+              {
+                foreach (var item in model.BlockStateIds)
+                {
+                    if (item == 1)
+                            modelFull.IsFullBlocked = false;
+                    if (item == 2)
+                            modelFull.IsFullBlocked = true;
+                }
+                    changeRes=await _userService.ChangeUserFullBlockById((Guid)model.Id, modelFull?.IsFullBlocked);
+              }
+             if (model?.RoleIds != null && modelFull != null)
+             {
+                if (model.Id != null)
+                {
+                    foreach (var roleId in model.RoleIds)
+                    {
+                        var role = modelFull?.AllRoles?.FirstOrDefault(role => role.Id.Equals(roleId));
+
+                        if (role != null)
+                        {
+                            role.IsSelected = true;
+                            addresult += await _roleService.AddRoleByNameToUser((Guid)(model?.Id!), role?.Name!);
+                        }
+                    }
+                    foreach (var role in modelFull.AllRoles!)
+                    {
+                        if (model!.RoleIds.All(r => r != role.Id))
+                        {
+                            role.IsSelected = false;
+                            subtract += await _roleService.RemoveRoleByNameFromUser((Guid)(model?.Id!), role?.Name!);
+                        }
+                    }
+
+                    model.SystemInfo = $"<b>Roles:<br/>{addresult} were added<br/>{subtract} were deleted</b>";
+                        if (changeRes > 0)
+                        {
+                            model.SystemInfo += $"<b>Full block status was changed</b>";
+                        }
+                        else
+                        {
+                            model.SystemInfo += $"<br/><b>Full block status was not changed</b>";
+                        }
+
+                    return View(modelFull);
+                }
+             }
+             else
+             {
+                model!.SystemInfo = $"<b>You have not chosen any role</b>";
+                return View(modelFull);
+            }
+
+            model.SystemInfo = "<b>Something went wrong (</b>";
+            return View(modelFull);
+
+          }
+          catch (Exception e)
+          {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+          }
         }
     }
 }

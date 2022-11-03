@@ -29,12 +29,14 @@ namespace MedContactCore.DataTransferObjects
             public string? Address { get; set; }
             public Guid? FamilyId { get; set; }
             public Guid? CustomerDataId { get; set; }
+            public bool? IsOnline { get; set; }
             public bool? IsDependent { get; set; }
             public bool? IsFullBlocked { get; set; }
             public List<DoctorData>? DoctorData { get; set; }
             public List<AcsData>? AcsDatas { get; set; }
             public List<RoleDto>? Roles { get; set; }
             public DateTime RegistrationDate { get; set; }
-            
+            public DateTime LastLogin { get; set; }
+
     }
 }

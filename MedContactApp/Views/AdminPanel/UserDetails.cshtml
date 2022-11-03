@@ -1,0 +1,184 @@
+﻿@model AdminUserEditModel
+
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "~/Views/Shared/_LayoutCustomSelect.cshtml";
+}
+
+<h1>User Details</h1>
+
+<h4>@Model.Name @Model.Surname (@Model.Email)</h4>
+<h6>User Id: @Model.Id</h6>
+<hr />
+<p>Customer Data Id: @Model.CustomerDataId</p>
+<p>Family Id: @Model.FamilyId</p>
+<hr />
+<div class="container">
+<div class="row">
+    <dl class="col-6 col-sm-3">
+                <dt>
+                        @Html.DisplayNameFor(model => model.Email)
+                        
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.Email)
+                </dd>
+                <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                 
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt>
+                        @Html.DisplayNameFor(model => model.Surname)
+                     
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.Surname)
+                </dd>
+                <dt>
+                        Middle Name
+                      
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.MidName)
+                </dd>
+                <dt>
+                        Birth Date
+                       
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.BirthDate)
+                </dd>
+                <dt>
+                        @Html.DisplayNameFor(model => model.Gender)
+                       
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.Gender)
+                </dd>
+                <dt>
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                       
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.PhoneNumber)
+                </dd>
+                <dt>
+                        @Html.DisplayNameFor(model => model.Address)
+                        
+                </dt>
+                <dd>
+                        @Html.DisplayFor(model => model.Address)
+                </dd>
+               
+
+    </dl>
+
+
+    <div class= "col-6 col-sm-3">
+        <form asp-action="UserDetails" asp-controller="AdminPanel" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="BlockStateIds"><b>Full User Block</b></label>
+                 <br />
+                 <select class="list-box tri-state" aria-label="BlockState"
+                            id="BlockStateIds" name="BlockStateIds">
+                        @if (Model.BlockState != null)
+                        {
+                            foreach (var item in Model.BlockState)
+                            {
+                                await Html.RenderPartialAsync("BlockstateSelectPartialView", item);
+                            }
+                        }
+                 </select>
+                <br />
+                <label for="RoleIds"><b>Select user roles:</b></label>
+                <br />
+                <select aria-label="AllRoles"
+                        id="RoleIds" multiple="multiple" name="RoleIds">
+
+                    @if (Model.AllRoles != null)
+                    {
+                        foreach (var item in Model.AllRoles)
+                        {
+                            await Html.RenderPartialAsync("RoleSelectPartialView", item);
+                        }
+                    }
+                </select>
+            </div>
+            <br />
+         
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.IsDependent)
+              
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IsDependent)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IsOnline)
+                
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IsOnline)
+            </dd>
+            <dt>
+                Registration Date
+               
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.RegistrationDate)
+            </dd>
+            <dt>
+                Last Login
+              
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastLogin)
+            </dd>
+        </dl>
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </form>
+    </div>
+
+
+        <div>
+            <a asp-controller="AdminPanel" asp-action="UserIndex">Back to Table</a>
+        </div>
+
+        @if (Model.SystemInfo != null)
+        {
+            <div>
+                <p>
+                    @Html.Raw(@Model.SystemInfo)
+                </p>
+            </div>
+        }
+
+</div>
+</div>
+
+
+
+
+
+@section Scripts
+    {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>document.multiselect('#RoleIds')</script>
+ }
+
+@section CssStyles
+{
+    <style>
+        #RoleIds_multiSelect {
+            width:inherit;
+        }
+    </style>
+
+}

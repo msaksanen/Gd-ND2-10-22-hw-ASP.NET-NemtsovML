@@ -104,5 +104,33 @@ namespace MedContactBusiness.ServicesImplementations
 
         }
 
+        public async Task<int> RemoveRoleByNameFromUser(Guid userId, string roleName)
+        {
+            int result = 0;
+            var userRoleList = await GetRoleListByUserIdAsync(userId);
+            if (userRoleList != null && userRoleList.Any(r => r.Name != null && r.Name.Equals(roleName)))
+            {
+                var role = await _unitOfWork.RoleRepository
+                      .Get()
+                      .FirstOrDefaultAsync(r => r.Name != null && r.Name.Equals(roleName));
+
+                var user = await _unitOfWork.UserRepository.GetByIdTrackAsync(userId);
+
+                _unitOfWork.RoleRepository
+                            .Get()
+                            .Include(r => r.Users)
+                            .Load();
+
+                if (role != null && user != null)
+                {
+                    role.Users?.Remove(user);
+                    result = await _unitOfWork.Commit();
+                }
+            }
+
+            return result;
+
+        }
+        
     }
 }

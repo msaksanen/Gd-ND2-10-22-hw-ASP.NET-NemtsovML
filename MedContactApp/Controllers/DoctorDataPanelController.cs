@@ -95,6 +95,8 @@ namespace MedContactApp.Controllers
         [HttpPost]
         public async Task<IActionResult> EditDoctorData(EditDoctorDataModel model)
         {
+          try
+          {
             var UserIdClaim = User.FindFirst("MUId");
             var userId = UserIdClaim?.Value;
             var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
@@ -156,7 +158,13 @@ namespace MedContactApp.Controllers
             }
             model.SystemInfo = "<b>Something went wrong (</b>";
             return View(model);
-        }
+            }
+          catch (Exception e)
+          {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+          }
+      }
 
         [HttpGet]
         public async Task <IActionResult> RegDoctorData()

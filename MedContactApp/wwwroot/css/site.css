@@ -18,7 +18,8 @@ body {
 }
 
 table.delivery {
-    width: max-content;
+    font-size: 14px;
+    width: -webkit-fill-available;
     border: 0px;
     border-collapse: separate;
 }

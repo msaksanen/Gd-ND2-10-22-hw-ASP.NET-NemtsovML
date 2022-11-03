@@ -21,6 +21,35 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsFullBlocked)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsFullBlocked)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoleNames)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.RoleNames != null)
+            {
+                <ul class="list-group list-group-flush">
+                @foreach (var item in Model.RoleNames)
+                {
+                        <li class="list-group-item" style="width:fit-content">
+                          @item
+                    </li>
+                    
+                }
+               </ul>
+            }
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd class="col-sm-10">
@@ -38,21 +67,11 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MidName)
         </dd>
-       @* <dt class="col-sm-2"> Age (years)</dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Age)
-        </dd>*@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.BirthDate)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PhoneNumber)

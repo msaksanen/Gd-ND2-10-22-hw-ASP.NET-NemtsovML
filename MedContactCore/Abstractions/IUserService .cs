@@ -27,5 +27,7 @@ namespace MedContactCore.Abstractions
         Task<bool> CheckUserEmailAsync(string email);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
         IQueryable<User> GetUsers();
+        Task<int> ChangeUserStatusById(Guid id, int state);
+        Task<int> ChangeUserFullBlockById(Guid id, bool? IsFullBlocked);
     }
 }

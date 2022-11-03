@@ -14,6 +14,7 @@ using Serilog;
 using Serilog.Events;
 using MedContactApp.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace MedContactApp
 {
@@ -41,6 +42,11 @@ namespace MedContactApp
                     options.LogoutPath = new PathString(@"/Account/Logout");
                     //options.AccessDeniedPath = new PathString(@"/Account/Login");
                 });
+            builder.Services.AddAuthorization(opts => {
+                opts.AddPolicy("FullBlockedUser", policy => {
+                    policy.RequireClaim("FullBlocked", "false");
+                });
+            });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
 

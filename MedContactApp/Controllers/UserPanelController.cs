@@ -48,7 +48,7 @@ namespace MedContactApp.Controllers
             //    if  (userDto != null)            
             //         return View(userDto);
             //}
-            var model = await _modelBuilder.BuildById(id, HttpContext);
+            var model = await _modelBuilder.BuildById(HttpContext, id);
             if (model!= null) 
                 return View(model);
 
@@ -75,7 +75,7 @@ namespace MedContactApp.Controllers
             //    }
 
             //}
-            var model = await _modelBuilder.BuildById(id, HttpContext);
+            var model = await _modelBuilder.BuildById(HttpContext, id);
             if (model != null)
             {
                 if (model.IsDependent == true)
@@ -127,7 +127,7 @@ namespace MedContactApp.Controllers
             //    if (roles != null) model.RoleNames = roles;
             //    return View(model);
             //}
-            var model = await _modelBuilder.BuildById(id, HttpContext);
+            var model = await _modelBuilder.BuildById(HttpContext, id);
             if (model != null)
             {
                 var chModel =_mapper.Map<ChangePasswordModel>(model);

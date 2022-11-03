@@ -105,26 +105,36 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            var UserIdClaim = HttpContext.User.FindFirst("MUId");
+            var userId = UserIdClaim!.Value;
+            var result = Guid.TryParse(userId, out Guid guid_id);
+            if (result)
+                 await _userService.ChangeUserStatusById(guid_id, 1);
 
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
         
         private async Task Authenticate (string email, Guid userId)
         {
+            string isfullBlocked="false";
             var dto = await _userService.GetUserByIdAsync(userId);
             var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
 
             if (dto.Email != null && dto.Username!=null  && roleList!=null)
             {
+                if (dto.IsFullBlocked == true)
+                    isfullBlocked = "true";
+
                 string id = dto.Id.ToString();
                 var claims = new List<Claim>()
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
                 new Claim(ClaimTypes.Email, dto.Email),
                 new Claim("MUId",id),
-                new Claim("UId",id)
+                new Claim("UId",id),
+                new Claim("FullBlocked", isfullBlocked)
             };
                 foreach (var role in roleList)
                     if (role.Name != null)
@@ -137,6 +147,7 @@ namespace MedContactApp.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(identity));
+            await _userService.ChangeUserStatusById(dto.Id,0);
             }
            
         }

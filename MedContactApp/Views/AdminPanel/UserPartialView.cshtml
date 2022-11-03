@@ -4,10 +4,8 @@
     <td area-label="Email">
         @Html.DisplayFor(modelItem => Model.Email)
     </td>
-    <td area-label="Name">
-        @Html.DisplayFor(modelItem => Model.Name)
-    </td>
-    <td area-label="MidName">
+    <td area-label="Names">
+        @Html.DisplayFor(modelItem => Model.Name) 
         @Html.DisplayFor(modelItem => Model.MidName)
     </td>
     <td area-label="Surname">
@@ -15,6 +13,21 @@
     </td>
     <td area-label="Birth Date">
         @Html.DisplayFor(modelItem => Model.BirthDate) 
+    </td>
+    <td area-label="Gender">
+        @Html.DisplayFor(modelItem => Model.Gender)
+    </td>
+    <td area-label="IsFullBlocked">
+        @Html.DisplayFor(modelItem => Model.IsFullBlocked)
+    </td>
+    <td area-label="IsFamilyDependent">
+        @Html.DisplayFor(modelItem => Model.IsDependent)
+    </td>
+    <td area-label="IsOnline">
+        @Html.DisplayFor(modelItem => Model.IsOnline)
+    </td>
+    <td area-label="Last Login">
+        @Html.DisplayFor(modelItem => Model.LastLogin)
     </td>
     <td area-label="Roles">
         @if (Model.Roles!=null && Model.Roles.Any())
@@ -29,11 +42,9 @@
             }
         }
     </td>
-    <td area-label="Address">
-        @Html.DisplayFor(modelItem => Model.Address)
-    </td>
+   
     <td>
-        <span> <a class="btn btn-primary" href="~/customer/details/@Model.Id">View details</a></span>
+        <span> <a class="btn btn-primary" href="~/adminpanel/userdetails/@Model.Id">View details</a></span>
     </td>
 
 </tr>

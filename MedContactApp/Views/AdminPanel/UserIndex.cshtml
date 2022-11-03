@@ -12,16 +12,25 @@
 
 
 
+<Table class="delivery">
+<tbody>
+  <tr>
+    <form method="get">
+     <td style="border:none">
+                <label>Name: </label>
+                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+     </td>
+     <td style="border:none">
+                <label>Role: </label>
+                <select name="role" asp-items="Model.FilterViewModel.Roles"></select>
 
-<form method="get">
-    <label>Name: </label>
-    <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+                <input type="submit" value="Filter" />
 
-    <label>Role: </label>
-    <select name="role" asp-items="Model.FilterViewModel.Roles"></select>
-
-    <input type="submit" value="Filter" />
-</form>
+    </td>
+    </form>
+ </tr>
+</tbody>
+</Table>
 
 <Table class="delivery">  
     <caption>Customers Info Table</caption>
@@ -36,11 +45,8 @@
         <th>
             <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
-             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Name</sort-header>
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
      
-        </th>
-        <th>
-           Middle Name
         </th>
         <th>
               <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
@@ -55,10 +61,32 @@
      
         </th>
         <th>
-           Roles
+              <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.GenderSort">Gender</sort-header>
         </th>
         <th>
-           Address
+             <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFullBlockedSort">IsFullBlocked</sort-header>
+        </th>
+        <th>
+             <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFamilyDependentSort">IsFamilyDependent</sort-header>
+        </th>
+        <th>
+             <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsOnlineSort">IsOnline</sort-header>
+        </th>
+         <th>
+            <sort-header action="UserIndex" up="@Model.SortViewModel.Up"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.LastLoginSort">Last Login</sort-header>
+        </th>
+        <th>
+           Roles
         </th>
         <th>
            Details
@@ -87,10 +115,6 @@
     @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
  }
-
-
-   
-
 
 
 @section CssStyles

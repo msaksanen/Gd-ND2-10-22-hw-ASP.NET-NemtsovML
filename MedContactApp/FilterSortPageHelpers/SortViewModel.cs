@@ -9,21 +9,14 @@ namespace MedContactApp.FilterSortPageHelpers
         public SortState SurnameSort { get; }
         public SortState BirthDateSort { get; }    
         public SortState RegDateSort { get; }
+        public SortState LastLoginSort { get; }
+        public SortState IsFullBlockedSort { get; }
+        public SortState IsFamilyDependentSort { get; }
+        public SortState IsOnlineSort { get; }
+        public SortState GenderSort { get; }
+       
         public SortState Current { get; }
         public bool Up { get; set; }  
-
-
-
-        //public SortViewModel(SortState sortOrder)
-        //{
-        //    EmailSort = sortOrder == SortState.EmailAsc ? SortState.EmailDesc : SortState.EmailAsc;
-        //    NameSort = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
-        //    SurnameSort = sortOrder == SortState.SurnameAsc ? SortState.SurnameDesc : SortState.SurnameAsc;
-        //    BirthDateSort = sortOrder == SortState.BirtDateAsc ? SortState.BirthDateDesc : SortState.BirtDateAsc;
-        //    RegDateSort = sortOrder == SortState.RegDateAsc ? SortState.RegDateDesc : SortState.RegDateAsc;
-        //    Current = sortOrder;
-        //}
-
 
         public SortViewModel(SortState sortOrder)
         {
@@ -32,10 +25,19 @@ namespace MedContactApp.FilterSortPageHelpers
             SurnameSort = SortState.SurnameAsc;
             BirthDateSort = SortState.BirtDateAsc;
             RegDateSort = SortState.RegDateAsc;
+            LastLoginSort = SortState.LastLoginAsc;
+            GenderSort = SortState.GenderAsc;
+            IsFullBlockedSort = SortState.IsFullBlockedAsc;
+            IsFamilyDependentSort = SortState.IsFamilyDependentAsc;
+            IsOnlineSort = SortState.IsOnlineAsc;
+
+
             Up = true;
 
             if (sortOrder == SortState.EmailDesc || sortOrder == SortState.BirthDateDesc || sortOrder == SortState.NameDesc
-                || sortOrder == SortState.SurnameDesc || sortOrder == SortState.RegDateDesc)
+                || sortOrder == SortState.SurnameDesc || sortOrder == SortState.RegDateDesc || sortOrder==SortState.LastLoginDesc ||
+                sortOrder == SortState.GenderDesc || sortOrder == SortState.IsOnlineDesc || sortOrder == SortState.IsFamilyDependentDesc ||
+                sortOrder == SortState.IsFullBlockedDesc)
             {
                 Up = false;
             }
@@ -68,6 +70,36 @@ namespace MedContactApp.FilterSortPageHelpers
                     break;
                 case SortState.RegDateDesc:
                     Current = RegDateSort = SortState.RegDateAsc;
+                    break;
+                case SortState.LastLoginAsc:
+                    Current = LastLoginSort = SortState.LastLoginDesc;
+                    break;
+                case SortState.LastLoginDesc:
+                    Current = LastLoginSort = SortState.LastLoginAsc;
+                    break;
+                case SortState.IsFullBlockedAsc:
+                    Current = IsFullBlockedSort = SortState.IsFullBlockedDesc;
+                    break;
+                case SortState.IsFullBlockedDesc:
+                    Current = IsFullBlockedSort = SortState.IsFullBlockedAsc;
+                    break;
+                case SortState.IsFamilyDependentAsc:
+                    Current = IsFamilyDependentSort = SortState.IsFullBlockedDesc;
+                    break;
+                case SortState.IsFamilyDependentDesc:
+                    Current = IsFamilyDependentSort = SortState.IsFamilyDependentAsc;
+                    break;
+                case SortState.IsOnlineAsc:
+                    Current = IsOnlineSort = SortState.IsOnlineDesc;
+                    break;
+                case SortState.IsOnlineDesc:
+                    Current = IsOnlineSort = SortState.IsOnlineAsc;
+                    break;
+                case SortState.GenderAsc:
+                    Current = GenderSort = SortState.GenderDesc;
+                    break;
+                case SortState.GenderDesc:
+                    Current = GenderSort = SortState.GenderAsc;
                     break;
                 default:
                     Current = EmailSort = SortState.EmailDesc;

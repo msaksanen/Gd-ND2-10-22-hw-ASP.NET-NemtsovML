@@ -340,6 +340,12 @@ namespace MedContactDb.Migrations
                     b.Property<bool?>("IsFullBlocked")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("MidName")
                         .HasColumnType("nvarchar(max)");
 

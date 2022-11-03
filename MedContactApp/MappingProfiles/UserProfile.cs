@@ -38,9 +38,11 @@ namespace MedContactApp.MappingProfiles
             CreateMap<DoctorModel, UserDto>();
             
             CreateMap<UserDto, UserDataModel>();
+            CreateMap<UserDto, AdminUserEditModel>();
 
             CreateMap<BaseUserModel, ChangePasswordModel>();
             CreateMap<BaseUserModel, RegDoctorDataModel>();
+            CreateMap<BaseUserModel, AdminUserEditModel>();
 
         }
     }

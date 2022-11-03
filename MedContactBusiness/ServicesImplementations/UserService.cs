@@ -49,6 +49,7 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<int> CreateUserWithRoleAsync(UserDto dto, string roleName)
         {
             var entity = _mapper.Map<User>(dto);
+            entity.IsFullBlocked = false;
             var role = await _unitOfWork.RoleRepository
                        .Get()
                        .FirstOrDefaultAsync(role => role.Name != null && role.Name.Equals(roleName));
@@ -135,6 +136,38 @@ namespace MedContactBusiness.ServicesImplementations
         {
                 await _unitOfWork.UserRepository.PatchAsync(id, patchList);
                 return await _unitOfWork.Commit();
+        }
+
+        public async Task<int> ChangeUserStatusById(Guid id, int state)
+        {
+            var entity = await _unitOfWork.UserRepository.GetByIdTrackAsync(id);
+            if (entity == null) return -1;
+            if (state==1) //user is online and logs out
+            {
+                entity.IsOnline = false;
+            }
+
+            else  //user is offline and logs in
+            {
+                entity.IsOnline = true;
+                entity.LastLogin = DateTime.Now;
+            }
+
+            var result= await _unitOfWork.Commit();
+            return result;
+        }
+
+        public async Task<int> ChangeUserFullBlockById(Guid id, bool? IsFullBlocked)
+        {
+            var entity = await _unitOfWork.UserRepository.GetByIdTrackAsync(id);
+            if (entity == null) return 0;
+            if (IsFullBlocked==true)
+                entity.IsFullBlocked = true;
+            else
+                entity.IsFullBlocked = false;
+            var result = await _unitOfWork.Commit();
+            return result;
+
         }
 
         private string CreateMd5(string? password)

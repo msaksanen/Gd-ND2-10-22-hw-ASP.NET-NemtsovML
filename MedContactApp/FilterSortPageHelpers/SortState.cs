@@ -12,8 +12,18 @@
             BirtDateAsc,
             BirthDateDesc,
             RegDateAsc,
-            RegDateDesc
+            RegDateDesc,
+            LastLoginAsc,
+            LastLoginDesc,
+            IsFullBlockedAsc,
+            IsFullBlockedDesc,
+            IsFamilyDependentAsc,
+            IsFamilyDependentDesc,
+            IsOnlineAsc,
+            IsOnlineDesc,
+            GenderAsc,
+            GenderDesc,
 
-       
+
     }
 }

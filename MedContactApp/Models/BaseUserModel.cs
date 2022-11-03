@@ -1,4 +1,6 @@
 ﻿using MedContactApp.Helpers;
+using MedContactCore.DataTransferObjects;
+using MedContactDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -59,6 +61,8 @@ namespace MedContactApp.Models
         public List<string>? RoleNames { get; set; }
        // public virtual string? RoleName { get; set; }
         public DateTime? RegistrationDate { get; set; }
+        public bool? IsOnline { get; set; }
+        public DateTime LastLogin { get; set; }
 
     }
 }
