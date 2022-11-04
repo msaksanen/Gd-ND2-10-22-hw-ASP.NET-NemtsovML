@@ -144,7 +144,7 @@ namespace MedContactApp.Controllers
                             }
                         }
 
-                        model.SystemInfo = $"<b>Specialities:<br/>{addresult} were added<br/>{subtract} were marked for deletion</b>";
+                        model.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added<br/>{subtract} was/were marked for deletion</b>";
                         return View(model);
                     }
                     else

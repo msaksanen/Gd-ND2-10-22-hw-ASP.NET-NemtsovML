@@ -28,6 +28,7 @@ using MedContactApp.FilterSortPageHelpers;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Microsoft.Build.Framework;
+using System.Data;
 
 namespace MedContactApp.Controllers
 {
@@ -188,45 +189,125 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> UserDetails(string? id)
         {
-            var baseModel = await _modelBuilder.BuildByIdAdmin(id);
-            var model = _mapper.Map<AdminUserEditModel>(baseModel);
+            //var baseModel = await _modelBuilder.BuildByIdAdmin(id);
+            //var model = _mapper.Map<AdminUserEditModel>(baseModel);
 
-            var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
+            //var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
 
-            if (model != null && allroles!=null && model.RoleNames!=null)
+            //if (model != null && allroles!=null && model.RoleNames!=null)
+            //{
+            //    if (model.IsFullBlocked == true)
+            //    {
+            //        var item = model?.BlockState?.First(x => x.IntId == 2);
+            //        item!.IsSelected = true;
+
+            //    }
+            //    else if (model.IsFullBlocked == false)
+            //    {
+            //        var item = model?.BlockState?.First(x => x.IntId == 1);
+            //        item!.IsSelected = true;
+            //    }
+            //    else
+            //    {
+            //        var item = model?.BlockState?.First(x => x.IntId == 0);
+            //        item!.IsSelected = true;
+            //    }
+
+            //    model!.AllRoles = allroles;
+
+            //    foreach (var item in model.AllRoles)
+            //    {
+            //        if (model.RoleNames.Any(x => x.Equals(item.Name)))
+            //        {
+            //            item.IsSelected = true;
+            //        }
+            //    }
+
+            //    return View(model);
+            //}
+            AdminUserEditModel emptyModel = new(); 
+            var model = await BuildByIdAdmin(emptyModel, id);
+            if (model == null)
+                 return NotFound();
+
+            return View(model);
+        }
+
+
+        private async Task<AdminUserEditModel?> BuildByIdAdmin(AdminUserEditModel model, string? id)
+        {
+            Guid userId = default;
+            AdminUserEditModel? newModel = null;
+
+
+            if (string.IsNullOrEmpty(id) && model.Id == null)
+                    return null;
+
+            if (model.Id == null)
             {
-                if (model.IsFullBlocked == true)
+                var res = Guid.TryParse(id, out Guid Id);
+                if (!res)
+                     return null; 
+                else userId = Id;
+            }
+            else 
+                userId = (Guid)model.Id;
+
+            var usr = await _userService.GetUserByIdAsync(userId);
+            var userRoles = await _roleService.GetRoleListByUserIdAsync(userId);
+            var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
+            if  (usr == null && allroles == null) return null;
+           
+            newModel = _mapper.Map<AdminUserEditModel>(usr);
+            if (newModel == null) return null; 
+            newModel.AllRoles = allroles;
+
+            if (userRoles != null && userRoles.Any())
+            {
+                var roleList = userRoles.Select(r => r.Name).ToList();
+                if (roleList != null && roleList.Any())
+                    newModel!.RoleNames = roleList!;
+            }
+
+
+            if (model.Id != null)
+            {
+                newModel.BlockStateIds = model.BlockStateIds;
+                newModel.RoleIds = model.RoleIds;
+            }
+            else
+            {
+                if (newModel.IsFullBlocked == true)
                 {
-                    var item = model?.BlockState?.First(x => x.IntId == 2);
+                    var item = newModel?.BlockState?.First(x => x.IntId == 2);
                     item!.IsSelected = true;
 
                 }
-                else if (model.IsFullBlocked == false)
+                else if (newModel.IsFullBlocked == false)
                 {
-                    var item = model?.BlockState?.First(x => x.IntId == 1);
+                    var item = newModel?.BlockState?.First(x => x.IntId == 1);
                     item!.IsSelected = true;
                 }
                 else
                 {
-                    var item = model?.BlockState?.First(x => x.IntId == 0);
+                    var item = newModel?.BlockState?.First(x => x.IntId == 0);
                     item!.IsSelected = true;
                 }
 
-                model!.AllRoles = allroles;
-
-                foreach (var item in model.AllRoles)
+                foreach (var item in newModel!.AllRoles)
                 {
-                    if (model.RoleNames.Any(x => x.Equals(item.Name)))
+                    if (newModel.RoleNames!.Any(x => x.Equals(item.Name)))
                     {
                         item.IsSelected = true;
                     }
                 }
-               
-                return View(model);
             }
-                
-            return NotFound();
+
+            return newModel;
         }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> UserDetails(AdminUserEditModel model)
@@ -238,66 +319,80 @@ namespace MedContactApp.Controllers
             int changeRes = 0;
            try
            {
-                var baseModel = await _modelBuilder.BuildByIdAdmin(model.Id.ToString());
-                var modelFull = _mapper.Map<AdminUserEditModel>(baseModel);
-                var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
-                modelFull.AllRoles = allroles;
+                //var baseModel = await _modelBuilder.BuildByIdAdmin(model.Id.ToString());
+                //var modelFull = _mapper.Map<AdminUserEditModel>(baseModel);
+                var modelFull = await BuildByIdAdmin(model, String.Empty);
+                if (modelFull == null) throw new Exception();
+                //var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
+                //modelFull.AllRoles = allroles;
 
-                if (model.BlockStateIds != null)
-              {
-                foreach (var item in model.BlockStateIds)
+                if (modelFull != null && modelFull.BlockStateIds != null)
                 {
-                    if (item == 1)
-                            modelFull.IsFullBlocked = false;
-                    if (item == 2)
-                            modelFull.IsFullBlocked = true;
-                }
+                     foreach (var item in modelFull.BlockStateIds)
+                     {
+                        if (item == 1)
+                        {
+                            modelFull!.IsFullBlocked = false;
+                            var sitem = modelFull?.BlockState?.First(x => x.IntId == 1);
+                            sitem!.IsSelected = true;
+                        }
+
+                        if (item == 2)
+                        {
+                            modelFull!.IsFullBlocked = true;
+                            var sitem = modelFull?.BlockState?.First(x => x.IntId == 1);
+                            sitem!.IsSelected = true;
+                        }
+   
+                     }
                     changeRes=await _userService.ChangeUserFullBlockById((Guid)model.Id, modelFull?.IsFullBlocked);
-              }
-             if (model?.RoleIds != null && modelFull != null)
-             {
-                if (model.Id != null)
+                }
+                if (modelFull != null && modelFull.Id != null)
                 {
-                    foreach (var roleId in model.RoleIds)
+                    if (modelFull.RoleIds != null)
                     {
-                        var role = modelFull?.AllRoles?.FirstOrDefault(role => role.Id.Equals(roleId));
-
-                        if (role != null)
+                        foreach (var roleId in modelFull.RoleIds!)
                         {
-                            role.IsSelected = true;
-                            addresult += await _roleService.AddRoleByNameToUser((Guid)(model?.Id!), role?.Name!);
-                        }
-                    }
-                    foreach (var role in modelFull.AllRoles!)
-                    {
-                        if (model!.RoleIds.All(r => r != role.Id))
-                        {
-                            role.IsSelected = false;
-                            subtract += await _roleService.RemoveRoleByNameFromUser((Guid)(model?.Id!), role?.Name!);
-                        }
-                    }
+                            var role = modelFull?.AllRoles?.FirstOrDefault(role => role.Id.Equals(roleId));
 
-                    model.SystemInfo = $"<b>Roles:<br/>{addresult} were added<br/>{subtract} were deleted</b>";
+                            if (role != null)
+                            {
+                                role.IsSelected = true;
+                                addresult += await _roleService.AddRoleByNameToUser((Guid)(modelFull?.Id!), role?.Name!);
+                            }
+                        }
+                        foreach (var role in modelFull.AllRoles!)
+                        {
+                            if (modelFull!.RoleIds.All(r => r != role.Id))
+                            {
+                                role.IsSelected = false;
+                                if (modelFull.RoleNames!.Any( x =>x.Equals(role.Name)))
+                                    subtract += await _roleService.RemoveRoleByNameFromUser((Guid)(modelFull?.Id!), role?.Name!);
+                            }
+                        }
+
+                        modelFull.SystemInfo = $"<b>Roles:<br/>{addresult} was/were added<br/>{subtract} was/were deleted</b>";
                         if (changeRes > 0)
                         {
-                            model.SystemInfo += $"<b>Full block status was changed</b>";
+                            modelFull.SystemInfo += $"<br/><b>Full block status was changed</b>";
                         }
                         else
                         {
-                            model.SystemInfo += $"<br/><b>Full block status was not changed</b>";
+                            modelFull.SystemInfo += $"<br/><b>Full block status was not changed</b>";
                         }
 
-                    return View(modelFull);
-                }
-             }
-             else
-             {
-                model!.SystemInfo = $"<b>You have not chosen any role</b>";
-                return View(modelFull);
-            }
+                        return View(modelFull);
+                    }
 
-            model.SystemInfo = "<b>Something went wrong (</b>";
-            return View(modelFull);
+                    else
+                    {
+                        modelFull!.SystemInfo = $"<b>You have not chosen any role</b>";
+                        return View(modelFull);
+                    }
+                }
+
+                modelFull!.SystemInfo = "<b>Something went wrong (</b>";
+                    return View(modelFull);
 
           }
           catch (Exception e)

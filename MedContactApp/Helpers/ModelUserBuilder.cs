@@ -17,33 +17,33 @@ namespace MedContactApp.Helpers
             _mapper = mapper;
             _roleService = roleService;
         }
-        internal async Task<BaseUserModel?> BuildByIdAdmin (string? id)
-        {
+        //internal async Task<BaseUserModel?> BuildByIdAdmin (string? id)
+        //{
             
-            if (string.IsNullOrEmpty(id))
-                    return null;
+        //    if (string.IsNullOrEmpty(id))
+        //            return null;
 
-            var res = Guid.TryParse(id, out Guid Id);
+        //    var res = Guid.TryParse(id, out Guid Id);
 
-                if (res)
-                {
-                    var usr = await _userService.GetUserByIdAsync(Id);
-                    if (usr != null)
-                    {
-                        var baseUserModel = _mapper.Map<BaseUserModel>(usr);
-                        var roles = await _roleService.GetRoleListByUserIdAsync(Id);
-                        if (roles!=null &&  roles.Any())
-                        {
-                            var roleList = roles.Select(r => r.Name).ToList();
-                            if (roleList!=null && roleList.Any())
-                              baseUserModel.RoleNames = roleList!;
+        //        if (res)
+        //        {
+        //            var usr = await _userService.GetUserByIdAsync(Id);
+        //            if (usr != null)
+        //            {
+        //                var baseUserModel = _mapper.Map<BaseUserModel>(usr);
+        //                var roles = await _roleService.GetRoleListByUserIdAsync(Id);
+        //                if (roles!=null &&  roles.Any())
+        //                {
+        //                    var roleList = roles.Select(r => r.Name).ToList();
+        //                    if (roleList!=null && roleList.Any())
+        //                      baseUserModel.RoleNames = roleList!;
 
-                            return baseUserModel;
-                        }
-                    }             
-                }
-                return null; 
-        }
+        //                    return baseUserModel;
+        //                }
+        //            }             
+        //        }
+        //        return null; 
+        //}
 
 
         internal async Task<BaseUserModel?> BuildById(HttpContext context, string? id = "")
