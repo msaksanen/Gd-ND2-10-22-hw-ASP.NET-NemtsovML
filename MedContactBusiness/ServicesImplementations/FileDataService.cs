@@ -36,6 +36,16 @@ namespace MedContactBusiness.ServicesImplementations
             await _unitOfWork.FileDataRepository.AddRangeAsync(entityList);
             var addingResult = await _unitOfWork.Commit();
             return addingResult;
-        } 
+        }
+
+        public async Task<List<FileDataDto>?> FileDataTolistByUserId(Guid id)
+        {
+          var list =await  _unitOfWork.FileDataRepository.Get()
+                           .Where(x => x.UserId.Equals(id))
+                           .Select(x => _mapper.Map<FileDataDto>(x))
+                           .ToListAsync();
+
+          return list;
+        }
     }
 }

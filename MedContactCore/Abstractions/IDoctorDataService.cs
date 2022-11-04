@@ -15,5 +15,6 @@ namespace MedContactCore.Abstractions
       Task<DoctorData?> GetDoctorDataByUserIdSpecId(Guid? userId, Guid? specId);
       Task<List<DoctorDataDto>> GetDoctorDataListByUserId(Guid userId);
       Task<int> MarkForDeleteDoctorDataAsync(DoctorDataDto dto);
+      Task<List<DoctorInfo>?> GetDoctorInfoByUserId(Guid? userId);
     }
 }

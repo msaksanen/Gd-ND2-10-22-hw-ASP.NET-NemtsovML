@@ -1,0 +1,13 @@
+﻿@model DoctorInfo
+@if (Model.ForDeletion!=true)
+{
+    <li>
+        @Model.Speciality
+    </li>
+}
+else
+{
+    <li>
+        @Model.Speciality (marked by user for deletion)
+    </li>
+}

@@ -12,5 +12,6 @@ namespace MedContactCore.DataTransferObjects
         public string? Surname { get; set; }
         public string? MidName { get; set; }
         public string? Speciality { get; set; }
+        public bool? ForDeletion { get; set; }
     }
 }

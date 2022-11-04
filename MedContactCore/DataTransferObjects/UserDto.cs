@@ -32,6 +32,7 @@ namespace MedContactCore.DataTransferObjects
             public bool? IsOnline { get; set; }
             public bool? IsDependent { get; set; }
             public bool? IsFullBlocked { get; set; }
+            public List<FileData>? FileDatas { get; set; }
             public List<DoctorData>? DoctorData { get; set; }
             public List<AcsData>? AcsDatas { get; set; }
             public List<RoleDto>? Roles { get; set; }

@@ -1,0 +1,123 @@
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
+
+@model UserIndexApplViewModel
+
+@{
+    ViewData["Title"] = "Applicants Table"; 
+}
+
+
+
+<Table class="delivery">
+<tbody>
+  <tr>
+    <form method="get">
+     <td style="border:none">
+                <label style="text-align:left">Name: </label>
+                <input name="name" value="@Model!.FilterNameViewModel.SelectedName" />
+                <input type="submit" value="Filter" />
+     </td>
+    </form>
+ </tr>
+</tbody>
+</Table>
+
+<Table class="delivery">  
+    <caption>Applicants Info Table</caption>
+    <thead>
+    <tr>
+        <th>
+               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.EmailSort">Email</sort-header>
+ 
+        </th>
+        <th>
+               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
+     
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
+
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth Date</sort-header>
+     
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.GenderSort">Gender</sort-header>
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFullBlockedSort">IsFullBlocked</sort-header>
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFamilyDependentSort">IsFamilyDependent</sort-header>
+        </th>
+        <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsOnlineSort">IsOnline</sort-header>
+        </th>
+         <th>
+              <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
+               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.LastLoginSort">Last Login</sort-header>
+        </th>
+        <th>
+           Roles
+        </th>
+        <th>
+           Details
+         </th>
+    </tr>
+    <thead>
+    <tbody>
+    
+        
+
+@if (Model.Users.Any())
+{
+    foreach (var item in Model.Users)
+    {
+        await Html.RenderPartialAsync("ApplPartialView", item);
+    }
+}
+
+    </tbody>
+</Table>
+
+
+@section Footer
+{
+
+    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+                             @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
+ }
+
+
+@section CssStyles
+{
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}        
+    </style>
+}

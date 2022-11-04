@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Security.Principal;
+using System.Xml.Linq;
 
 namespace MedContactBusiness.ServicesImplementations
 {
@@ -42,6 +43,26 @@ namespace MedContactBusiness.ServicesImplementations
             {
                 throw new ArgumentException(nameof(dData));
             }
+        }
+
+        public async Task<List<DoctorInfo>?> GetDoctorInfoByUserId(Guid? userId)
+        {
+            var dDataList = await _unitOfWork.DoctorDataRepository
+                                  .Get()
+                                  .Include(t => t.Speciality)
+                                  .Include(t => t.User)
+                                  .Where(t => t.UserId.Equals(userId))
+                                  .Where(t => t.Speciality != null)
+                                  .ToListAsync();
+
+
+            if (!dDataList.Any())
+            {
+                var docInfoList = dDataList.Select(t => _mapper.Map<DoctorInfo>((t.User, t.Speciality,t.ForDeletion))).ToList();
+                return docInfoList;
+            }
+           
+                return null;
         }
 
         public async Task<int> CreateDoctorDataAsync(DoctorDataDto dto)

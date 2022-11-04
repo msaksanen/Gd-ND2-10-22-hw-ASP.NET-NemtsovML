@@ -1,0 +1,114 @@
+﻿@model ApplicantModel
+
+@{
+    ViewData["Title"] = "Applicant Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>@Model.Name @Model.Surname (@Model.Email)</h4>
+<h6>User Id: @Model.Id</h6>
+<hr />
+<hr />
+<div class="container">
+<div class="row">
+    <dl class="col-6 col-sm-3">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MidName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MidName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Surname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Surname)
+
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BirthDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsFullBlocked)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsFullBlocked)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RegistrationDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegistrationDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsOnline)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsOnline)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastLogin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastLogin)
+        </dd>
+    </dl>
+
+    <div class="col-6 col-sm-3">
+        <div>
+            <label><b>Current specialities:</b></label>
+            <ul>
+                @if(Model.doctorInfos!=null && Model.doctorInfos.Any())
+                {
+                    foreach (var item in Model.doctorInfos)
+                    {
+                      await Html.RenderPartialAsync("DoctorInfoPartialView", item);
+                    }
+                }
+            </ul>
+        </div>
+
+        <div>
+            <label><b>Uploaded CV files:</b></label>
+            <ul>
+                @if(Model.fileDatas!=null && Model.fileDatas.Any())
+                {
+                    foreach (var item in Model.fileDatas)
+                    {
+                     <li>
+                         <a href="@item.Path"><i>@item.Name</i></a>
+                    </li>
+                    }                      
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div>
+      <a asp-controller="AdminPanel" asp-action="ApplicationIndex">Back to Table</a>
+    </div>
+
+        @if (Model.SystemInfo != null)
+        {
+            <div>
+                <p>
+                    @Html.Raw(@Model.SystemInfo)
+                </p>
+            </div>
+        }
+</div>
+</div>

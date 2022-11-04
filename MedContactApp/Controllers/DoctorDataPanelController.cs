@@ -169,16 +169,6 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task <IActionResult> RegDoctorData()
         {
-            //RegDoctorDataModel model = new();
-            //var UserIdClaim = User.FindFirst("MUId");
-            //var userId = UserIdClaim?.Value;
-            //if (Guid.TryParse(userId, out Guid UId))
-            //{
-            //    model.UserId = UId; ;
-            //}
-
-            //return View(model);
-
             var model = await _modelUserBuilder.BuildById(HttpContext);
             if (model != null)
             {
@@ -218,8 +208,8 @@ namespace MedContactApp.Controllers
                     foreach (var uploadedFile in model.Uploads)
                     {
                         string ext = Path.GetExtension(uploadedFile.FileName);
-                        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
-                        string path = "/files/cv/" + name + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}"+ext;
+                        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
+                        string path = "/files/cv/" + name;
                         using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                         {
                             await uploadedFile.CopyToAsync(fileStream);

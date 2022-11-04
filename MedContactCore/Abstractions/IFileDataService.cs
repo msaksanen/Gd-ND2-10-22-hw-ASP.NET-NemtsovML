@@ -11,5 +11,6 @@ namespace MedContactCore.Abstractions
     public interface IFileDataService
     {
         Task<int> AddListToFileData(List<FileDataDto> list);
+        Task<List<FileDataDto>?> FileDataTolistByUserId(Guid id);
     }
 }
