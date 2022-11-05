@@ -8,11 +8,13 @@ namespace MedContactApp.FilterSortPageHelpers
 {
     public class FilterNameViewModel
     {
-        public FilterNameViewModel(string name)
+        public FilterNameViewModel(string name, string email)
         {
             SelectedName = name;
+            SelectedEmail = email;
         }
         public string SelectedName { get; }
-        
+        public string SelectedEmail { get; }
+
     }
 }

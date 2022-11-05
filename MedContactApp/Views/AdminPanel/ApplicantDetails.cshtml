@@ -8,7 +8,6 @@
 <h4>@Model.Name @Model.Surname (@Model.Email)</h4>
 <h6>User Id: @Model.Id</h6>
 <hr />
-<hr />
 <div class="container">
 <div class="row">
     <dl class="col-6 col-sm-3">
@@ -76,7 +75,18 @@
                 {
                     foreach (var item in Model.doctorInfos)
                     {
-                      await Html.RenderPartialAsync("DoctorInfoPartialView", item);
+                            @if (item.ForDeletion != true)
+                            {
+                                <li>
+                                    @item.Speciality
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    @item.Speciality (marked by user for deletion)
+                                </li>
+                            }
                     }
                 }
             </ul>
@@ -84,22 +94,32 @@
 
         <div>
             <label><b>Uploaded CV files:</b></label>
-            <ul>
+            <hr />
+                <Table class="delivery">
+                <tbody>
                 @if(Model.fileDatas!=null && Model.fileDatas.Any())
                 {
-                    foreach (var item in Model.fileDatas)
-                    {
-                     <li>
-                         <a href="@item.Path"><i>@item.Name</i></a>
-                    </li>
-                    }                      
+                  foreach (var item in Model.fileDatas)
+                  {
+                     <tr>
+                       <td>
+                            <a href="@item.Path"><i>@item.Name</i></a>
+                       </td>
+                       <td>
+                            <i class="bi bi-file-x"></i><a href="/adminpanel/applicantdetails/?id=@Model.Id&filedata=@item.Id"><i>Delete</i></a>
+                       </td>
+                     </tr>
+                  }                      
                 }
-            </ul>
+                </tbody>
+                </Table>
         </div>
     </div>
 
     <div>
-      <a asp-controller="AdminPanel" asp-action="ApplicationIndex">Back to Table</a>
+      <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpanel/applicantdetails/?id=@Model.Id">Edit user details</a>
+      <br />
+      <a asp-controller="AdminPanel" asp-action="ApplicationIndex">Back to applicant table</a>
     </div>
 
         @if (Model.SystemInfo != null)
@@ -112,3 +132,4 @@
         }
 </div>
 </div>
+

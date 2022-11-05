@@ -65,6 +65,11 @@ namespace MedContactBusiness.ServicesImplementations
                 return null;
         }
 
+        public IQueryable<DoctorData> GetDoctorData()
+        {
+            return _unitOfWork.DoctorDataRepository.Get();
+        }
+
         public async Task<int> CreateDoctorDataAsync(DoctorDataDto dto)
         {
             var entity = _mapper.Map<DoctorData>(dto);

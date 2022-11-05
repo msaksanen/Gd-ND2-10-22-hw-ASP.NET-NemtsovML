@@ -146,7 +146,14 @@
 
 
         <div>
-            <a asp-controller="AdminPanel" asp-action="UserIndex">Back to Table</a>
+            @if (!string.IsNullOrEmpty(Model.Reflink))
+            {
+                <a href="@Model.Reflink">Back</a>
+            }
+            else
+            {
+                <a asp-controller="AdminPanel" asp-action="UserIndex">Back to user table</a>
+            }
         </div>
 
         @if (Model.SystemInfo != null)

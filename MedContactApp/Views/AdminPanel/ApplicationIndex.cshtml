@@ -17,7 +17,11 @@
   <tr>
     <form method="get">
      <td style="border:none">
-                <label style="text-align:left">Name: </label>
+                <label>Email: </label>
+                <input name="email" value="@Model!.FilterNameViewModel.SelectedEmail" />
+     </td>
+     <td style="border:none">
+                <label style="text-align:left">Name/Surname: </label>
                 <input name="name" value="@Model!.FilterNameViewModel.SelectedName" />
                 <input type="submit" value="Filter" />
      </td>
@@ -32,51 +36,60 @@
     <tr>
         <th>
                <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
-               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
-               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.EmailSort">Email</sort-header>
+                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+                opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
+                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.EmailSort">Email</sort-header>
  
         </th>
         <th>
                <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
-               opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+                opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
      
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
 
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth Date</sort-header>
      
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.GenderSort">Gender</sort-header>
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFullBlockedSort">IsFullBlocked</sort-header>
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFamilyDependentSort">IsFamilyDependent</sort-header>
         </th>
         <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsOnlineSort">IsOnline</sort-header>
         </th>
          <th>
               <sort-header action="ApplicationIndex" up="@Model.SortViewModel.Up"
                opt-url-name="@(Model.FilterNameViewModel.SelectedName)"
+               opt-url-email="@(Model.FilterNameViewModel.SelectedEmail)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.LastLoginSort">Last Login</sort-header>
         </th>
         <th>

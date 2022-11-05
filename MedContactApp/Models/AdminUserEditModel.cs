@@ -15,6 +15,7 @@ namespace MedContactApp.Models
         public List<RoleDto>? AllRoles { get; set; }
         public Guid[]? RoleIds { get; set; }
         public string? SystemInfo { get; set; }
+        public string? Reflink { get; set; }
     }
 }
 

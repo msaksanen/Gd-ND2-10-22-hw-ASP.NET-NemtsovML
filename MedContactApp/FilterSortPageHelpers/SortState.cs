@@ -17,12 +17,18 @@
             LastLoginDesc,
             IsFullBlockedAsc,
             IsFullBlockedDesc,
+            IsBlockedAsc,
+            IsBlockedDesc,
+            IsMarkedAsc,
+            IsMarkedDesc,
             IsFamilyDependentAsc,
             IsFamilyDependentDesc,
             IsOnlineAsc,
             IsOnlineDesc,
             GenderAsc,
             GenderDesc,
+            SpecialityAsc,
+            SpecialityDesc
 
 
     }

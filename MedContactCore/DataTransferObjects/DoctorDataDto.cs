@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MedContactDb.Entities
+namespace MedContactCore.DataTransferObjects
+
 {
     public class DoctorDataDto 
     {
@@ -14,6 +15,6 @@ namespace MedContactDb.Entities
         public bool? IsBlocked { get; set; }
         public bool? ForDeletion { get; set; }
         public Guid? SpecialityId { get; set; }
-        public List<DayTimeTable>? DayTimeTables { get; set; }
+        public List<DayTimeTableDto>? DayTimeTables { get; set; }
     }
 }

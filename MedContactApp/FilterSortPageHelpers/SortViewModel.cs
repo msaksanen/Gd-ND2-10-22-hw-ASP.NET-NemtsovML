@@ -14,7 +14,10 @@ namespace MedContactApp.FilterSortPageHelpers
         public SortState IsFamilyDependentSort { get; }
         public SortState IsOnlineSort { get; }
         public SortState GenderSort { get; }
-       
+        public SortState IsBlockedSort { get; }
+        public SortState IsMarkedSort { get; }
+        public SortState SpecialitySort { get; }
+
         public SortState Current { get; }
         public bool Up { get; set; }  
 
@@ -28,16 +31,19 @@ namespace MedContactApp.FilterSortPageHelpers
             LastLoginSort = SortState.LastLoginAsc;
             GenderSort = SortState.GenderAsc;
             IsFullBlockedSort = SortState.IsFullBlockedAsc;
+            IsBlockedSort = SortState.IsBlockedAsc;
+            IsMarkedSort = SortState.IsMarkedAsc;
+            SpecialitySort = SortState.SpecialityAsc;
             IsFamilyDependentSort = SortState.IsFamilyDependentAsc;
             IsOnlineSort = SortState.IsOnlineAsc;
-
 
             Up = true;
 
             if (sortOrder == SortState.EmailDesc || sortOrder == SortState.BirthDateDesc || sortOrder == SortState.NameDesc
                 || sortOrder == SortState.SurnameDesc || sortOrder == SortState.RegDateDesc || sortOrder==SortState.LastLoginDesc ||
                 sortOrder == SortState.GenderDesc || sortOrder == SortState.IsOnlineDesc || sortOrder == SortState.IsFamilyDependentDesc ||
-                sortOrder == SortState.IsFullBlockedDesc)
+                sortOrder == SortState.IsFullBlockedDesc || sortOrder ==SortState.IsBlockedDesc || sortOrder== SortState.IsMarkedDesc
+                || sortOrder==SortState.SpecialityDesc)
             {
                 Up = false;
             }
@@ -100,6 +106,24 @@ namespace MedContactApp.FilterSortPageHelpers
                     break;
                 case SortState.GenderDesc:
                     Current = GenderSort = SortState.GenderAsc;
+                    break;
+                case SortState.IsBlockedAsc:
+                    Current = IsBlockedSort = SortState.IsBlockedDesc;
+                    break;
+                case SortState.IsBlockedDesc:
+                    Current = IsBlockedSort = SortState.IsBlockedAsc;
+                    break;
+                case SortState.IsMarkedAsc:
+                    Current = IsMarkedSort = SortState.IsMarkedDesc;
+                    break;
+                case SortState.IsMarkedDesc:
+                    Current = IsMarkedSort = SortState.IsMarkedAsc;
+                    break;
+                case SortState.SpecialityAsc:
+                    Current = SpecialitySort = SortState.SpecialityDesc;
+                    break;
+                case SortState.SpecialityDesc:
+                    Current = SpecialitySort = SortState.SpecialityAsc;
                     break;
                 default:
                     Current = EmailSort = SortState.EmailDesc;

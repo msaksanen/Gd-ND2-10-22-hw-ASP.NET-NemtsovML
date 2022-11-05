@@ -47,5 +47,37 @@ namespace MedContactBusiness.ServicesImplementations
 
           return list;
         }
+
+        public async Task<int> RemoveFileDataWithFileById(Guid id, string webRootPath)
+        {
+            var result = -2;
+            var filedata = await _unitOfWork.FileDataRepository.GetByIdTrackAsync(id);
+           
+            if (filedata == null)
+                return result;
+
+            if (filedata.Path == null)
+            {
+                 _unitOfWork.FileDataRepository.Remove(filedata);
+                result += await _unitOfWork.Commit();
+                return result;
+            }
+
+            string path = Path.Combine(webRootPath, filedata.Path!);
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                _unitOfWork.FileDataRepository.Remove(filedata);
+                result = 1 + await _unitOfWork.Commit();
+            }
+            else 
+            {
+                _unitOfWork.FileDataRepository.Remove(filedata);
+                result = await _unitOfWork.Commit();
+            }
+        
+            return result;
+        }
     }
 }

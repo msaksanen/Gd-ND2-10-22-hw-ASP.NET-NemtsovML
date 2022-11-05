@@ -19,7 +19,7 @@ namespace MedContactApp.Helpers
 
             if (pageCount>1)  
             {
-                if (currentPage == pageCount) ////shows 3 page links when last page is active
+                if (currentPage == pageCount && pageCount>2) ////shows 3 page links when last page is active
                 {
                     sb.Append($@" <li class=""page-item""><a class=""page-link"" href=""{pageRoute}{pageCount - 2}{processOptions}"">&nbsp {pageCount - 2} &nbsp</a></li>");
                 }

@@ -1,0 +1,50 @@
+﻿@model DoctorFullDataDto
+
+<tr>
+    <td area-label="Email">
+        @Html.DisplayFor(modelItem => Model.Email)
+    </td>
+    <td area-label="Speciality">
+        @Html.DisplayFor(modelItem => Model.SpecialityName)
+    </td>
+    <td area-label="Names">
+        @Html.DisplayFor(modelItem => Model.Username) 
+        @Html.DisplayFor(modelItem => Model.MidName)
+    </td>
+    <td area-label="Surname">
+        @Html.DisplayFor(modelItem => Model.Surname)
+    </td>
+    <td area-label="Birth Date">
+        @Html.DisplayFor(modelItem => Model.BirthDate) 
+    </td>
+    <td area-label="Gender">
+        @Html.DisplayFor(modelItem => Model.Gender)
+    </td>
+    <td area-label="IsFullBlocked">
+        @Html.DisplayFor(modelItem => Model.IsFullBlocked)
+    </td>
+    <td area-label="IsSpecialityBlocked">
+        @Html.DisplayFor(modelItem => Model.IsBlocked)
+    </td>
+    <td area-label="IsMarkedForDelete">
+        @Html.DisplayFor(modelItem => Model.ForDeletion)
+    </td>
+    <td area-label="Roles">
+        @if (Model.Roles!=null && Model.Roles.Any())
+        {
+            foreach (var item in Model.Roles)
+            {
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                       @item.Name
+                   </li>
+               </ul>
+            }
+        }
+    </td>
+   
+    <td>
+        <span> <a class="btn btn-primary" href="~/adminpanel/doctordetails/@Model.Id">View details</a></span>
+    </td>
+
+</tr>
