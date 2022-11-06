@@ -1,0 +1,192 @@
+﻿@model AdminEditDoctorModel
+
+@{
+    ViewData["Title"] = "Doctor Details";
+    Layout = "~/Views/Shared/_LayoutCustomSelect.cshtml";
+}
+
+<h1>Doctor Details</h1>
+
+<h4>@Model.Name @Model.Surname (@Model.Email)</h4>
+<h6>User Id: @Model.UserId</h6>
+
+<hr />
+<div class="container">
+    <div class="row">
+        <dl class="col-6 col-sm-3">
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Surname)
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Surname)
+            </dd>
+            <dt>
+                Middle Name
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.MidName)
+            </dd>
+            <dt>
+                Birth Date
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.BirthDate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Gender)
+
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+        </dl>
+
+       <div class="col-6 col-sm-3">
+         <form asp-action="DoctorDetails" asp-controller="AdminPanel" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="UserId" class="form-control" type="hidden"/>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                  <label><b>Marked by user for deletion speclialities:</b></label>
+                    <hr/>
+                         <Table class="delivery">
+                         <tbody>
+                   @if (Model.Specialities != null && Model.Specialities.Any())
+                   {
+                       foreach (var item in Model.Specialities)
+                     {
+                        @if (item.ForDeletion == true)
+                        {
+                         <tr>
+                           <td>
+                                @item.Name
+                           </td>
+                           <td>
+                            <i class="bi bi-x-circle"></i><a href="/adminpanel/doctordetails/?userid=@Model.UserId&specd=@item.Id"><i>Delete</i></a>
+                          </td>
+                          <td>
+                            <i class="bi bi-bootstrap-reboot"></i><a href="/adminpanel/doctordetails/?userid=@Model.UserId&specr=@item.Id"><i>Restore</i></a>
+                          </td>
+                         </tr>
+                        }
+                     }                      
+                   }
+                        </tbody>
+                        </Table>
+             </div>
+             <div class="form-group">
+                       <label for="SpecialityBlockIds">Block/unblock specialities:</label>
+                        <br />
+                        <select aria-label="SpecialitiesBlock"
+                                id="SpecialityBlockIds" multiple="multiple" name="SpecialityBlockIds">
+
+                            @if (Model.Specialities != null)
+                            {
+                                @foreach (var item in Model.Specialities)
+                                {
+                                    @if (item.IsSelected == true)
+                                    {
+                                        @if (item.IsSpecBlocked != true)
+                                        {
+                                            <option label="@item.Name" value="@item.Id">@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option label="@item.Name" selected value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                   
+                                }
+                            }
+                        </select>
+             </div>
+             <div class="form-group">
+                       <label for="SpecialityIds">Add/remove specialities:</label>
+                        <br />
+                        <select aria-label="Specialities"
+                                id="SpecialityIds" multiple="multiple" name="SpecialityIds">
+
+                            @if (Model.Specialities != null)
+                            {
+                                @foreach (var item in Model.Specialities)
+                                {
+                                   
+                                        @if (item.IsSelected == true)
+                                         {
+                                             <option label="@item.Name" selected value="@item.Id">@item.Name</option>
+                                         }
+                                         else
+                                         {
+                                             <option label="@item.Name" value="@item.Id">@item.Name</option>
+                                         }
+                               
+                                }
+                            }
+                        </select>
+             </div>
+             <br/>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+      </div>
+        
+      <div>
+            <a asp-controller ="AdminPanel" asp-action="DoctorDataIndex">Back to List</a>
+      </div>
+
+
+        @if (Model.SystemInfo != null)
+        {
+            <div>
+                <p>
+                    @Html.Raw(@Model.SystemInfo)
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+   @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>document.multiselect('#SpecialityIds')</script>
+    <script>document.multiselect('#SpecialityBlockIds')</script>
+}
+
+@section CssStyles
+{
+    <style>
+        #SpecialityIds_multiSelect {
+            width: max-content;
+        }
+
+        #SpecialityBlockIds_multiSelect {
+            width: max-content;
+        }
+    </style>
+
+}

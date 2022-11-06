@@ -11,6 +11,8 @@ namespace MedContactCore.DataTransferObjects
         public Guid Id { get; set; }
         public string? Name { get; set; }
         public bool? IsSelected { get; set; }
+        public bool? IsSpecBlocked { get; set; }
+        public bool? ForDeletion { get; set; }
 
         //public List<DoctorData>? DoctorDatas { get; set; }
     }

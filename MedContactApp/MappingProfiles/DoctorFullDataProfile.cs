@@ -9,6 +9,10 @@ namespace MedContactApp.MappingProfiles
         public DoctorFullDataProfile()
         {
             CreateMap<(DoctorData, User, Speciality), DoctorFullDataDto>()
+                .ForMember(dto => dto.Id,
+                 opt => opt.MapFrom(d => d.Item1.Id))
+                .ForMember(dto => dto.UserId,
+                 opt => opt.MapFrom(d => d.Item2.Id))
                 .ForMember(dto => dto.Username,
                  opt => opt.MapFrom(d => d.Item2.Name))
                 .ForMember(dto => dto.Surname,
@@ -30,7 +34,17 @@ namespace MedContactApp.MappingProfiles
                 .ForMember(dto => dto.IsBlocked,
                  opt => opt.MapFrom(d => d.Item1.IsBlocked))
                  .ForMember(dto => dto.DayTimeTables,
-                 opt => opt.MapFrom(d => d.Item1.DayTimeTables));
+                 opt => opt.MapFrom(d => d.Item1.DayTimeTables))
+                   .ForMember(dto => dto.SpecialityId,
+                 opt => opt.MapFrom(d => d.Item1.SpecialityId));
+
+            CreateMap<User, DoctorFullDataDto>()
+                  .ForMember(dto => dto.UserId,
+                 opt => opt.MapFrom(d => d.Id))
+                .ForMember(dto => dto.Username,
+                 opt => opt.MapFrom(d => d.Name))
+                  .ForMember(dto => dto.SpecialityName,
+                 opt => opt.MapFrom(d=>"Underfined"));
 
         }
    

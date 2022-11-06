@@ -30,6 +30,12 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Build.Framework;
 using System.Data;
 using System.Xml.Linq;
+using System;
+using System.ComponentModel.DataAnnotations;
+using MedContactDb.Migrations;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MedContactApp.Controllers
 {
@@ -42,13 +48,14 @@ namespace MedContactApp.Controllers
         private readonly ModelUserBuilder _modelBuilder;
         private readonly IFileDataService _fileDataService;
         private readonly IDoctorDataService _doctorDataService;
+        private readonly ISpecialityService _specialityService;
         private readonly IWebHostEnvironment _appEnvironment;
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
             IMapper mapper, IRoleService roleService, IConfiguration configuration, 
             ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService, 
-            IWebHostEnvironment appEnvironment)
+            IWebHostEnvironment appEnvironment, ISpecialityService specialityService)
         {
             _userService = userService;
             _mapper = mapper;
@@ -58,6 +65,7 @@ namespace MedContactApp.Controllers
             _fileDataService = fileDataService;
             _doctorDataService = doctorDataService;
             _appEnvironment = appEnvironment;
+            _specialityService = specialityService; 
         }
 
         [HttpGet]
@@ -143,6 +151,40 @@ namespace MedContactApp.Controllers
                                                     .Include(d => d.User)
                                                     .ThenInclude(u => u!.Roles);
 
+                IQueryable<User> doctors = _userService.GetUsers()
+                                           .Include(u => u.Roles)
+                                           .Include(u => u.DoctorDatas);
+
+                var newdoctors = from d in doctors
+                                 from r in d.Roles!
+                                 where d.DoctorDatas == null || d.DoctorDatas.Count == 0
+                                 where r.Name!.Equals("Doctor")
+                                 select d;
+
+                newdoctors= UserSort(newdoctors, sortOrder);
+                var nList = await newdoctors
+                                  .Select(d => _mapper.Map<DoctorFullDataDto>(d))
+                                  .ToListAsync();
+              
+                //IQueryable<DoctorData> datas = _doctorDataService
+                //                                 .GetDoctorData()
+                //                                 .Include(d => d.Speciality)
+                //                                 .Include(d => d.DayTimeTables);
+
+                //var doctorfulldata = from doct in doctors
+                //                     from d in doct.DoctorDatas!
+                //                     join s in datas on d.UserId equals s.UserId
+                //                     select new 
+                //                     { 
+                //                        Id =doct.Id, Email=doct.Email,
+                //                        Username=doct.Name, Surname=doct.Surname, MidName=doct.MidName,
+                //                        BirthDate = doct.BirthDate, Gender= doct.Gender,
+                //                        IsFullBlocked =doct.IsFullBlocked,
+                //                        DoctorDatas=d, 
+                //                     };
+                
+
+
                 var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
 
                 if (roleId != default)
@@ -156,12 +198,13 @@ namespace MedContactApp.Controllers
                 dDatas = DoctorDataFilter(dDatas, email, name, surname, speciality);
                 dDatas = DoctorDataSort(dDatas, sortOrder);
 
-                var count = await dDatas.CountAsync();
-                var listData = await dDatas.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                var items = listData.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality))).ToList();
-                //DoctorData, User, Speciality
-                //  var docInfoList = dDataList.Select(t => _mapper.Map<DoctorInfo>((t.User, t.Speciality, t.ForDeletion))).ToList();
+                var dataList = await dDatas.ToListAsync();
+                var list= dataList.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality))).ToList();
+                var fulList = nList.Concat(list);
 
+                var count = fulList.Count();
+                var items = fulList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+               
                 string pageRoute = @"/adminpanel/doctordataindex?page=";
                 string processOptions = $"&email{email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
 
@@ -277,6 +320,205 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DoctorDetails(string? userid, string? specr, string? specd)
+        {
+            if (string.IsNullOrEmpty(userid))
+                return NotFound();
+            var res = Guid.TryParse(userid, out Guid userId);
+            
+            if (!res)
+                return NotFound("User Id is incorrect");
+            try 
+            {
+                //var user = await _userService.GetUserByIdAsync(userId);
+                //var doctorData = await _doctorDataService.GetDoctorDataListByUserId(userId);
+                //var spec = await _specialityService.GetSpecialitiesListAsync();
+                var model = await AdminDoctorModelBuildAsync(new AdminEditDoctorModel(), userId, specr, specd);
+                if (model!=null)  //(user!=null && spec!=null)
+                {
+                    //var model = _mapper.Map<AdminEditDoctorModel>(user);
+                    //model.Specialities = spec;
+                    //if (doctorData == null || doctorData.Count==0)
+                    //    return View(model);
+
+                    //var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
+                    //var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
+
+                    //foreach (var item in doctorData)
+                    //{
+                    //    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
+                    //    if (sp != null)
+                    //    {
+
+                    //        if (resSpecR && sp.Id.Equals(specRId))
+                    //        {
+                    //            item.ForDeletion = false;
+                    //           await _doctorDataService.UpdateDoctorDataAsync(item);
+                    //        }
+
+                    //        if (resSpecD && sp.Id.Equals(specDId))
+                    //        {
+                    //            await _doctorDataService.RemoveByIdAsync(item.Id);
+                    //            continue;
+                    //        }
+
+                    //        if (item.ForDeletion == true) 
+                    //            sp.ForDeletion = true;
+                    //        else
+                    //            sp.IsSelected = true;
+                    //        if (item.IsBlocked == true) sp.IsSpecBlocked = true;
+
+                    //    }
+                    //}
+                    return View(model);
+                }
+                return BadRequest();
+            }
+           
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
+        }
+
+        private async Task<AdminEditDoctorModel?> AdminDoctorModelBuildAsync(AdminEditDoctorModel smodel, Guid Uid, 
+            string? specr="", string? specd="")
+        {
+            var user = await _userService.GetUserByIdAsync(Uid);
+            var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
+            var spec = await _specialityService.GetSpecialitiesListAsync();
+            if (user != null && spec != null)
+            {
+               var model = _mapper.Map<AdminEditDoctorModel>(user);
+               model.Specialities = spec;
+               model.SpecialityIds = smodel.SpecialityIds;
+               model.SpecialityBlockIds = smodel.SpecialityBlockIds;
+                if (doctorData == null || doctorData.Count == 0)
+                    return model;
+                var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
+                var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
+                foreach (var item in doctorData)
+                {
+                    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
+                    if (sp != null)
+                    {
+
+                        if (resSpecR && sp.Id.Equals(specRId))
+                        {
+                            item.ForDeletion = false;
+                            await _doctorDataService.UpdateDoctorDataAsync(item);
+                        }
+
+                        if (resSpecD && sp.Id.Equals(specDId))
+                        {
+                            await _doctorDataService.RemoveByIdAsync(item.Id);
+                            continue;
+                        }
+
+                        if (item.ForDeletion == true)
+                            sp.ForDeletion = true;
+                        else
+                            sp.IsSelected = true;
+                        if (item.IsBlocked == true) 
+                            sp.IsSpecBlocked = true;
+                    }
+                }
+                return model;
+            }
+            return null;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DoctorDetails(AdminEditDoctorModel model)
+        {
+            if (model == null && model?.UserId == null)
+                return BadRequest();
+
+            int addresult = 0;
+            int updresult = 0;
+            int subtract = 0;
+
+            var modelFull = await AdminDoctorModelBuildAsync(model, (Guid)model.UserId!);
+            if (modelFull == null)
+                return BadRequest()
+;
+            //var user = await _userService.GetUserByIdAsync((Guid)model.UserId!);
+            var doctorData = await _doctorDataService.GetDoctorDataListByUserId((Guid)model.UserId);
+            var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
+            //var spec = await _specialityService.GetSpecialitiesListAsync();
+            //if (spec != null && user != null && doctorData != null)
+            //{
+            //    var modelFull = _mapper.Map<AdminEditDoctorModel>(user);
+            //        modelFull.Specialities = spec;
+            //        modelFull.SpecialityIds = model.SpecialityIds;
+            //        modelFull.SpecialityBlockIds = model.SpecialityBlockIds;
+
+            if (modelFull.SpecialityIds != null)
+            {
+                    foreach (var sp in modelFull.SpecialityIds)
+                    {
+                        if (doctorData.All(ddt => ddt.SpecialityId != sp))
+                        {
+                            var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
+                            if (specModel != null) specModel.IsSelected = true;
+
+                            DoctorDataDto doctorDataDto = new()
+                            {
+                                Id = Guid.NewGuid(),
+                                IsBlocked = false,
+                                UserId = modelFull?.UserId,
+                                SpecialityId = sp,
+                                RoleId = roleId
+                            };
+                            addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
+                        }
+                    }
+                foreach (var dd in doctorData)
+                {
+                    if (modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
+                    {
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
+                        if (specModel != null) specModel.IsSelected = false;
+
+                        subtract += await _doctorDataService.RemoveByIdAsync(dd.Id);
+                    }
+                }
+            }
+            if (modelFull.SpecialityBlockIds != null)
+            {
+                foreach (var sp in modelFull.SpecialityBlockIds)
+                {
+                    var blockdata = doctorData.FirstOrDefault(d => d.SpecialityId.Equals(sp) && d.IsBlocked==false);
+                    if (blockdata!=null)
+                    {
+                        blockdata.IsBlocked = true;
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
+                        if (specModel != null) specModel.IsSpecBlocked = true;
+                        updresult += await _doctorDataService.UpdateDoctorDataAsync(blockdata);
+                    }
+                }
+
+                foreach (var dd in doctorData)
+                {
+                    if (modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId && dd.IsBlocked == true))
+                    {
+                        dd.IsBlocked = false;
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
+                        if (specModel != null) specModel.IsSpecBlocked = false;
+
+                        updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
+                    }
+                }
+            }
+            //}
+            modelFull.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added" +
+                                   $"<br/>{subtract} was/were deleted<br/>Blockstate of {updresult} was/were updated</b>";
+
+            return View(modelFull);   
+        }
+
+            [HttpGet]
         public async Task<IActionResult> UserDetails(string? id, string? reflink="")
         {
 
@@ -483,7 +725,6 @@ namespace MedContactApp.Controllers
             }
             return dDatas;
         }
-
         private IQueryable<DoctorData> DoctorDataSort(IQueryable<DoctorData> dDatas, SortState sortOrder)
         {
             switch (sortOrder)

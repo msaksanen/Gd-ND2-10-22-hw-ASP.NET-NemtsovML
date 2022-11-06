@@ -20,9 +20,6 @@
     <td area-label="Gender">
         @Html.DisplayFor(modelItem => Model.Gender)
     </td>
-    <td area-label="IsFullBlocked">
-        @Html.DisplayFor(modelItem => Model.IsFullBlocked)
-    </td>
     <td area-label="IsSpecialityBlocked">
         @Html.DisplayFor(modelItem => Model.IsBlocked)
     </td>
@@ -44,7 +41,9 @@
     </td>
    
     <td>
-        <span> <a class="btn btn-primary" href="~/adminpanel/doctordetails/@Model.Id">View details</a></span>
+        <span> <a class="btn btn-link" href="~/adminpanel/specdetails/?userid=@Model.UserId">Speciality details</a></span>
+        <br />
+        <span> <a class="btn btn-link" href="~/adminpanel/doctordetails/?userid=@Model.UserId">Doctor details</a></span>
     </td>
 
 </tr>

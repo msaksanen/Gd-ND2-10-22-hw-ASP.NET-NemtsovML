@@ -122,5 +122,24 @@ namespace MedContactBusiness.ServicesImplementations
 
             return list;
         }
+
+        public async Task <int> UpdateDoctorDataAsync(DoctorDataDto dto)
+        {
+            var data = _mapper.Map<DoctorData>(dto);
+            _unitOfWork.DoctorDataRepository.Update(data);
+            var res = await _unitOfWork.Commit();
+            return res;
+        }
+
+        public async Task<int> RemoveByIdAsync(Guid id)
+        {
+            var data = await _unitOfWork.DoctorDataRepository.GetByIdAsync(id); 
+            if (data!=null)
+            {
+                _unitOfWork.DoctorDataRepository.Remove(data);
+            }
+            var res = await _unitOfWork.Commit();
+            return res;
+        }                 
     }
 }

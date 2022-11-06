@@ -11,7 +11,6 @@
 }
 
 
-
 <Table class="delivery">
 <tbody>
   <tr>
@@ -32,7 +31,7 @@
                 <label>Role: </label>
                 <select name="role" asp-items="Model.FilterViewModel.Roles"></select>
 
-                <input type="submit" value="Filter" />
+                <input type="submit" value="Filter"/>
 
     </td>
     </form>
@@ -91,26 +90,19 @@
                opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.GenderSort">Gender</sort-header>
         </th>
-        <th>
-              <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
-              opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-              opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
-              opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
-              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsFullBlockedSort">IsFullBlocked</sort-header>
-        </th>
          <th>
               <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
               opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
               opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
-              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsBlockedSort">IsSpecialityBlocked</sort-header>
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsBlockedSort">Speciality Blocked</sort-header>
         </th>
         <th>
               <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
               opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
               opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
-              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsMarkedSort">IsMarkedForDelete</sort-header>
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsMarkedSort">Marked For Delete</sort-header>
         </th>
 
         <th>
