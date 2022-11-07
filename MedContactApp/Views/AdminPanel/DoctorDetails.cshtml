@@ -103,17 +103,16 @@
                             {
                                 @foreach (var item in Model.Specialities)
                                 {
-                                    @if (item.IsSelected == true)
-                                    {
-                                        @if (item.IsSpecBlocked != true)
-                                        {
-                                            <option label="@item.Name" value="@item.Id">@item.Name</option>
-                                        }
-                                        else
+                                   
+                                        @if (item.IsSpecBlocked == true)
                                         {
                                             <option label="@item.Name" selected value="@item.Id">@item.Name</option>
                                         }
-                                    }
+                                        else
+                                        {
+                                            <option label="@item.Name"  value="@item.Id">@item.Name</option>
+                                        }
+                                  
                                    
                                 }
                             }

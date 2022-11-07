@@ -107,35 +107,36 @@ namespace MedContactApp.Controllers
             if (Guid.TryParse(userId, out Guid Uid) && roleId != null)
             {
                 model = await DoctorDataModelBuildAsync(model, Uid);
+                var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
 
                 if (model.Password != null && await _userService.CheckUserPassword(Uid, model.Password))
                 {
-                    if (model.SpecialityIds != null)
-                    {
-                        var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
-
-                        foreach (var spec in model.SpecialityIds)
+                        if (model.SpecialityIds != null)
                         {
-                            if (doctorData.All(ddt => ddt.SpecialityId != spec))
+                            
+
+                            foreach (var spec in model.SpecialityIds)
                             {
-                                var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(spec));
-                                if (specModel != null) specModel.IsSelected = true;
-
-                                DoctorDataDto doctorDataDto = new()
+                                if (doctorData.All(ddt => ddt.SpecialityId != spec))
                                 {
-                                    Id = Guid.NewGuid(),
-                                    IsBlocked = true,
-                                    UserId = Uid,
-                                    SpecialityId = spec,
-                                    RoleId = roleId
-                                };
-                                addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
-                            }
-                        }
+                                    var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(spec));
+                                    if (specModel != null) specModel.IsSelected = true;
 
+                                    DoctorDataDto doctorDataDto = new()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        IsBlocked = true,
+                                        UserId = Uid,
+                                        SpecialityId = spec,
+                                        RoleId = roleId
+                                    };
+                                    addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
+                                }
+                            }
+                        }   
                         foreach (var dd in doctorData)
                         {
-                            if (model!.SpecialityIds.All(spec => spec != dd.SpecialityId))
+                            if (model!.SpecialityIds==null || model!.SpecialityIds.All(spec => spec != dd.SpecialityId))
                             {
                                 var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
                                 if (specModel != null) specModel.IsSelected = false;
@@ -146,12 +147,12 @@ namespace MedContactApp.Controllers
 
                         model.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added<br/>{subtract} was/were marked for deletion</b>";
                         return View(model);
-                    }
-                    else
-                    {
-                        model.SystemInfo = $"<b>You have not chosen any speciality</b>";
-                        return View(model);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    model.SystemInfo = $"<b>You have not chosen any speciality</b>";
+                    //    return View(model);
+                    //}
                 }
                 model.SystemInfo = "You have entered incorrect password";
                 return View(model);

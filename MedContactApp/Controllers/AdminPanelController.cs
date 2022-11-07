@@ -420,6 +420,7 @@ namespace MedContactApp.Controllers
                             sp.ForDeletion = true;
                         else
                             sp.IsSelected = true;
+
                         if (item.IsBlocked == true) 
                             sp.IsSpecBlocked = true;
                     }
@@ -456,41 +457,45 @@ namespace MedContactApp.Controllers
 
             if (modelFull.SpecialityIds != null)
             {
-                    foreach (var sp in modelFull.SpecialityIds)
-                    {
-                        if (doctorData.All(ddt => ddt.SpecialityId != sp))
-                        {
-                            var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
-                            if (specModel != null) specModel.IsSelected = true;
-
-                            DoctorDataDto doctorDataDto = new()
-                            {
-                                Id = Guid.NewGuid(),
-                                IsBlocked = false,
-                                UserId = modelFull?.UserId,
-                                SpecialityId = sp,
-                                RoleId = roleId
-                            };
-                            addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
-                        }
-                    }
-                foreach (var dd in doctorData)
+                foreach (var sp in modelFull.SpecialityIds)
                 {
-                    if (modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
+                    if (doctorData.All(ddt => ddt.SpecialityId != sp))
                     {
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
-                        if (specModel != null) specModel.IsSelected = false;
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
+                        if (specModel != null) specModel.IsSelected = true;
 
-                        subtract += await _doctorDataService.RemoveByIdAsync(dd.Id);
+                        DoctorDataDto doctorDataDto = new()
+                        {
+                            Id = Guid.NewGuid(),
+                            IsBlocked = false,
+                            UserId = modelFull?.UserId,
+                            SpecialityId = sp,
+                            RoleId = roleId
+                        };
+                        addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
                     }
                 }
             }
+                foreach (var dd in doctorData)
+                {
+                   if (modelFull?.SpecialityIds==null || modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
+                   {
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion==false);
+                    if (specModel != null)
+                    {
+                        specModel.IsSelected = false;
+                        specModel.ForDeletion = true;
+                        subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
+                    }
+                   }
+                }
+
             if (modelFull.SpecialityBlockIds != null)
             {
                 foreach (var sp in modelFull.SpecialityBlockIds)
                 {
-                    var blockdata = doctorData.FirstOrDefault(d => d.SpecialityId.Equals(sp) && d.IsBlocked==false);
-                    if (blockdata!=null)
+                    var blockdata = doctorData.FirstOrDefault(d => d.SpecialityId.Equals(sp) && d.IsBlocked == false);
+                    if (blockdata != null)
                     {
                         blockdata.IsBlocked = true;
                         var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
@@ -498,19 +503,23 @@ namespace MedContactApp.Controllers
                         updresult += await _doctorDataService.UpdateDoctorDataAsync(blockdata);
                     }
                 }
+            }
 
                 foreach (var dd in doctorData)
                 {
-                    if (modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId && dd.IsBlocked == true))
+                    if (modelFull?.SpecialityBlockIds == null || modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId))
                     {
-                        dd.IsBlocked = false;
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
-                        if (specModel != null) specModel.IsSpecBlocked = false;
+                        if (dd.IsBlocked==true)
+                        {
+                           dd.IsBlocked = false;
+                           var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
+                           if (specModel != null) specModel.IsSpecBlocked = false;
 
-                        updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
+                           updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
+                        }
                     }
                 }
-            }
+            
             //}
             modelFull.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added" +
                                    $"<br/>{subtract} was/were deleted<br/>Blockstate of {updresult} was/were updated</b>";
