@@ -2,7 +2,15 @@
 
 <tr>
     <td area-label="Email">
-        @Html.DisplayFor(modelItem => Model.Email)
+        @if(Model.IsDependent !=true)
+        {
+            @Html.Raw($"<b>{@Model.Email}</b>");
+        }
+        else
+        {
+            @Html.Raw($"{@Model.Email}")
+        }
+       
     </td>
     <td area-label="Names">
         @Html.DisplayFor(modelItem => Model.Name) 

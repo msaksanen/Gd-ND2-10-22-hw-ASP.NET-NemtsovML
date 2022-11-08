@@ -54,8 +54,8 @@ namespace MedContactApp.Controllers
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
-            IMapper mapper, IRoleService roleService, IConfiguration configuration, 
-            ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService, 
+            IMapper mapper, IRoleService roleService, IConfiguration configuration,
+            ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService,
             IWebHostEnvironment appEnvironment, ISpecialityService specialityService)
         {
             _userService = userService;
@@ -66,7 +66,7 @@ namespace MedContactApp.Controllers
             _fileDataService = fileDataService;
             _doctorDataService = doctorDataService;
             _appEnvironment = appEnvironment;
-            _specialityService = specialityService; 
+            _specialityService = specialityService;
         }
 
         [HttpGet]
@@ -96,6 +96,12 @@ namespace MedContactApp.Controllers
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
                 IQueryable<User> users = _userService.GetUsers().Include(u => u.Roles);
+
+                if (groupOrder.Equals(GroupState.FamilyGroupOn))
+                {
+                    users = users.Include(u => u.Family);
+                }
+              
                 var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
 
                 if (roleId != default)
@@ -118,7 +124,7 @@ namespace MedContactApp.Controllers
                 {
                     users = UserSort(users, sortOrder);
                 }
-                       
+
                 var count = await users.CountAsync();
                 var items = await users.Skip((page - 1) * pageSize).Take(pageSize)
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
@@ -127,10 +133,10 @@ namespace MedContactApp.Controllers
                 string processOptions = $"&grouporder={groupOrder}&email{email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
 
                 UserIndexViewModel viewModel = new(
-                    items, processOptions, groupOrder,icon,
+                    items, processOptions, groupOrder, icon,
                     new PageViewModel(count, page, pageSize, pageRoute),
                     new FilterViewModel(roles, roleId, name, email),
-                    new SortViewModel(sortOrder) 
+                    new SortViewModel(sortOrder)
                 );
                 return View(viewModel);
 
@@ -143,11 +149,11 @@ namespace MedContactApp.Controllers
 
         }
 
-       
-      
+
+
 
         [HttpGet]
-        public async Task<IActionResult> DoctorDataIndex(string email, string name, string surname, string role, 
+        public async Task<IActionResult> DoctorDataIndex(string email, string name, string surname, string role,
             string speciality, int page = 1, SortState sortOrder = SortState.EmailAsc)
         {
 
@@ -175,11 +181,11 @@ namespace MedContactApp.Controllers
                                  where r.Name!.Equals("Doctor")
                                  select d;
 
-                newdoctors= UserSort(newdoctors, sortOrder);
+                newdoctors = UserSort(newdoctors, sortOrder);
                 var nList = await newdoctors
                                   .Select(d => _mapper.Map<DoctorFullDataDto>(d))
                                   .ToListAsync();
-              
+
                 //IQueryable<DoctorData> datas = _doctorDataService
                 //                                 .GetDoctorData()
                 //                                 .Include(d => d.Speciality)
@@ -196,7 +202,7 @@ namespace MedContactApp.Controllers
                 //                        IsFullBlocked =doct.IsFullBlocked,
                 //                        DoctorDatas=d, 
                 //                     };
-                
+
 
 
                 var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
@@ -213,12 +219,12 @@ namespace MedContactApp.Controllers
                 dDatas = DoctorDataSort(dDatas, sortOrder);
 
                 var dataList = await dDatas.ToListAsync();
-                var list= dataList.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality))).ToList();
+                var list = dataList.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality))).ToList();
                 var fulList = nList.Concat(list);
 
                 var count = fulList.Count();
                 var items = fulList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-               
+
                 string pageRoute = @"/adminpanel/doctordataindex?page=";
                 string processOptions = $"&email{email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
 
@@ -282,7 +288,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ApplicantDetails(string? id, string? filedata="")
+        public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "")
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest();
@@ -291,7 +297,7 @@ namespace MedContactApp.Controllers
             if (!res)
                 return BadRequest();
             var usr = await _userService.GetUserByIdAsync(Id);
-            if(usr == null)
+            if (usr == null)
                 return NotFound();
 
             var model = _mapper.Map<ApplicantModel>(usr);
@@ -303,7 +309,7 @@ namespace MedContactApp.Controllers
                     model.SystemInfo = $"<b>File data Id({filedata}) for deletion is incorrect.</b>";
                 var removeResult = await _fileDataService.RemoveFileDataWithFileById(fdId, _appEnvironment.WebRootPath);
 
-                switch(removeResult)
+                switch (removeResult)
                 {
                     case -2:
                         model.SystemInfo = $"<b>FileData with Id({filedata}) was not found <br/>File cannot be deleted</b>";
@@ -320,8 +326,8 @@ namespace MedContactApp.Controllers
                 }
             }
             var fileList = await _fileDataService.FileDataTolistByUserId(Id);
-            if (fileList!=null && fileList.Any())
-                fileList= fileList.Where(x => x.Category != null && x.Category.Equals("Applicant")).ToList();
+            if (fileList != null && fileList.Any())
+                fileList = fileList.Where(x => x.Category != null && x.Category.Equals("Applicant")).ToList();
             model.fileDatas = fileList;
 
             var doctInfoList = await _doctorDataService.GetDoctorInfoByUserId(Id);
@@ -339,19 +345,19 @@ namespace MedContactApp.Controllers
             if (string.IsNullOrEmpty(userid))
                 return NotFound();
             var res = Guid.TryParse(userid, out Guid userId);
-            
+
             if (!res)
                 return NotFound("User Id is incorrect");
-            try 
+            try
             {
                 var model = await AdminDoctorModelBuildAsync(new AdminEditDoctorModel(), userId, specr, specd);
-                if (model!=null)
+                if (model != null)
                 {
                     return View(model);
                 }
                 return BadRequest();
             }
-           
+
             catch (Exception e)
             {
                 Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
@@ -399,25 +405,25 @@ namespace MedContactApp.Controllers
                             UserId = modelFull?.UserId,
                             SpecialityId = sp,
                             RoleId = roleId,
-                            SpecNameReserved =specModel?.Name
+                            SpecNameReserved = specModel?.Name
                         };
                         addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
                     }
                 }
             }
-                foreach (var dd in doctorData)
+            foreach (var dd in doctorData)
+            {
+                if (modelFull?.SpecialityIds == null || modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
                 {
-                   if (modelFull?.SpecialityIds==null || modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
-                   {
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion==false);
+                    var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion == false);
                     if (specModel != null)
                     {
                         specModel.IsSelected = false;
                         specModel.ForDeletion = true;
                         subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
                     }
-                   }
                 }
+            }
 
             if (modelFull.SpecialityBlockIds != null)
             {
@@ -434,30 +440,30 @@ namespace MedContactApp.Controllers
                 }
             }
 
-                foreach (var dd in doctorData)
+            foreach (var dd in doctorData)
+            {
+                if (modelFull?.SpecialityBlockIds == null || modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId))
                 {
-                    if (modelFull?.SpecialityBlockIds == null || modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId))
+                    if (dd.IsBlocked == true)
                     {
-                        if (dd.IsBlocked==true)
-                        {
-                           dd.IsBlocked = false;
-                           var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
-                           if (specModel != null) specModel.IsSpecBlocked = false;
+                        dd.IsBlocked = false;
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
+                        if (specModel != null) specModel.IsSpecBlocked = false;
 
-                           updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
-                        }
+                        updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
                     }
                 }
-            
+            }
+
             //}
             modelFull.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added" +
                                    $"<br/>{subtract} was/were deleted<br/>Blockstate of {updresult} was/were updated</b>";
 
-            return View(modelFull);   
+            return View(modelFull);
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserDetails(string? id, string? reflink="")
+        public async Task<IActionResult> UserDetails(string? id, string? reflink = "")
         {
 
             AdminUserEditModel emptyModel = new();
@@ -465,9 +471,9 @@ namespace MedContactApp.Controllers
             if (model == null)
                 return NotFound();
 
-           model.Reflink = reflink;
+            model.Reflink = reflink;
 
-           return View(model);
+            return View(model);
         }
 
         [HttpPost]
@@ -549,7 +555,7 @@ namespace MedContactApp.Controllers
                 }
 
                 modelFull!.SystemInfo = "<b>Something went wrong (</b>";
-               
+
                 return View(modelFull);
 
             }
@@ -607,12 +613,15 @@ namespace MedContactApp.Controllers
             }
             return null;
         }
-        private IQueryable<User> UserSort(IQueryable<User> users, SortState sortOrder, int fSort=0)
+        private IQueryable<User> UserSort(IQueryable<User> users, SortState sortOrder, int fSort = 0)
         {
-            Expression<Func<User, Guid?>>? orderFamilyBy = default;
-            if (fSort==1)
-                 orderFamilyBy = d =>d.FamilyId;
-
+            Expression<Func<User, string?>>? orderFamilyBy = default;
+            if (fSort == 1)
+            {
+                orderFamilyBy = d => d!.Family!.MainUserId.Equals(d.Id) ? ("!"+ d.FamilyId.ToString()+"A") : 
+                                (d.FamilyId != null ? ("!"+d.FamilyId.ToString()+"B") : ("z" + d.FamilyId.ToString() + "z"));
+            }
+          
             switch (sortOrder)
             {
                 case SortState.EmailDesc:
@@ -641,7 +650,7 @@ namespace MedContactApp.Controllers
                     break;
                 case SortState.BirthDateDesc:
                     if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.BirthDate);
-                    else  users = users.OrderByDescending(s => s.BirthDate);
+                    else users = users.OrderByDescending(s => s.BirthDate);
                     break;
                 case SortState.LastLoginAsc:
                     if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.LastLogin);
@@ -677,7 +686,7 @@ namespace MedContactApp.Controllers
                     break;
                 case SortState.GenderAsc:
                     if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Gender);
-                    else  users = users.OrderBy(s => s.Gender);
+                    else users = users.OrderBy(s => s.Gender);
                     break;
                 case SortState.GenderDesc:
                     if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Gender);
@@ -685,14 +694,14 @@ namespace MedContactApp.Controllers
                     break;
 
                 default:
-                    if (orderFamilyBy!=null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Email);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Email);
                     else users = users.OrderBy(s => s.Email);
                     break;
             }
 
             return users;
         }
-        private IQueryable<User> UserFilter (IQueryable<User> users, string email, string name, string surname)
+        private IQueryable<User> UserFilter(IQueryable<User> users, string email, string name, string surname)
         {
             if (!string.IsNullOrEmpty(email))
             {
@@ -712,7 +721,7 @@ namespace MedContactApp.Controllers
         {
             if (!string.IsNullOrEmpty(email))
             {
-                dDatas = dDatas.Where(p => p.User!.Email!=null && p.User.Email.Contains(email));
+                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.Contains(email));
             }
             if (!string.IsNullOrEmpty(name))
             {
