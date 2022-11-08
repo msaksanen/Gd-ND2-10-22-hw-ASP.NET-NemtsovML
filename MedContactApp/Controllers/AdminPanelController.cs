@@ -36,6 +36,7 @@ using MedContactDb.Migrations;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace MedContactApp.Controllers
 {
@@ -83,10 +84,10 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         public async Task<IActionResult> UserIndex(string email, string name, string surname, string role, int page = 1,
-               SortState sortOrder = SortState.EmailAsc)
+               SortState sortOrder = SortState.EmailAsc, GroupState groupOrder = GroupState.FamilyGroupOff)
 
         {
-
+            string icon = string.Empty;
             var res = Guid.TryParse(role, out Guid roleId);
             if (!res)
                 roleId = default;
@@ -105,21 +106,31 @@ namespace MedContactApp.Controllers
                              select u);
                 }
 
-                users = UserFilter(users, email, name, surname);
-                users = UserSort(users, sortOrder);
 
+                users = UserFilter(users, email, name, surname);
+
+                if (groupOrder.Equals(GroupState.FamilyGroupOn))
+                {
+                    users = UserSort(users, sortOrder, 1);
+                    icon = @$"<i class=""bi bi-check2-circle""></i>";
+                }
+                else
+                {
+                    users = UserSort(users, sortOrder);
+                }
+                       
                 var count = await users.CountAsync();
                 var items = await users.Skip((page - 1) * pageSize).Take(pageSize)
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
 
                 string pageRoute = @"/adminpanel/userindex?page=";
-                string processOptions = $"&email{email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
+                string processOptions = $"&grouporder={groupOrder}&email{email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
 
                 UserIndexViewModel viewModel = new(
-                    items, processOptions,
+                    items, processOptions, groupOrder,icon,
                     new PageViewModel(count, page, pageSize, pageRoute),
                     new FilterViewModel(roles, roleId, name, email),
-                    new SortViewModel(sortOrder)
+                    new SortViewModel(sortOrder) 
                 );
                 return View(viewModel);
 
@@ -131,6 +142,9 @@ namespace MedContactApp.Controllers
             }
 
         }
+
+       
+      
 
         [HttpGet]
         public async Task<IActionResult> DoctorDataIndex(string email, string name, string surname, string role, 
@@ -330,46 +344,9 @@ namespace MedContactApp.Controllers
                 return NotFound("User Id is incorrect");
             try 
             {
-                //var user = await _userService.GetUserByIdAsync(userId);
-                //var doctorData = await _doctorDataService.GetDoctorDataListByUserId(userId);
-                //var spec = await _specialityService.GetSpecialitiesListAsync();
                 var model = await AdminDoctorModelBuildAsync(new AdminEditDoctorModel(), userId, specr, specd);
-                if (model!=null)  //(user!=null && spec!=null)
+                if (model!=null)
                 {
-                    //var model = _mapper.Map<AdminEditDoctorModel>(user);
-                    //model.Specialities = spec;
-                    //if (doctorData == null || doctorData.Count==0)
-                    //    return View(model);
-
-                    //var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
-                    //var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
-
-                    //foreach (var item in doctorData)
-                    //{
-                    //    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
-                    //    if (sp != null)
-                    //    {
-
-                    //        if (resSpecR && sp.Id.Equals(specRId))
-                    //        {
-                    //            item.ForDeletion = false;
-                    //           await _doctorDataService.UpdateDoctorDataAsync(item);
-                    //        }
-
-                    //        if (resSpecD && sp.Id.Equals(specDId))
-                    //        {
-                    //            await _doctorDataService.RemoveByIdAsync(item.Id);
-                    //            continue;
-                    //        }
-
-                    //        if (item.ForDeletion == true) 
-                    //            sp.ForDeletion = true;
-                    //        else
-                    //            sp.IsSelected = true;
-                    //        if (item.IsBlocked == true) sp.IsSpecBlocked = true;
-
-                    //    }
-                    //}
                     return View(model);
                 }
                 return BadRequest();
@@ -380,54 +357,6 @@ namespace MedContactApp.Controllers
                 Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
                 return BadRequest();
             }
-        }
-
-        private async Task<AdminEditDoctorModel?> AdminDoctorModelBuildAsync(AdminEditDoctorModel smodel, Guid Uid, 
-            string? specr="", string? specd="")
-        {
-            var user = await _userService.GetUserByIdAsync(Uid);
-            var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
-            var spec = await _specialityService.GetSpecialitiesListAsync();
-            if (user != null && spec != null)
-            {
-               var model = _mapper.Map<AdminEditDoctorModel>(user);
-               model.Specialities = spec;
-               model.SpecialityIds = smodel.SpecialityIds;
-               model.SpecialityBlockIds = smodel.SpecialityBlockIds;
-                if (doctorData == null || doctorData.Count == 0)
-                    return model;
-                var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
-                var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
-                foreach (var item in doctorData)
-                {
-                    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
-                    if (sp != null)
-                    {
-
-                        if (resSpecR && sp.Id.Equals(specRId))
-                        {
-                            item.ForDeletion = false;
-                            await _doctorDataService.UpdateDoctorDataAsync(item);
-                        }
-
-                        if (resSpecD && sp.Id.Equals(specDId))
-                        {
-                            await _doctorDataService.RemoveByIdAsync(item.Id);
-                            continue;
-                        }
-
-                        if (item.ForDeletion == true)
-                            sp.ForDeletion = true;
-                        else
-                            sp.IsSelected = true;
-
-                        if (item.IsBlocked == true) 
-                            sp.IsSpecBlocked = true;
-                    }
-                }
-                return model;
-            }
-            return null;
         }
 
         [HttpPost]
@@ -442,8 +371,7 @@ namespace MedContactApp.Controllers
 
             var modelFull = await AdminDoctorModelBuildAsync(model, (Guid)model.UserId!);
             if (modelFull == null)
-                return BadRequest()
-;
+                return BadRequest();
             //var user = await _userService.GetUserByIdAsync((Guid)model.UserId!);
             var doctorData = await _doctorDataService.GetDoctorDataListByUserId((Guid)model.UserId);
             var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
@@ -470,7 +398,8 @@ namespace MedContactApp.Controllers
                             IsBlocked = false,
                             UserId = modelFull?.UserId,
                             SpecialityId = sp,
-                            RoleId = roleId
+                            RoleId = roleId,
+                            SpecNameReserved =specModel?.Name
                         };
                         addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
                     }
@@ -527,7 +456,7 @@ namespace MedContactApp.Controllers
             return View(modelFull);   
         }
 
-            [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> UserDetails(string? id, string? reflink="")
         {
 
@@ -631,71 +560,138 @@ namespace MedContactApp.Controllers
             }
         }
 
-
-        private IQueryable<User> UserSort(IQueryable<User> users, SortState sortOrder)
+        private async Task<AdminEditDoctorModel?> AdminDoctorModelBuildAsync(AdminEditDoctorModel smodel, Guid Uid,
+           string? specr = "", string? specd = "")
         {
+            var user = await _userService.GetUserByIdAsync(Uid);
+            var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
+            var spec = await _specialityService.GetSpecialitiesListAsync();
+            if (user != null && spec != null)
+            {
+                var model = _mapper.Map<AdminEditDoctorModel>(user);
+                model.Specialities = spec;
+                model.SpecialityIds = smodel.SpecialityIds;
+                model.SpecialityBlockIds = smodel.SpecialityBlockIds;
+                if (doctorData == null || doctorData.Count == 0)
+                    return model;
+                var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
+                var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
+                foreach (var item in doctorData)
+                {
+                    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
+                    if (sp != null)
+                    {
+
+                        if (resSpecR && sp.Id.Equals(specRId))
+                        {
+                            item.ForDeletion = false;
+                            await _doctorDataService.UpdateDoctorDataAsync(item);
+                        }
+
+                        if (resSpecD && sp.Id.Equals(specDId))
+                        {
+                            await _doctorDataService.RemoveByIdAsync(item.Id);
+                            continue;
+                        }
+
+                        if (item.ForDeletion == true)
+                            sp.ForDeletion = true;
+                        else
+                            sp.IsSelected = true;
+
+                        if (item.IsBlocked == true)
+                            sp.IsSpecBlocked = true;
+                    }
+                }
+                return model;
+            }
+            return null;
+        }
+        private IQueryable<User> UserSort(IQueryable<User> users, SortState sortOrder, int fSort=0)
+        {
+            Expression<Func<User, Guid?>>? orderFamilyBy = default;
+            if (fSort==1)
+                 orderFamilyBy = d =>d.FamilyId;
+
             switch (sortOrder)
             {
                 case SortState.EmailDesc:
-                    users = users.OrderByDescending(s => s.Email);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Email);
+                    else users = users.OrderByDescending(s => s.Email);
                     break;
                 case SortState.NameAsc:
-                    users = users.OrderBy(s => s.Name);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Name);
+                    else users = users.OrderBy(s => s.Name);
                     break;
                 case SortState.NameDesc:
-                    users = users.OrderByDescending(s => s.Name);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Name);
+                    else users = users.OrderByDescending(s => s.Name);
                     break;
                 case SortState.SurnameAsc:
-                    users = users.OrderBy(s => s.Surname);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Surname);
+                    else users = users.OrderBy(s => s.Surname);
                     break;
                 case SortState.SurnameDesc:
-                    users = users.OrderByDescending(s => s.Surname);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Surname);
+                    else users = users.OrderByDescending(s => s.Surname);
                     break;
                 case SortState.BirtDateAsc:
-                    users = users.OrderBy(s => s.BirthDate);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.BirthDate);
+                    else users = users.OrderBy(s => s.BirthDate);
                     break;
                 case SortState.BirthDateDesc:
-                    users = users.OrderByDescending(s => s.BirthDate);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.BirthDate);
+                    else  users = users.OrderByDescending(s => s.BirthDate);
                     break;
                 case SortState.LastLoginAsc:
-                    users = users.OrderBy(s => s.LastLogin);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.LastLogin);
+                    else users = users.OrderBy(s => s.LastLogin);
                     break;
                 case SortState.LastLoginDesc:
-                    users = users.OrderByDescending(s => s.LastLogin);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.LastLogin);
+                    else users = users.OrderByDescending(s => s.LastLogin);
                     break;
                 case SortState.IsFullBlockedAsc:
-                    users = users.OrderBy(s => s.IsFullBlocked);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsFullBlocked);
+                    else users = users.OrderBy(s => s.IsFullBlocked);
                     break;
                 case SortState.IsFullBlockedDesc:
-                    users = users.OrderByDescending(s => s.IsFullBlocked);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsFullBlocked);
+                    else users = users.OrderByDescending(s => s.IsFullBlocked);
                     break;
                 case SortState.IsFamilyDependentAsc:
-                    users = users.OrderBy(s => s.IsDependent);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsDependent);
+                    else users = users.OrderBy(s => s.IsDependent);
                     break;
                 case SortState.IsFamilyDependentDesc:
-                    users = users.OrderByDescending(s => s.IsDependent);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsDependent);
+                    else users = users.OrderByDescending(s => s.IsDependent);
                     break;
                 case SortState.IsOnlineAsc:
-                    users = users.OrderBy(s => s.IsOnline);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsOnline);
+                    else users = users.OrderBy(s => s.IsOnline);
                     break;
                 case SortState.IsOnlineDesc:
-                    users = users.OrderByDescending(s => s.IsOnline);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsOnline);
+                    else users = users.OrderByDescending(s => s.IsOnline);
                     break;
                 case SortState.GenderAsc:
-                    users = users.OrderBy(s => s.Gender);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Gender);
+                    else  users = users.OrderBy(s => s.Gender);
                     break;
                 case SortState.GenderDesc:
-                    users = users.OrderByDescending(s => s.Gender);
+                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Gender);
+                    else users = users.OrderByDescending(s => s.Gender);
                     break;
 
                 default:
-                    users = users.OrderBy(s => s.Email);
+                    if (orderFamilyBy!=null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Email);
+                    else users = users.OrderBy(s => s.Email);
                     break;
             }
 
             return users;
         }
-
         private IQueryable<User> UserFilter (IQueryable<User> users, string email, string name, string surname)
         {
             if (!string.IsNullOrEmpty(email))

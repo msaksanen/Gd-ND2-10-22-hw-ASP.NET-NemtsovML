@@ -161,6 +161,9 @@ namespace MedContactDb.Migrations
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SpecNameReserved")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("SpecialityId")
                         .HasColumnType("uniqueidentifier");
 

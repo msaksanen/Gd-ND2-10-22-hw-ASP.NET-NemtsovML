@@ -14,6 +14,7 @@ namespace MedContactDb.Entities
         public Role? Role { get; set; }
         public Guid? UserId { get; set; }
         public User? User { get; set; }
+        public string? SpecNameReserved { get; set; }
         public bool? IsBlocked { get; set; }
         public bool? ForDeletion { get; set; }
         public Guid? SpecialityId { get; set; }

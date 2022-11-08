@@ -34,6 +34,19 @@ namespace MedContactBusiness.ServicesImplementations
                          .Select(sp => _mapper.Map<SpecialityDto>(sp))
                          .ToListAsync();
         }
-       
+        
+        public async Task<int> DeleteSpecialityByName(string? name)
+        {
+            int res = 0;
+            if (name != null)
+            {
+                var spec = await _unitOfWork.SpecialityRepository.Get().FirstOrDefaultAsync(x => x.Name != null && x.Name.Equals(name));
+                
+                if (spec!=null ) _unitOfWork.SpecialityRepository.Remove(spec);
+                res = await _unitOfWork.Commit();
+            }
+            return res;
+        }
+
     }
 }

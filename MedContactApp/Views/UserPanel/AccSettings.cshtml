@@ -32,12 +32,14 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IsFullBlocked)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RoleNames)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.RoleNames != null)
+        
+       
+            @if (Model.RoleNames != null && (Model.IsDependent== false || Model.IsDependent==null))
             {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.RoleNames)
+            </dt>
+            <dd class="col-sm-10">
                 <ul class="list-group list-group-flush">
                 @foreach (var item in Model.RoleNames)
                 {
@@ -47,8 +49,9 @@
                     
                 }
                </ul>
+            </dd>
             }
-        </dd>
+        
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>

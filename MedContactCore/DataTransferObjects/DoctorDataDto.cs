@@ -14,6 +14,7 @@ namespace MedContactCore.DataTransferObjects
         public Guid? UserId { get; set; }
         public bool? IsBlocked { get; set; }
         public bool? ForDeletion { get; set; }
+        public string? SpecNameReserved { get; set; }
         public Guid? SpecialityId { get; set; }
         public List<DayTimeTableDto>? DayTimeTables { get; set; }
     }

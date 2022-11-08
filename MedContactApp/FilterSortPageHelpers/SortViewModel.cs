@@ -17,8 +17,8 @@ namespace MedContactApp.FilterSortPageHelpers
         public SortState IsBlockedSort { get; }
         public SortState IsMarkedSort { get; }
         public SortState SpecialitySort { get; }
-
         public SortState Current { get; }
+        public SortState PrevState { get; }
         public bool Up { get; set; }  
 
         public SortViewModel(SortState sortOrder)
@@ -37,6 +37,8 @@ namespace MedContactApp.FilterSortPageHelpers
             IsFamilyDependentSort = SortState.IsFamilyDependentAsc;
             IsOnlineSort = SortState.IsOnlineAsc;
 
+            PrevState = sortOrder;
+
             Up = true;
 
             if (sortOrder == SortState.EmailDesc || sortOrder == SortState.BirthDateDesc || sortOrder == SortState.NameDesc
@@ -47,6 +49,7 @@ namespace MedContactApp.FilterSortPageHelpers
             {
                 Up = false;
             }
+
 
             switch (sortOrder)
             {
@@ -90,7 +93,7 @@ namespace MedContactApp.FilterSortPageHelpers
                     Current = IsFullBlockedSort = SortState.IsFullBlockedAsc;
                     break;
                 case SortState.IsFamilyDependentAsc:
-                    Current = IsFamilyDependentSort = SortState.IsFullBlockedDesc;
+                    Current = IsFamilyDependentSort = SortState.IsFamilyDependentDesc;
                     break;
                 case SortState.IsFamilyDependentDesc:
                     Current = IsFamilyDependentSort = SortState.IsFamilyDependentAsc;

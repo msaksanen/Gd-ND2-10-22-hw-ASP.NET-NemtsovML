@@ -128,7 +128,8 @@ namespace MedContactApp.Controllers
                                         IsBlocked = true,
                                         UserId = Uid,
                                         SpecialityId = spec,
-                                        RoleId = roleId
+                                        RoleId = roleId,
+                                        SpecNameReserved = specModel?.Name
                                     };
                                     addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
                                 }

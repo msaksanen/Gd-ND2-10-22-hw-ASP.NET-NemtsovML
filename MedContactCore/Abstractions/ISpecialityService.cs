@@ -10,5 +10,6 @@ namespace MedContactCore.Abstractions
     public interface ISpecialityService
     {
         Task<List<SpecialityDto>?> GetSpecialitiesListAsync();
+        Task<int> DeleteSpecialityByName(string? name);
     }
 }
