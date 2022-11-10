@@ -374,7 +374,8 @@ namespace MedContactApp.Controllers
             int addresult = 0;
             int updresult = 0;
             int subtract = 0;
-
+         try
+         { 
             var modelFull = await AdminDoctorModelBuildAsync(model, (Guid)model.UserId!);
             if (modelFull == null)
                 return BadRequest();
@@ -415,7 +416,7 @@ namespace MedContactApp.Controllers
             {
                 if (modelFull?.SpecialityIds == null || modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
                 {
-                    var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion == false);
+                    var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion != true);
                     if (specModel != null)
                     {
                         specModel.IsSelected = false;
@@ -433,7 +434,7 @@ namespace MedContactApp.Controllers
                     if (blockdata != null)
                     {
                         blockdata.IsBlocked = true;
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
+                        var specModel = modelFull?.Specialities?.FirstOrDefault(s => s.Id.Equals(sp));
                         if (specModel != null) specModel.IsSpecBlocked = true;
                         updresult += await _doctorDataService.UpdateDoctorDataAsync(blockdata);
                     }
@@ -461,6 +462,12 @@ namespace MedContactApp.Controllers
 
             return View(modelFull);
         }
+        catch (Exception e)
+        {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+        }
+    }
 
         [HttpGet]
         public async Task<IActionResult> UserDetails(string? id, string? reflink = "")

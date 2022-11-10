@@ -117,7 +117,8 @@ namespace MedContactApp.Controllers
 
                             foreach (var spec in model.SpecialityIds)
                             {
-                                if (doctorData.All(ddt => ddt.SpecialityId != spec))
+                                if (doctorData.All(ddt => ddt.SpecialityId != spec) || 
+                                    doctorData.Any(ddt => ddt.SpecialityId == spec && ddt.ForDeletion==true))
                                 {
                                     var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(spec));
                                     if (specModel != null) specModel.IsSelected = true;

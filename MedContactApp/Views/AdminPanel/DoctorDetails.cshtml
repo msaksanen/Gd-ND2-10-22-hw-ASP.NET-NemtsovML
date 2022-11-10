@@ -101,20 +101,23 @@
 
                             @if (Model.Specialities != null)
                             {
-                                @foreach (var item in Model.Specialities)
-                                {
+                               @foreach (var item in Model.Specialities)
+                               {
+                                 @if (item.IsSelected == true || item.ForDeletion==true)
+                                 {
+                                    @if (item.IsSpecBlocked == true)
+                                    {
+                                        <option label="@item.Name" selected value="@item.Id">@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option label="@item.Name" value="@item.Id">@item.Name</option>
+                                    }
+
+                                 }
+                                       
                                    
-                                        @if (item.IsSpecBlocked == true)
-                                        {
-                                            <option label="@item.Name" selected value="@item.Id">@item.Name</option>
-                                        }
-                                        else
-                                        {
-                                            <option label="@item.Name"  value="@item.Id">@item.Name</option>
-                                        }
-                                  
-                                   
-                                }
+                               }
                             }
                         </select>
              </div>
