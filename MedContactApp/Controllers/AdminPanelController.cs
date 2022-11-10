@@ -37,6 +37,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq.Expressions;
+using MedContactApp.AdminPanelHelpers;
 
 namespace MedContactApp.Controllers
 {
@@ -51,12 +52,15 @@ namespace MedContactApp.Controllers
         private readonly IDoctorDataService _doctorDataService;
         private readonly ISpecialityService _specialityService;
         private readonly IWebHostEnvironment _appEnvironment;
+        private readonly AdminModelBuilder _adminModelBuilder;
+        private readonly AdminSortFilter _adminSortFilter;
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
             IMapper mapper, IRoleService roleService, IConfiguration configuration,
             ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService,
-            IWebHostEnvironment appEnvironment, ISpecialityService specialityService)
+            IWebHostEnvironment appEnvironment, ISpecialityService specialityService, AdminModelBuilder adminModelBuilder,
+            AdminSortFilter adminSortFilter)
         {
             _userService = userService;
             _mapper = mapper;
@@ -67,6 +71,8 @@ namespace MedContactApp.Controllers
             _doctorDataService = doctorDataService;
             _appEnvironment = appEnvironment;
             _specialityService = specialityService;
+            _adminModelBuilder = adminModelBuilder;
+            _adminSortFilter = adminSortFilter;
         }
 
         [HttpGet]
@@ -113,16 +119,16 @@ namespace MedContactApp.Controllers
                 }
 
 
-                users = UserFilter(users, email, name, surname);
+                users = _adminSortFilter.UserFilter(users, email, name, surname);
 
                 if (groupOrder.Equals(GroupState.FamilyGroupOn))
                 {
-                    users = UserSort(users, sortOrder, 1);
+                    users = _adminSortFilter.UserSort(users, sortOrder, 1);
                     icon = @$"<i class=""bi bi-check2-circle""></i>";
                 }
                 else
                 {
-                    users = UserSort(users, sortOrder);
+                    users = _adminSortFilter.UserSort(users, sortOrder);
                 }
 
                 var count = await users.CountAsync();
@@ -148,333 +154,13 @@ namespace MedContactApp.Controllers
             }
 
         }
-
-
-
-
-        [HttpGet]
-        public async Task<IActionResult> DoctorDataIndex(string email, string name, string surname, string role,
-            string speciality, int page = 1, SortState sortOrder = SortState.EmailAsc)
-        {
-
-            var res = Guid.TryParse(role, out Guid roleId);
-            if (!res)
-                roleId = default;
-            try
-            {
-                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-                if (result) _pageSize = pageSize;
-                IQueryable<DoctorData> dDatas = _doctorDataService
-                                                    .GetDoctorData()
-                                                    .Include(d => d.Speciality)
-                                                    .Include(d => d.DayTimeTables)
-                                                    .Include(d => d.User)
-                                                    .ThenInclude(u => u!.Roles);
-
-                IQueryable<User> doctors = _userService.GetUsers()
-                                           .Include(u => u.Roles)
-                                           .Include(u => u.DoctorDatas);
-
-                var newdoctors = from d in doctors
-                                 from r in d.Roles!
-                                 where d.DoctorDatas == null || d.DoctorDatas.Count == 0
-                                 where r.Name!.Equals("Doctor")
-                                 select d;
-
-                newdoctors = UserSort(newdoctors, sortOrder);
-                var nList = await newdoctors
-                                  .Select(d => _mapper.Map<DoctorFullDataDto>(d))
-                                  .ToListAsync();
-
-                //IQueryable<DoctorData> datas = _doctorDataService
-                //                                 .GetDoctorData()
-                //                                 .Include(d => d.Speciality)
-                //                                 .Include(d => d.DayTimeTables);
-
-                //var doctorfulldata = from doct in doctors
-                //                     from d in doct.DoctorDatas!
-                //                     join s in datas on d.UserId equals s.UserId
-                //                     select new 
-                //                     { 
-                //                        Id =doct.Id, Email=doct.Email,
-                //                        Username=doct.Name, Surname=doct.Surname, MidName=doct.MidName,
-                //                        BirthDate = doct.BirthDate, Gender= doct.Gender,
-                //                        IsFullBlocked =doct.IsFullBlocked,
-                //                        DoctorDatas=d, 
-                //                     };
-
-
-
-                var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
-
-                if (roleId != default)
-                {
-                    dDatas = (from d in dDatas
-                              from r in d.User!.Roles!
-                              where r.Id.Equals(roleId)
-                              select d);
-                }
-
-                dDatas = DoctorDataFilter(dDatas, email, name, surname, speciality);
-                dDatas = DoctorDataSort(dDatas, sortOrder);
-
-                var dataList = await dDatas.ToListAsync();
-                var list = dataList.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality))).ToList();
-                var fulList = nList.Concat(list);
-
-                var count = fulList.Count();
-                var items = fulList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-                string pageRoute = @"/adminpanel/doctordataindex?page=";
-                string processOptions = $"&email{email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
-
-                DoctDataIndexViewModel viewModel = new(
-                    items, processOptions,
-                    new PageViewModel(count, page, pageSize, pageRoute),
-                    new FilterSpecViewModel(roles, roleId, name, email, speciality),
-                    new SortViewModel(sortOrder)
-                );
-                return View(viewModel);
-
-            }
-            catch (Exception e)
-            {
-                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                return BadRequest();
-            }
-
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ApplicationIndex(string email, string name, string surname, int page = 1,
-             SortState sortOrder = SortState.EmailAsc)
-
-        {
-            try
-            {
-                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-                if (result) _pageSize = pageSize;
-                IQueryable<User> users = _userService.GetUsers().Include(u => u.Roles);
-                IQueryable<User> applicants = from u in users
-                                              from r in u.Roles!
-                                              where r.Name!.Equals("Applicant")
-                                              select u;
-
-                applicants = UserFilter(applicants, email, name, surname);
-                applicants = UserSort(applicants, sortOrder);
-
-                var count = await applicants.CountAsync();
-                var items = await applicants.Skip((page - 1) * pageSize).Take(pageSize)
-                           .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
-
-                string pageRoute = @"/adminpanel/applicationindex?page=";
-                string processOptions = $"&email={email}&name={name}&sortorder={sortOrder}";
-
-                UserIndexApplViewModel viewModel = new(
-                    items, processOptions,
-                    new PageViewModel(count, page, pageSize, pageRoute),
-                    new FilterNameViewModel(name, email),
-                    new SortViewModel(sortOrder)
-                );
-                return View(viewModel);
-
-            }
-            catch (Exception e)
-            {
-                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                return BadRequest();
-            }
-
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "")
-        {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
-
-            var res = Guid.TryParse(id, out Guid Id);
-            if (!res)
-                return BadRequest();
-            var usr = await _userService.GetUserByIdAsync(Id);
-            if (usr == null)
-                return NotFound();
-
-            var model = _mapper.Map<ApplicantModel>(usr);
-
-            if (!string.IsNullOrEmpty(filedata))
-            {
-                var resfile = Guid.TryParse(filedata, out Guid fdId);
-                if (!resfile)
-                    model.SystemInfo = $"<b>File data Id({filedata}) for deletion is incorrect.</b>";
-                var removeResult = await _fileDataService.RemoveFileDataWithFileById(fdId, _appEnvironment.WebRootPath);
-
-                switch (removeResult)
-                {
-                    case -2:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) was not found <br/>File cannot be deleted</b>";
-                        break;
-                    case -1:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) has incorrect path <br/>File cannot be deleted</b>";
-                        break;
-                    case 1:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) was deleted <br/>The file was removed before</b>";
-                        break;
-                    case 2:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) and its file were deleted</b>";
-                        break;
-                }
-            }
-            var fileList = await _fileDataService.FileDataTolistByUserId(Id);
-            if (fileList != null && fileList.Any())
-                fileList = fileList.Where(x => x.Category != null && x.Category.Equals("Applicant")).ToList();
-            model.fileDatas = fileList;
-
-            var doctInfoList = await _doctorDataService.GetDoctorInfoByUserId(Id);
-            if (doctInfoList != null && doctInfoList.Any())
-                model.doctorInfos = doctInfoList;
-
-            //ViewBag.WebRootPath = _appEnvironment.WebRootPath;
-
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DoctorDetails(string? userid, string? specr, string? specd)
-        {
-            if (string.IsNullOrEmpty(userid))
-                return NotFound();
-            var res = Guid.TryParse(userid, out Guid userId);
-
-            if (!res)
-                return NotFound("User Id is incorrect");
-            try
-            {
-                var model = await AdminDoctorModelBuildAsync(new AdminEditDoctorModel(), userId, specr, specd);
-                if (model != null)
-                {
-                    return View(model);
-                }
-                return BadRequest();
-            }
-
-            catch (Exception e)
-            {
-                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DoctorDetails(AdminEditDoctorModel model)
-        {
-            if (model == null && model?.UserId == null)
-                return BadRequest();
-
-            int addresult = 0;
-            int updresult = 0;
-            int subtract = 0;
-         try
-         { 
-            var modelFull = await AdminDoctorModelBuildAsync(model, (Guid)model.UserId!);
-            if (modelFull == null)
-                return BadRequest();
-            //var user = await _userService.GetUserByIdAsync((Guid)model.UserId!);
-            var doctorData = await _doctorDataService.GetDoctorDataListByUserId((Guid)model.UserId);
-            var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
-            //var spec = await _specialityService.GetSpecialitiesListAsync();
-            //if (spec != null && user != null && doctorData != null)
-            //{
-            //    var modelFull = _mapper.Map<AdminEditDoctorModel>(user);
-            //        modelFull.Specialities = spec;
-            //        modelFull.SpecialityIds = model.SpecialityIds;
-            //        modelFull.SpecialityBlockIds = model.SpecialityBlockIds;
-
-            if (modelFull.SpecialityIds != null)
-            {
-                foreach (var sp in modelFull.SpecialityIds)
-                {
-                    if (doctorData.All(ddt => ddt.SpecialityId != sp))
-                    {
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(sp));
-                        if (specModel != null) specModel.IsSelected = true;
-
-                        DoctorDataDto doctorDataDto = new()
-                        {
-                            Id = Guid.NewGuid(),
-                            IsBlocked = false,
-                            UserId = modelFull?.UserId,
-                            SpecialityId = sp,
-                            RoleId = roleId,
-                            SpecNameReserved = specModel?.Name
-                        };
-                        addresult += await _doctorDataService.CreateDoctorDataAsync(doctorDataDto);
-                    }
-                }
-            }
-            foreach (var dd in doctorData)
-            {
-                if (modelFull?.SpecialityIds == null || modelFull!.SpecialityIds.All(spec => spec != dd.SpecialityId))
-                {
-                    var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId) && dd.ForDeletion != true);
-                    if (specModel != null)
-                    {
-                        specModel.IsSelected = false;
-                        specModel.ForDeletion = true;
-                        subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
-                    }
-                }
-            }
-
-            if (modelFull.SpecialityBlockIds != null)
-            {
-                foreach (var sp in modelFull.SpecialityBlockIds)
-                {
-                    var blockdata = doctorData.FirstOrDefault(d => d.SpecialityId.Equals(sp) && d.IsBlocked == false);
-                    if (blockdata != null)
-                    {
-                        blockdata.IsBlocked = true;
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(s => s.Id.Equals(sp));
-                        if (specModel != null) specModel.IsSpecBlocked = true;
-                        updresult += await _doctorDataService.UpdateDoctorDataAsync(blockdata);
-                    }
-                }
-            }
-
-            foreach (var dd in doctorData)
-            {
-                if (modelFull?.SpecialityBlockIds == null || modelFull!.SpecialityBlockIds.All(spec => spec != dd.SpecialityId))
-                {
-                    if (dd.IsBlocked == true)
-                    {
-                        dd.IsBlocked = false;
-                        var specModel = modelFull?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
-                        if (specModel != null) specModel.IsSpecBlocked = false;
-
-                        updresult += await _doctorDataService.UpdateDoctorDataAsync(dd);
-                    }
-                }
-            }
-
-            //}
-            modelFull.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added" +
-                                   $"<br/>{subtract} was/were deleted<br/>Blockstate of {updresult} was/were updated</b>";
-
-            return View(modelFull);
-        }
-        catch (Exception e)
-        {
-                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                return BadRequest();
-        }
-    }
-
+       
         [HttpGet]
         public async Task<IActionResult> UserDetails(string? id, string? reflink = "")
         {
 
             AdminUserEditModel emptyModel = new();
-            var model = await BuildByIdAdmin(emptyModel, id);
+            var model = await _adminModelBuilder.AdminUserModelBuildAsync(emptyModel, id);
             if (model == null)
                 return NotFound();
 
@@ -493,7 +179,7 @@ namespace MedContactApp.Controllers
             int changeRes = 0;
             try
             {
-                var modelFull = await BuildByIdAdmin(model, String.Empty);
+                var modelFull = await _adminModelBuilder.AdminUserModelBuildAsync(model, String.Empty);
                 if (modelFull == null) throw new Exception();
 
                 if (modelFull != null && modelFull.BlockStateIds != null)
@@ -573,368 +259,7 @@ namespace MedContactApp.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SpecialityManager(string? delid, string? newspeciality)
-        {
-            AdminSpecModel model = new();
-         
-            if (!string.IsNullOrEmpty(newspeciality))
-            {
-                SpecialityDto newSpeciality = new() { Id = Guid.NewGuid(), Name = newspeciality };
-                var addres = await _specialityService.AddSpecialityToDb(newSpeciality);
-                if (addres > 0)
-                    model.SystemInfo = $"<b>Speciality {newspeciality} was added to database.</b>";
-                if (addres == 0)
-                    model.SystemInfo = $"<b> No speciality was added to database.</b>";
-            }
 
-            if (!string.IsNullOrEmpty(delid))
-            {
-                var res = Guid.TryParse(delid, out var id);
-                if (res)
-                {
-                    var delres = await _specialityService.RemoveSpecialityById(id);
-                    if (delres.IntResult > 0)
-                        model.SystemInfo += $"<br/><b>Speciality {delres.Name} was removed from database.</b>";
-                }
-            }
-
-            var specList = await _specialityService.GetSpecialitiesListAsync();
-
-            if (specList != null)
-            {
-
-                model.Specialities = specList;
-            }
-
-            return View(model);
-        }
-
-        private async Task<AdminEditDoctorModel?> AdminDoctorModelBuildAsync(AdminEditDoctorModel smodel, Guid Uid,
-           string? specr = "", string? specd = "")
-        {
-            var user = await _userService.GetUserByIdAsync(Uid);
-            var doctorData = await _doctorDataService.GetDoctorDataListByUserId(Uid);
-            var spec = await _specialityService.GetSpecialitiesListAsync();
-            if (user != null && spec != null)
-            {
-                var model = _mapper.Map<AdminEditDoctorModel>(user);
-                model.Specialities = spec;
-                model.SpecialityIds = smodel.SpecialityIds;
-                model.SpecialityBlockIds = smodel.SpecialityBlockIds;
-                if (doctorData == null || doctorData.Count == 0)
-                    return model;
-                var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
-                var resSpecD = Guid.TryParse(specd, out Guid specDId); //delete speciality
-                foreach (var item in doctorData)
-                {
-                    var sp = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(item.SpecialityId));
-                    if (sp != null)
-                    {
-
-                        if (resSpecR && sp.Id.Equals(specRId))
-                        {
-                            item.ForDeletion = false;
-                            await _doctorDataService.UpdateDoctorDataAsync(item);
-                        }
-
-                        if (resSpecD && sp.Id.Equals(specDId))
-                        {
-                            await _doctorDataService.RemoveByIdAsync(item.Id);
-                            continue;
-                        }
-
-                        if (item.ForDeletion == true)
-                            sp.ForDeletion = true;
-                        else
-                            sp.IsSelected = true;
-
-                        if (item.IsBlocked == true)
-                            sp.IsSpecBlocked = true;
-                    }
-                }
-                return model;
-            }
-            return null;
-        }
-        private IQueryable<User> UserSort(IQueryable<User> users, SortState sortOrder, int fSort = 0)
-        {
-            Expression<Func<User, string?>>? orderFamilyBy = default;
-            if (fSort == 1)
-            {
-                orderFamilyBy = d => d!.Family!.MainUserId.Equals(d.Id) ? ("!"+ d.FamilyId.ToString()+"A") : 
-                                (d.FamilyId != null ? ("!"+d.FamilyId.ToString()+"B") : ("z" + d.FamilyId.ToString() + "z"));
-            }
-          
-            switch (sortOrder)
-            {
-                case SortState.EmailDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Email);
-                    else users = users.OrderByDescending(s => s.Email);
-                    break;
-                case SortState.NameAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Name);
-                    else users = users.OrderBy(s => s.Name);
-                    break;
-                case SortState.NameDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Name);
-                    else users = users.OrderByDescending(s => s.Name);
-                    break;
-                case SortState.SurnameAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Surname);
-                    else users = users.OrderBy(s => s.Surname);
-                    break;
-                case SortState.SurnameDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Surname);
-                    else users = users.OrderByDescending(s => s.Surname);
-                    break;
-                case SortState.BirtDateAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.BirthDate);
-                    else users = users.OrderBy(s => s.BirthDate);
-                    break;
-                case SortState.BirthDateDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.BirthDate);
-                    else users = users.OrderByDescending(s => s.BirthDate);
-                    break;
-                case SortState.LastLoginAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.LastLogin);
-                    else users = users.OrderBy(s => s.LastLogin);
-                    break;
-                case SortState.LastLoginDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.LastLogin);
-                    else users = users.OrderByDescending(s => s.LastLogin);
-                    break;
-                case SortState.IsFullBlockedAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsFullBlocked);
-                    else users = users.OrderBy(s => s.IsFullBlocked);
-                    break;
-                case SortState.IsFullBlockedDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsFullBlocked);
-                    else users = users.OrderByDescending(s => s.IsFullBlocked);
-                    break;
-                case SortState.IsFamilyDependentAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsDependent);
-                    else users = users.OrderBy(s => s.IsDependent);
-                    break;
-                case SortState.IsFamilyDependentDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsDependent);
-                    else users = users.OrderByDescending(s => s.IsDependent);
-                    break;
-                case SortState.IsOnlineAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.IsOnline);
-                    else users = users.OrderBy(s => s.IsOnline);
-                    break;
-                case SortState.IsOnlineDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.IsOnline);
-                    else users = users.OrderByDescending(s => s.IsOnline);
-                    break;
-                case SortState.GenderAsc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Gender);
-                    else users = users.OrderBy(s => s.Gender);
-                    break;
-                case SortState.GenderDesc:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenByDescending(s => s.Gender);
-                    else users = users.OrderByDescending(s => s.Gender);
-                    break;
-
-                default:
-                    if (orderFamilyBy != null) users = users.OrderBy(orderFamilyBy).ThenBy(s => s.Email);
-                    else users = users.OrderBy(s => s.Email);
-                    break;
-            }
-
-            return users;
-        }
-        private IQueryable<User> UserFilter(IQueryable<User> users, string email, string name, string surname)
-        {
-            if (!string.IsNullOrEmpty(email))
-            {
-                users = users.Where(p => p.Email!.Contains(email));
-            }
-            if (!string.IsNullOrEmpty(name))
-            {
-                users = users.Where(p => p.Name!.Contains(name) || p.MidName!.Contains(name) || p.Surname!.Contains(name));
-            }
-            if (!string.IsNullOrEmpty(surname))
-            {
-                users = users.Where(p => p.Surname!.Contains(surname));
-            }
-            return users;
-        }
-        private IQueryable<DoctorData> DoctorDataFilter(IQueryable<DoctorData> dDatas, string email, string name, string surname, string speciality)
-        {
-            if (!string.IsNullOrEmpty(email))
-            {
-                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.Contains(email));
-            }
-            if (!string.IsNullOrEmpty(name))
-            {
-                dDatas = dDatas.Where(p => p.User!.Name != null && p.User.Name.Contains(name)
-                                        || p.User!.MidName != null && p.User.MidName.Contains(name)
-                                        || p.User!.Surname != null && p.User.Surname.Contains(name));
-            }
-            if (!string.IsNullOrEmpty(surname))
-            {
-                dDatas = dDatas.Where(p => p.User!.Surname != null && p.User.Surname.Contains(surname));
-            }
-            if (!string.IsNullOrEmpty(speciality))
-            {
-                dDatas = dDatas.Where(p => p.Speciality!.Name != null && p.Speciality.Name.Contains(speciality));
-            }
-            return dDatas;
-        }
-        private IQueryable<DoctorData> DoctorDataSort(IQueryable<DoctorData> dDatas, SortState sortOrder)
-        {
-            switch (sortOrder)
-            {
-                case SortState.EmailDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.Email);
-                    break;
-                case SortState.NameAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.Name);
-                    break;
-                case SortState.NameDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.Name);
-                    break;
-                case SortState.SurnameAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.Surname);
-                    break;
-                case SortState.SurnameDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.Surname);
-                    break;
-                case SortState.BirtDateAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.BirthDate);
-                    break;
-                case SortState.BirthDateDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.BirthDate);
-                    break;
-                case SortState.LastLoginAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.LastLogin);
-                    break;
-                case SortState.LastLoginDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.LastLogin);
-                    break;
-                case SortState.IsFullBlockedAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.IsFullBlocked);
-                    break;
-                case SortState.IsFullBlockedDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.IsFullBlocked);
-                    break;
-                case SortState.IsBlockedAsc:
-                    dDatas = dDatas.OrderBy(s => s.IsBlocked);
-                    break;
-                case SortState.IsBlockedDesc:
-                    dDatas = dDatas.OrderByDescending(s => s.IsBlocked);
-                    break;
-                case SortState.IsMarkedAsc:
-                    dDatas = dDatas.OrderBy(s => s.ForDeletion);
-                    break;
-                case SortState.IsMarkedDesc:
-                    dDatas = dDatas.OrderByDescending(s => s.ForDeletion);
-                    break;
-                case SortState.IsFamilyDependentAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.IsDependent);
-                    break;
-                case SortState.IsFamilyDependentDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.IsDependent);
-                    break;
-                case SortState.IsOnlineAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.IsOnline);
-                    break;
-                case SortState.IsOnlineDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.IsOnline);
-                    break;
-                case SortState.GenderAsc:
-                    dDatas = dDatas.OrderBy(s => s!.User!.Gender);
-                    break;
-                case SortState.GenderDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.User!.Gender);
-                    break;
-                case SortState.SpecialityAsc:
-                    dDatas = dDatas.OrderBy(s => s!.Speciality!.Name);
-                    break;
-                case SortState.SpecialityDesc:
-                    dDatas = dDatas.OrderByDescending(s => s!.Speciality!.Name);
-                    break;
-
-                default:
-                    dDatas = dDatas.OrderBy(s => s!.User!.Email);
-                    break;
-            }
-
-            return dDatas;
-        }
-        private async Task<AdminUserEditModel?> BuildByIdAdmin(AdminUserEditModel model, string? id)
-        {
-            Guid userId = default;
-            AdminUserEditModel? newModel = null;
-
-
-            if (string.IsNullOrEmpty(id) && model.Id == null)
-                return null;
-
-            if (model.Id == null)
-            {
-                var res = Guid.TryParse(id, out Guid Id);
-                if (!res)
-                    return null;
-                else userId = Id;
-            }
-            else
-                userId = (Guid)model.Id;
-
-            var usr = await _userService.GetUserByIdAsync(userId);
-            var userRoles = await _roleService.GetRoleListByUserIdAsync(userId);
-            var allroles = await _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToListAsync();
-            if (usr == null && allroles == null) return null;
-
-            newModel = _mapper.Map<AdminUserEditModel>(usr);
-            if (newModel == null) return null;
-            newModel.AllRoles = allroles;
-
-            if (userRoles != null && userRoles.Any())
-            {
-                var roleList = userRoles.Select(r => r.Name).ToList();
-                if (roleList != null && roleList.Any())
-                    newModel!.RoleNames = roleList!;
-            }
-
-
-            if (model.Id != null)
-            {
-                newModel.BlockStateIds = model.BlockStateIds;
-                newModel.RoleIds = model.RoleIds;
-            }
-            else
-            {
-                if (newModel.IsFullBlocked == true)
-                {
-                    var item = newModel?.BlockState?.First(x => x.IntId == 2);
-                    item!.IsSelected = true;
-
-                }
-                else if (newModel.IsFullBlocked == false)
-                {
-                    var item = newModel?.BlockState?.First(x => x.IntId == 1);
-                    item!.IsSelected = true;
-                }
-                else
-                {
-                    var item = newModel?.BlockState?.First(x => x.IntId == 0);
-                    item!.IsSelected = true;
-                }
-
-                foreach (var item in newModel!.AllRoles)
-                {
-                    if (newModel.RoleNames!.Any(x => x.Equals(item.Name)))
-                    {
-                        item.IsSelected = true;
-                    }
-                }
-            }
-
-            return newModel;
-        }
-
+       
     }
 }

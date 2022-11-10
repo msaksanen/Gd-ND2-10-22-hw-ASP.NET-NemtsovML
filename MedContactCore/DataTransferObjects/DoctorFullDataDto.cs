@@ -27,6 +27,7 @@ namespace MedContactCore.DataTransferObjects
         public bool? ForDeletion { get; set; }
         public Guid? SpecialityId { get; set; }
         public string? SpecialityName { get; set; }
+        public string? SpecNameReserved { get; set; }
         public List<DayTimeTableDto>? DayTimeTables { get; set; }
         public List<RoleDto>? Roles { get; set; }
     }

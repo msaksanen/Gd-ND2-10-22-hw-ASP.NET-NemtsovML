@@ -15,6 +15,7 @@ using Serilog.Events;
 using MedContactApp.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using MedContactApp.AdminPanelHelpers;
 
 namespace MedContactApp
 {
@@ -82,6 +83,8 @@ namespace MedContactApp
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();
 
             builder.Services.AddScoped<ModelUserBuilder>();
+            builder.Services.AddScoped<AdminModelBuilder>();
+            builder.Services.AddScoped<AdminSortFilter>();
             builder.Services.AddScoped<EmailChecker>();
             builder.Services.AddScoped<BirthDateChecker>();
 

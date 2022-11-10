@@ -30,13 +30,15 @@ namespace MedContactApp.MappingProfiles
                 .ForMember(dto => dto.IsFullBlocked,
                  opt => opt.MapFrom(d => d.Item2.IsFullBlocked))
                 .ForMember(dto => dto.SpecialityName,
-                 opt => opt.MapFrom(d => d.Item3.Name))
+                 opt => opt.MapFrom(d => d.Item3.Name ?? "Removed"))
                 .ForMember(dto => dto.IsBlocked,
                  opt => opt.MapFrom(d => d.Item1.IsBlocked))
-                 .ForMember(dto => dto.DayTimeTables,
+                .ForMember(dto => dto.DayTimeTables,
                  opt => opt.MapFrom(d => d.Item1.DayTimeTables))
-                   .ForMember(dto => dto.SpecialityId,
-                 opt => opt.MapFrom(d => d.Item1.SpecialityId));
+                .ForMember(dto => dto.SpecialityId,
+                 opt => opt.MapFrom(d => d.Item1.SpecialityId))
+                .ForMember(dto => dto.SpecNameReserved,
+                 opt => opt.MapFrom(d => d.Item1.SpecNameReserved));
 
             CreateMap<User, DoctorFullDataDto>()
                   .ForMember(dto => dto.UserId,

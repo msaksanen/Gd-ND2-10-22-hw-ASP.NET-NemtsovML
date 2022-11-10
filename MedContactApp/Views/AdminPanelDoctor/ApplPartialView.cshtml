@@ -1,14 +1,11 @@
-﻿@model DoctorFullDataDto
+﻿@model UserDto
 
 <tr>
     <td area-label="Email">
         @Html.DisplayFor(modelItem => Model.Email)
     </td>
-    <td area-label="Speciality">
-        @Html.DisplayFor(modelItem => Model.SpecialityName)
-    </td>
     <td area-label="Names">
-        @Html.DisplayFor(modelItem => Model.Username) 
+        @Html.DisplayFor(modelItem => Model.Name) 
         @Html.DisplayFor(modelItem => Model.MidName)
     </td>
     <td area-label="Surname">
@@ -20,11 +17,17 @@
     <td area-label="Gender">
         @Html.DisplayFor(modelItem => Model.Gender)
     </td>
-    <td area-label="IsSpecialityBlocked">
-        @Html.DisplayFor(modelItem => Model.IsBlocked)
+    <td area-label="IsFullBlocked">
+        @Html.DisplayFor(modelItem => Model.IsFullBlocked)
     </td>
-    <td area-label="IsMarkedForDelete">
-        @Html.DisplayFor(modelItem => Model.ForDeletion)
+    <td area-label="IsFamilyDependent">
+        @Html.DisplayFor(modelItem => Model.IsDependent)
+    </td>
+    <td area-label="IsOnline">
+        @Html.DisplayFor(modelItem => Model.IsOnline)
+    </td>
+    <td area-label="Last Login">
+        @Html.DisplayFor(modelItem => Model.LastLogin)
     </td>
     <td area-label="Roles">
         @if (Model.Roles!=null && Model.Roles.Any())
@@ -41,9 +44,7 @@
     </td>
    
     <td>
-        <span> <a class="btn btn-link" href="~/adminpanel/specdetails/?userid=@Model.UserId">Speciality details</a></span>
-        <br />
-        <span> <a class="btn btn-link" href="~/adminpanel/doctordetails/?userid=@Model.UserId">Doctor details</a></span>
+        <span> <a class="btn btn-primary" href="~/adminpaneldoctor/applicantdetails/@Model.Id">View details</a></span>
     </td>
 
 </tr>

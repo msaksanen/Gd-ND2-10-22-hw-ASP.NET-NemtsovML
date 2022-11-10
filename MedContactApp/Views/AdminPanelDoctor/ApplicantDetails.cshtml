@@ -106,7 +106,7 @@
                             <a href="@item.Path"><i>@item.Name</i></a>
                        </td>
                        <td>
-                            <i class="bi bi-x-circle"></i><a href="/adminpanel/applicantdetails/?id=@Model.Id&filedata=@item.Id"><i>Delete</i></a>
+                            <i class="bi bi-x-circle"></i><a href="/adminpaneldoctor/applicantdetails/?id=@Model.Id&filedata=@item.Id"><i>Delete</i></a>
                        </td>
                      </tr>
                   }                      
@@ -117,9 +117,9 @@
     </div>
 
     <div>
-      <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpanel/applicantdetails/?id=@Model.Id">Edit user details</a>
+      <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpaneldoctor/applicantdetails/?id=@Model.Id">Edit user details</a>
       <br />
-      <a asp-controller="AdminPanel" asp-action="ApplicationIndex">Back to applicant table</a>
+      <a asp-controller="AdminPanelDoctor" asp-action="ApplicationIndex">Back to applicant table</a>
     </div>
 
         @if (Model.SystemInfo != null)
