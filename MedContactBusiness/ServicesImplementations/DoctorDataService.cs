@@ -31,7 +31,7 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<DoctorInfo> GetDoctorInfoById(Guid? doctorDataId)
         {
             var dData = await _unitOfWork.DoctorDataRepository
-                .FindBy(t => t.Id.Equals(doctorDataId) && t.ForDeletion != true ,t => t.User!, t => t.Speciality!)
+                .FindBy(t => t.Id.Equals(doctorDataId) && t.ForDeletion != true && t.SpecialityId!=null ,t => t.User!, t => t.Speciality!)
                 .FirstOrDefaultAsync();
            
             if (dData?.Speciality != null && dData?.User != null)
@@ -116,6 +116,7 @@ namespace MedContactBusiness.ServicesImplementations
                     .Get()
                     .AsNoTracking()
                     .Where(dd => dd.UserId.Equals(userId))
+                    .Where(dd => dd.SpecialityId!=null)
                     .Select(dd => _mapper.Map<DoctorDataDto>(dd))
                     .ToListAsync();
 

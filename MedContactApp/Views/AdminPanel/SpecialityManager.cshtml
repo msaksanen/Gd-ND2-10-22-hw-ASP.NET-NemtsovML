@@ -1,0 +1,67 @@
+﻿@model AdminSpecModel
+
+@{
+    ViewData["Title"] = "Speciality Manager";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Speciality Manager</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <Table class="delivery">
+            <tbody>
+                <tr>
+
+                    <form method="get">
+                    <td style="border:none">
+                        <label>Speciality: </label>
+                        <input type="text" name="newspeciality" id="newspeciality" onchange="update_href(this.value)" />
+                        <input type="submit"  value="Create" />
+                    </td>
+                    </form>
+                </tr>
+             
+                @if (Model.Specialities != null && Model.Specialities.Any())
+                {
+                    foreach (var item in Model.Specialities)
+                    {
+                        <tr>
+                            <td>
+                                <b>@item.Name</b>
+                            </td>
+                            <td>
+                                <b>@item.Id</b>
+                            </td>
+                            <td>
+                                <i class="bi bi-x-circle"></i><a class="deletelink" href="/adminpanel/specialitymanager/?delid=@item.Id&newspeciality="><i>Delete Speciality</i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </Table>
+
+
+        @if (Model.SystemInfo != null)
+        {
+            <div>
+                <p>
+                    @Html.Raw(@Model.SystemInfo)
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Back</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/specnameappend.js"></script>
+}
+
+ 

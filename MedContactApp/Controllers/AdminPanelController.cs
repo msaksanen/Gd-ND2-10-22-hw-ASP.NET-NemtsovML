@@ -566,6 +566,43 @@ namespace MedContactApp.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SpecialityManager(string? delid, string? newspeciality)
+        {
+            AdminSpecModel model = new();
+         
+            if (!string.IsNullOrEmpty(newspeciality))
+            {
+                SpecialityDto newSpeciality = new() { Id = Guid.NewGuid(), Name = newspeciality };
+                var addres = await _specialityService.AddSpecialityToDb(newSpeciality);
+                if (addres > 0)
+                    model.SystemInfo = $"<b>Speciality {newspeciality} was added to database.</b>";
+                if (addres == 0)
+                    model.SystemInfo = $"<b> No speciality was added to database.</b>";
+            }
+
+            if (!string.IsNullOrEmpty(delid))
+            {
+                var res = Guid.TryParse(delid, out var id);
+                if (res)
+                {
+                    var delres = await _specialityService.RemoveSpecialityById(id);
+                    if (delres.IntResult > 0)
+                        model.SystemInfo += $"<br/><b>Speciality {delres.Name} was removed from database.</b>";
+                }
+            }
+
+            var specList = await _specialityService.GetSpecialitiesListAsync();
+
+            if (specList != null)
+            {
+
+                model.Specialities = specList;
+            }
+
+            return View(model);
+        }
+
         private async Task<AdminEditDoctorModel?> AdminDoctorModelBuildAsync(AdminEditDoctorModel smodel, Guid Uid,
            string? specr = "", string? specd = "")
         {
