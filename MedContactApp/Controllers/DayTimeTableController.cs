@@ -12,7 +12,12 @@ using System.Reflection;
 using System.Linq;
 using MedContactApp.Helpers;
 using MedContactDb.Entities;
-
+using MedContactApp.FilterSortHelpers;
+using System.Drawing.Printing;
+using System.Xml.Linq;
+using MedContactApp.FilterSortPageHelpers;
+using System.Data;
+using System.Drawing;
 
 namespace MedContactApp.Controllers
 {
@@ -22,17 +27,103 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private readonly IDoctorDataService _doctorDataService;
         private readonly IConfiguration _configuration;
+        private readonly ModelUserBuilder _modelBuilder;
         private int _pageSize = 7;
 
         public DayTimeTableController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
-            IMapper mapper, IDoctorDataService doctorDataService)
+            IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
             _configuration = configuration;
             _doctorDataService = doctorDataService;
+            _modelBuilder = modelBuilder;
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> SelelctSpec()
+        {
+            var usr = await _modelBuilder.BuildUserById(HttpContext);
+            if (usr==null ) return NotFound();
+            DoctorSelectSpecModel model = new();
+            model.User = usr;
+
+            var dDataList = await _doctorDataService.GetDoctorInfoByUserId((Guid)usr.Id!);
+
+            if (dDataList==null || dDataList.Count==0)
+            {
+                model.SystemInfo = @"<b>You do not have any specialities<br/>
+                                     You can add speciality at ""Edit Doctor Data"" menu in your settings </b>";
+
+            }
+
+            else if (dDataList != null && (dDataList.All(dd => dd.SpecialityId == null) || dDataList.All(dd => dd.IsBlocked==true)))
+            {
+                model.SystemInfo = @"<b>You do not have any active specialities<br/>
+                                     Contact with administration, please </b>";
+
+            }
+            else if (dDataList != null && (dDataList.Any(dd => dd.SpecialityId == null) || dDataList.Any(dd => dd.IsBlocked == true) ||
+                     dDataList.Any(dd => dd.ForDeletion == true)))
+            {
+                model.SystemInfo = @"<b>You have some inactive/removed specialities<br/>
+                                     Contact with administration for details, please </b>";
+                model.DoctorInfos = dDataList;
+            }
+            else
+            {
+                model.DoctorInfos = dDataList;
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TimeTableDoctIndex(string? dataid, SortState sortOrder = SortState.DateDesc, int page = 1 )
+        {
+            if (string.IsNullOrEmpty(dataid))
+                return BadRequest();
+            var res = Guid.TryParse(dataid, out Guid dataId);
+            if (res == false)
+                return BadRequest();
+            var dInfo = await _doctorDataService.GetDoctorInfoById(dataId);
+            if (dInfo == null || dInfo.DoctorDataId == null)
+                return NotFound();
+            IEnumerable <DayTimeTableDto>? timeTableList = await _dayTimeTableService.GetDayTimeTableByDoctorDataId((Guid)dInfo.DoctorDataId);
+           
+            bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+            if (result) _pageSize = pageSize;
+
+            if (sortOrder==SortState.DateAsc && timeTableList != null)
+             {
+                timeTableList = timeTableList.OrderBy(x => x.Date);
+             }
+             if (sortOrder == SortState.DateDesc && timeTableList != null)
+             {
+                timeTableList = timeTableList.OrderByDescending(x => x.Date);
+             }
+              var items = timeTableList;
+              int count = 0;
+             if (timeTableList != null)
+             {
+                count = timeTableList.Count();
+                items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+             }
+             
+             string pageRoute = @"/daytimetable/timetabledoctindex?page=";
+             string processOptions = $"&dataid={dataid}&sortorder={sortOrder}";
+
+            TimeTableDoctIndexModel model = new(
+                   items, processOptions,dInfo,
+                   new PageViewModel(count, page, pageSize, pageRoute),
+                   new SortViewModel(sortOrder));
+
+            return View(model);
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> Index(int page)
         {
             try
@@ -70,48 +161,66 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create (string? id)
+        public  async Task<IActionResult> Create (string? dataid)
         {
-            var result = Guid.TryParse(id, out Guid guid_id);
-            if (result)
-            {
-                var model = new DayTimeTableModel();
-                model.DoctorDataId = guid_id;
-                model.Date = DateTime.Now;
-                model.StartWorkTime = DateTime.Today.AddHours(8);
-                model.FinishWorkTime = DateTime.Today.AddHours(20);
+            if (string.IsNullOrEmpty(dataid))
+                return BadRequest();
+            var res = Guid.TryParse(dataid, out Guid dataId);
+            if (res == false)
+                return BadRequest();
+            var dData = await _doctorDataService.GetDoctorInfoById((Guid)dataId);
+            if (dData == null)
+                return NotFound();
+            
+                var model = _mapper.Map<DayTimeTableModel>(dData);
                 return View(model);
-            }
-
-            ModelState.AddModelError("CustomError", $"Id {id} is invalid.");
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         public async Task<IActionResult> Create (DayTimeTableModel model)
         {
-            if (ModelState.IsValid)
+            if (model == null || model.DoctorDataId == null)
+                return BadRequest();
+            try
             {
-                try
+               if (model.Date < DateTime.Now)
                 {
-                    model.Id = Guid.NewGuid();
-                    model.CreationDate = DateTime.Now;
-                    var dto = _mapper.Map<DayTimeTableDto>(model);
-                    if (dto != null)
+                    model.SystemInfo = "<b>Daytimetable was not created<br/>Input correct date!</b>";
+                    return View(model);
+                }
+
+                var dInfo = await _doctorDataService.GetDoctorInfoById(model.DoctorDataId);
+                if (dInfo == null)
+                    return NotFound();
+
+                model.Id = Guid.NewGuid();
+                model.CreationDate = DateTime.Now;
+                model.DoctorSpeciality = dInfo.Speciality;
+                model.DoctorName = dInfo.Name;
+                model.DoctorSurname = dInfo.Surname;
+                model.UserId = dInfo.UserId;    
+                var dto = _mapper.Map<DayTimeTableDto>(model);
+                model.SystemInfo = "<b>DayTimeTable was not created<br/>Something went wrong(</b>";
+
+                if (dto != null)
+                {
+                    var result = await _dayTimeTableService.CreateDayTimeTableAsync(dto);
+                    if (result > 0)
                     {
-                        var result = await _dayTimeTableService.CreateDayTimeTableAsync(dto);
-                        if (result > 0)
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                        model.SystemInfo = "<b>Daytimetable was successfully created</b>";
+                    }
+                    else if (result == -1)
+                    {
+                        model.SystemInfo = "<b>DayTimeTable was not created<br/>It overlaps with previously created daytimetable</b>";
                     }
                 }
-                catch (Exception e)
-                {
-                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                    return BadRequest();
-                }
             }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
+
             return View(model);
         }
     }

@@ -1,0 +1,84 @@
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
+
+@model TimeTableDoctIndexModel
+
+@{
+    ViewData["Title"] = "Doctor Speciality TimeTable";
+  
+}
+<h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
+<h6>Speciality @Model.DoctorInfo.Speciality</h6>
+<h6>User Id: @Model.DoctorInfo.UserId</h6>
+<p>
+    <a href="~/daytimetable/create/?dataid=@Model.DoctorInfo.DoctorDataId">Create New DayTimeTable</a>
+</p>
+<hr />
+
+
+@if (Model.TableList!= null && Model.TableList.Any() && Model.DoctorInfo.DoctorDataId!=null)
+{
+    <Table class="delivery">  
+        <caption>TimeTable</caption>
+        <thead>
+            <tr>
+                <th>
+                    <sort-header action="TimeTableDoctIndex" up="@Model.SortViewModel.Up"
+                     opt-url-dataid="@(Model.DoctorInfo.DoctorDataId)"
+                     current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Date</sort-header>
+                </th>
+                <th>
+                    Start WorkTime
+                </th>
+                <th>
+                    Finish WorkTime
+                </th>
+                <th>
+                    Consult Duration
+                </th>
+                <th>
+                    Total Ticket Quantity
+                </th>
+                <th>
+                    FreeTicketQty
+                </th>
+                <th>
+                    Creation Date
+                </th>
+                <th>
+                    Details
+                </th>
+            </tr>
+            <thead>
+                <tbody>
+                    @foreach (var item in Model.TableList)
+                    {
+                    await Html.RenderPartialAsync("TableListPartialView", item);
+                    }
+
+                </tbody>
+    </Table>
+}
+
+
+@section Footer
+{
+
+    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+                             @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
+ }
+
+
+@section CssStyles
+{
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}        
+    </style>
+}

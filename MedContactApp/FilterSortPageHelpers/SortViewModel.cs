@@ -8,7 +8,7 @@ namespace MedContactApp.FilterSortPageHelpers
         public SortState NameSort { get; }
         public SortState SurnameSort { get; }
         public SortState BirthDateSort { get; }    
-        public SortState RegDateSort { get; }
+        public SortState DateSort { get; }
         public SortState LastLoginSort { get; }
         public SortState IsFullBlockedSort { get; }
         public SortState IsFamilyDependentSort { get; }
@@ -27,7 +27,7 @@ namespace MedContactApp.FilterSortPageHelpers
             NameSort = SortState.NameAsc;
             SurnameSort = SortState.SurnameAsc;
             BirthDateSort = SortState.BirtDateAsc;
-            RegDateSort = SortState.RegDateAsc;
+            DateSort = SortState.DateAsc;
             LastLoginSort = SortState.LastLoginAsc;
             GenderSort = SortState.GenderAsc;
             IsFullBlockedSort = SortState.IsFullBlockedAsc;
@@ -42,7 +42,7 @@ namespace MedContactApp.FilterSortPageHelpers
             Up = true;
 
             if (sortOrder == SortState.EmailDesc || sortOrder == SortState.BirthDateDesc || sortOrder == SortState.NameDesc
-                || sortOrder == SortState.SurnameDesc || sortOrder == SortState.RegDateDesc || sortOrder==SortState.LastLoginDesc ||
+                || sortOrder == SortState.SurnameDesc || sortOrder == SortState.DateDesc || sortOrder==SortState.LastLoginDesc ||
                 sortOrder == SortState.GenderDesc || sortOrder == SortState.IsOnlineDesc || sortOrder == SortState.IsFamilyDependentDesc ||
                 sortOrder == SortState.IsFullBlockedDesc || sortOrder ==SortState.IsBlockedDesc || sortOrder== SortState.IsMarkedDesc
                 || sortOrder==SortState.SpecialityDesc)
@@ -74,11 +74,11 @@ namespace MedContactApp.FilterSortPageHelpers
                 case SortState.BirthDateDesc:
                     Current = BirthDateSort = SortState.BirtDateAsc;
                     break;
-                case SortState.RegDateAsc:
-                    Current = RegDateSort = SortState.RegDateDesc;
+                case SortState.DateAsc:
+                    Current = DateSort = SortState.DateDesc;
                     break;
-                case SortState.RegDateDesc:
-                    Current = RegDateSort = SortState.RegDateAsc;
+                case SortState.DateDesc:
+                    Current = DateSort = SortState.DateAsc;
                     break;
                 case SortState.LastLoginAsc:
                     Current = LastLoginSort = SortState.LastLoginDesc;

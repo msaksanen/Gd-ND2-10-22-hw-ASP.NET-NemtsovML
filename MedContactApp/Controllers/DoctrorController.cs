@@ -13,7 +13,7 @@ using System.Linq;
 using MedContactApp.Helpers;
 using MedContactDb.Entities;
 using MedContactBusiness.ServicesImplementations;
-
+using System.Security.Claims;
 
 namespace MedContactApp.Controllers
 {
@@ -36,6 +36,20 @@ namespace MedContactApp.Controllers
             _emailChecker = emailChecker;
             _roleService = roleService;
         }
+
+        [HttpGet]
+        public IActionResult DoctorMenu()
+        {
+            if (User.Identities.Any(identity => identity.IsAuthenticated))
+            {
+                var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                if (roles != null && roles.Any(r => r.Equals("Doctor")))
+                    return View();
+            }
+
+            return BadRequest();
+        }
+
         public async Task<IActionResult> Index(int page)
         {
             try

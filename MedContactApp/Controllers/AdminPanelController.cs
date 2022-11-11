@@ -47,30 +47,31 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
         private readonly IConfiguration _configuration;
-        private readonly ModelUserBuilder _modelBuilder;
-        private readonly IFileDataService _fileDataService;
-        private readonly IDoctorDataService _doctorDataService;
-        private readonly ISpecialityService _specialityService;
-        private readonly IWebHostEnvironment _appEnvironment;
+        //private readonly ModelUserBuilder _modelBuilder;
+        //private readonly IFileDataService _fileDataService;
+        //private readonly IDoctorDataService _doctorDataService;
+        //private readonly ISpecialityService _specialityService;
+        //private readonly IWebHostEnvironment _appEnvironment;
         private readonly AdminModelBuilder _adminModelBuilder;
         private readonly AdminSortFilter _adminSortFilter;
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
             IMapper mapper, IRoleService roleService, IConfiguration configuration,
-            ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService,
-            IWebHostEnvironment appEnvironment, ISpecialityService specialityService, AdminModelBuilder adminModelBuilder,
+            AdminModelBuilder adminModelBuilder,
             AdminSortFilter adminSortFilter)
+            // ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService,
+           // IWebHostEnvironment appEnvironment, ISpecialityService specialityService,
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
             _configuration = configuration;
-            _modelBuilder = modelBuilder;
-            _fileDataService = fileDataService;
-            _doctorDataService = doctorDataService;
-            _appEnvironment = appEnvironment;
-            _specialityService = specialityService;
+            //_modelBuilder = modelBuilder;
+            //_fileDataService = fileDataService;
+            //_doctorDataService = doctorDataService;
+            //_appEnvironment = appEnvironment;
+            //_specialityService = specialityService;
             _adminModelBuilder = adminModelBuilder;
             _adminSortFilter = adminSortFilter;
         }

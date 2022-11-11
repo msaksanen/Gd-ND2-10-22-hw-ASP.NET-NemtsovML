@@ -144,18 +144,6 @@
             </form>
     </div>
 
-
-        <div>
-            @if (!string.IsNullOrEmpty(Model.Reflink))
-            {
-                <a href="@Model.Reflink">Back</a>
-            }
-            else
-            {
-                <a asp-controller="AdminPanel" asp-action="UserIndex">Back to user table</a>
-            }
-        </div>
-
         @if (Model.SystemInfo != null)
         {
             <div>
@@ -169,7 +157,20 @@
 </div>
 
 
+@section Footer
+{
+    <div>
+        @if (!string.IsNullOrEmpty(Model.Reflink))
+        {
+            <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
+        }
+        else
+        {
+            <a asp-controller="AdminPanel" asp-action="UserIndex"><h6>&#5130 Back to user table</h6></a>
+        }
+    </div>
 
+}
 
 
 @section Scripts

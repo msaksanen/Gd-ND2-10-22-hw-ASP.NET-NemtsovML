@@ -50,8 +50,10 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-muted" style="line-height: 30px">
+        @*border-top *@
         <div class="container">
+            @await RenderSectionAsync("Footer", required: false)
             &copy; 2022 - MedContactApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

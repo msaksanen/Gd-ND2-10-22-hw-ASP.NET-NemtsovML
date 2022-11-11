@@ -71,5 +71,16 @@ namespace MedContactBusiness.ServicesImplementations
            return removeResult;
         }
 
+        public async Task<SpecialityDto?> GetSpecialityByName(string name)
+        {
+           if (string.IsNullOrEmpty(name))
+                return null;
+            var spec = await _unitOfWork.SpecialityRepository.Get().FirstOrDefaultAsync(s => s.Name != null && s.Name.Equals(name));
+            if (spec != null)
+                return _mapper.Map<SpecialityDto>(spec);
+            else
+                return null;
+        }
+
     }
 }

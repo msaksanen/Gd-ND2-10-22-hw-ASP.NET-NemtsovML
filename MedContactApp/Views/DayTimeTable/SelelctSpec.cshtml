@@ -1,0 +1,59 @@
+﻿@model DoctorSelectSpecModel
+
+@{
+    ViewData["Title"] = "Selelct Specialities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Selelct Specialities</h1>
+
+<h6>Select speciality in order to view/modify corresponding daytimetable</h6>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <Table class="delivery">
+            <tbody>
+                
+                @if (Model.DoctorInfos != null && Model.DoctorInfos.Any())
+                {
+                    foreach (var item in Model.DoctorInfos)
+                    {
+                        @if(item.SpecialityId!=null && item.IsBlocked!=true  &&  item.ForDeletion!=true)
+                        {
+                            <tr>
+                                <td>
+                                    <b>Speciality Id: @item.SpecialityId</b>
+                                </td>          
+                                <td>
+                                    <i class="bi bi-check2-circle"></i><a href="/daytimetable/timetabledoctindex/?dataid=@item.DoctorDataId"><i>@item.Speciality</i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </Table>
+        
+    </div>
+    <br />
+    @if (Model.SystemInfo != null)
+    {
+        <div>
+            <p>
+                @Html.Raw(@Model.SystemInfo)
+            </p>
+        </div>
+    }
+
+</div>
+
+@section Footer
+{
+   
+    <div>
+        <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back</h6></a>
+    </div>
+    <br />
+}
+
+

@@ -54,10 +54,14 @@
         }
     </div>
 </div>
+@section Footer
+{
+    
+    <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back</h6></a>
+   
+    <br />
+}
 
-<div>
-    <a asp-controller="Home" asp-action="Index">Back</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

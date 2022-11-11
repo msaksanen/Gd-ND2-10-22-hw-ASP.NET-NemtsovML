@@ -28,6 +28,7 @@ namespace MedContactBusiness.ServicesImplementations
         }
         public async Task<int> CreateDayTimeTableAsync (DayTimeTableDto dto)
         {
+            int addingResult = 0;
             var entity = _mapper.Map<DayTimeTable>(dto);
             if (entity != null && entity.StartWorkTime != null && entity.FinishWorkTime != null && 
                 entity.ConsultDuration != null && entity.ConsultDuration >0)
@@ -36,8 +37,17 @@ namespace MedContactBusiness.ServicesImplementations
                 int finishMin = entity.FinishWorkTime.Value.Hour * 60 + entity.FinishWorkTime.Value.Minute;
                 entity.TotalTicketQty= (int)Math.Floor((double)((finishMin - startMin) / entity.ConsultDuration));
                 entity.FreeTicketQty = entity.TotalTicketQty;
-                await _unitOfWork.DayTimeTableRepository.AddAsync(entity);
-                    var addingResult = await _unitOfWork.Commit();
+                var noOverLap = await _unitOfWork.DayTimeTableRepository.Get()
+                         .Where(d =>d.DoctorDataId.Equals(entity.DoctorDataId))
+                         .AllAsync(d => entity.StartWorkTime>=d.FinishWorkTime || d.StartWorkTime>=entity.FinishWorkTime); 
+                if (noOverLap)
+                {
+                    await _unitOfWork.DayTimeTableRepository.AddAsync(entity);
+                    addingResult = await _unitOfWork.Commit();
+                }
+                else
+                    addingResult = -1;
+
                     return addingResult;
             }
             else
@@ -45,6 +55,16 @@ namespace MedContactBusiness.ServicesImplementations
                     throw new ArgumentException(nameof(dto));
             }          
         }
+
+        //private  bool isOverLap (DayTimeTable old, DayTimeTable newd)
+        //{
+        //    if (old.StartWorkTime == newd.StartWorkTime || old.FinishWorkTime == newd.FinishWorkTime)
+        //            return true;
+        //    if (newd.StartWorkTime >= old.FinishWorkTime || old.StartWorkTime >= newd.FinishWorkTime)
+        //            return false;
+
+        //    return true;
+        //}
         public async Task<List<DayTimeTableDto>> GetDayTimeTableByPageNumberAndPageSizeAsync(int pageNumber, int pageSize)
         {
            
@@ -61,6 +81,15 @@ namespace MedContactBusiness.ServicesImplementations
         {
            
                 return await _unitOfWork.DayTimeTableRepository.Get().CountAsync();
+        }
+
+        public async Task<IEnumerable<DayTimeTableDto>?> GetDayTimeTableByDoctorDataId(Guid dataId)
+        {
+            var list = await  _unitOfWork.DayTimeTableRepository.Get()
+                                                         .Where(d => d.DoctorDataId != null && d.DoctorDataId.Equals(dataId))
+                                                         .Select(d => _mapper.Map<DayTimeTableDto>(d))
+                                                         .ToListAsync();
+            return list;
         }
 
     }

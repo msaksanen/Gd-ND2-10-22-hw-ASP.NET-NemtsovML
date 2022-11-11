@@ -30,7 +30,20 @@ namespace MedContactApp.MappingProfiles
                  .ForMember(model => model.DoctorName, m => m.MapFrom(doct => doct.Item2.Name))
                  .ForMember(model => model.DoctorMidName, m => m.MapFrom(doct => doct.Item2.MidName))
                  .ForMember(model => model.DoctorSurname, m => m.MapFrom(doct => doct.Item2.Surname))
-                 .ForMember(model => model.DoctorSpeciality, m => m.MapFrom(doct => doct.Item2.Speciality));
+                 .ForMember(model => model.DoctorSpeciality, m => m.MapFrom(doct => doct.Item2.Speciality))
+                 .ForMember(model => model.UserId, m => m.MapFrom(doct => doct.Item2.UserId));
+
+            CreateMap<DoctorInfo, DayTimeTableModel>()
+                .ForMember(model => model.DoctorDataId, m => m.MapFrom(dto => dto.DoctorDataId))
+                .ForMember(model => model.DoctorName, m => m.MapFrom(dto => dto.Name))
+                .ForMember(model => model.DoctorSurname, m => m.MapFrom(dto => dto.Surname))
+                .ForMember(model => model.DoctorSpeciality, m => m.MapFrom(dto => dto.Speciality))
+                .ForMember(model => model.Date, m => m.MapFrom(dto => DateTime.Now))
+                .ForMember(model => model.StartWorkTime, m => m.MapFrom(dto => DateTime.Today.AddHours(8)))
+                .ForMember(model => model.FinishWorkTime, m => m.MapFrom(dto => DateTime.Today.AddHours(20)))
+                .ForMember(model => model.UserId, m => m.MapFrom(dto => dto.UserId));
+
+       
         }
     }
 }

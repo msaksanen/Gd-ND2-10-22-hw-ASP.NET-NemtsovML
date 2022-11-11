@@ -96,19 +96,26 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a href="~/userpanel/accsettingsedit/@Model.Id">Edit details</a>
-</div>
-@if (Model.IsDependent != true)
+
+
+@section Footer
 {
     <div>
-    <a href="~/home/index">Back</a>
+        <a href="~/userpanel/accsettingsedit/@Model.Id"><h6>Edit details &#5125</h6></a>
     </div>
+    @if (Model.IsDependent != true)
+    {
+        <div>
+            <a href="~/home/index"><h6>&#5130 Back</h6></a>
+        </div>
+    }
+    else
+    {
+        <div>
+            <a href="~/familyaccount/family"><h6>&#5130 Back</h6></a>
+        </div>
+    }
+
 }
-else
-{
-    <div>
-    <a href="~/familyaccount/family">Back</a>
-    </div>
-}
+
 

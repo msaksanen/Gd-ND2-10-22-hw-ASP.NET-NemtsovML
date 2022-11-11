@@ -152,9 +152,7 @@
         </form>
       </div>
         
-      <div>
-            <a asp-controller ="AdminPanelDoctor" asp-action="DoctorDataIndex">Back to List</a>
-      </div>
+    
 
 
         @if (Model.SystemInfo != null)
@@ -169,7 +167,12 @@
 </div>
 
 
+@section Footer
+{
+    <a asp-controller="AdminPanelDoctor" asp-action="DoctorDataIndex"><h6>&#5130 Back to List</h6></a>
+    <br />
 
+}
 @section Scripts
 {
    @{

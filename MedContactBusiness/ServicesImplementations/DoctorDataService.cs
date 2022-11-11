@@ -36,7 +36,7 @@ namespace MedContactBusiness.ServicesImplementations
            
             if (dData?.Speciality != null && dData?.User != null)
             {
-                var doctInfo= _mapper.Map<DoctorInfo>((dData.User, dData.Speciality));
+                var doctInfo= _mapper.Map<DoctorInfo>((dData.User, dData.Speciality, dData));
                 return doctInfo;
             }
             else
@@ -56,9 +56,9 @@ namespace MedContactBusiness.ServicesImplementations
                                   .ToListAsync();
 
 
-            if (!dDataList.Any())
+            if (dDataList.Any())
             {
-                var docInfoList = dDataList.Select(t => _mapper.Map<DoctorInfo>((t.User, t.Speciality,t.ForDeletion))).ToList();
+                var docInfoList = dDataList.Select(t => _mapper.Map<DoctorInfo>((t.User, t.Speciality,t))).ToList();
                 return docInfoList;
             }
            
@@ -115,6 +115,7 @@ namespace MedContactBusiness.ServicesImplementations
              var list= await _unitOfWork.DoctorDataRepository
                     .Get()
                     .AsNoTracking()
+                    //.Include(dd => dd.Speciality)
                     .Where(dd => dd.UserId.Equals(userId))
                     .Where(dd => dd.SpecialityId!=null)
                     .Select(dd => _mapper.Map<DoctorDataDto>(dd))

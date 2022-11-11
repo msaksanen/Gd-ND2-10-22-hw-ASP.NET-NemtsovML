@@ -65,7 +65,8 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.LastLogin)
         </dd>
-    </dl>
+
+    </dl> 
 
     <div class="col-6 col-sm-3">
         <div>
@@ -117,9 +118,7 @@
     </div>
 
     <div>
-      <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpaneldoctor/applicantdetails/?id=@Model.Id">Edit user details</a>
-      <br />
-      <a asp-controller="AdminPanelDoctor" asp-action="ApplicationIndex">Back to applicant table</a>
+     
     </div>
 
         @if (Model.SystemInfo != null)
@@ -132,4 +131,16 @@
         }
 </div>
 </div>
+
+
+@section Footer
+{
+   
+    <div>
+    <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpaneldoctor/applicantdetails/?id=@Model.Id"><h6>Edit user details &#5125</h6></a>
+    
+    <a asp-controller="AdminPanelDoctor" asp-action="ApplicationIndex"><h6>&#5130 Back to applicant table</h6></a>
+    <br />
+    </div>
+}
 

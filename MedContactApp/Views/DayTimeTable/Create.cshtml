@@ -8,6 +8,10 @@
 
 <h1>Day Time Table</h1>
 
+    <h4>@Model?.DoctorName @Model?.DoctorSurname</h4>
+    <h6>Speciality @Model?.DoctorSpeciality</h6>
+    <h6>User Id: @Model?.UserId</h6>
+
 <br />
 
     <div class="col-md-4">
@@ -30,7 +34,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ConsultDuration" class="control-label"> Consultation Duration (min)</label>
-                <input asp-for="ConsultDuration" id="ConsultDuration" type="number" class="form-control" />
+                <input asp-for="ConsultDuration" id="ConsultDuration" type="number" class="form-control"  onblur="calctimetable()" />
                 <span asp-validation-for="ConsultDuration" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,27 +42,33 @@
             </div>
             <br/>
                 <div class="row">
-                    <div class="col-6 form-group">
-                        <button type="button" id="calc" class="btn btn-primary">Calculate Tickets Quantity</button>
-                    </div>
-                    <div class="col-6" id="calctext"></div>
+                   <div class="toast-container" id="toastContainer" style="position: absolute; top: 10px; right: 10px;">
+                    
+                   </div>
                 </div>      
                 <br/>
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>  
         </form>
+        <div>
+            @if(!string.IsNullOrEmpty(Model?.SystemInfo))
+                @Html.Raw(Model?.SystemInfo)
+        </div>
     </div>
     <br/>
-    <div>
-    <a asp-action="Index">Back to List</a>
-    </div>
 </div>
 
+@section Footer
+{
+    <a href="/daytimetable/timetabledoctindex/?dataid=@Model?.DoctorDataId"><h6>&#5130 Back to List</h6></a>
+    <br />
+
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="~/js/daytimetable.js"></script>
+    <script src="~/js/daytimetable.toast.js"></script>
    
 }
     

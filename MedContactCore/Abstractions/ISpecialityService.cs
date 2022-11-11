@@ -13,5 +13,6 @@ namespace MedContactCore.Abstractions
         Task<int> DeleteSpecialityByName(string? name);
         Task<int> AddSpecialityToDb(SpecialityDto dto);
         Task<Result> RemoveSpecialityById(Guid id);
+        Task<SpecialityDto?> GetSpecialityByName(string name);
     }
 }

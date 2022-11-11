@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MedContactCore.DataTransferObjects;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedContactApp.Models
@@ -32,5 +33,7 @@ namespace MedContactApp.Models
        
         [Required]
         public Guid? DoctorDataId { get; set; }
+        public Guid? UserId { get; set; }
+        public string? SystemInfo  { get; set; }
     }
 }

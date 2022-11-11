@@ -1,0 +1,29 @@
+﻿@model DayTimeTableDto
+
+<tr>
+    <td area-label="Date">
+        @Html.DisplayFor(modelItem => Model.Date) 
+    </td>
+    <td area-label="StartWorkTime">
+        @Html.DisplayFor(modelItem => Model.StartWorkTime)
+    </td>
+    <td area-label="FinishWorkTime">
+        @Html.DisplayFor(modelItem => Model.FinishWorkTime)
+    </td>
+    <td area-label="ConsultDuration">
+        @Html.DisplayFor(modelItem => Model.ConsultDuration)
+    </td>
+    <td area-label="Total Ticket Quantity">
+        @Html.DisplayFor(modelItem => Model.TotalTicketQty)
+    </td>
+    <td area-label="Free Ticket Quantity">
+        @Html.DisplayFor(modelItem => Model.FreeTicketQty)
+    </td>
+    <td area-label="Creation Date">
+        @Html.DisplayFor(modelItem => Model.CreationDate)
+    </td>
+    <td>
+        <span> <a class="btn btn-primary" href="~/daytimetable/details/@Model.Id">View details</a></span>
+    </td>
+
+</tr>
