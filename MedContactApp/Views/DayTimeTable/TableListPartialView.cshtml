@@ -23,7 +23,14 @@
         @Html.DisplayFor(modelItem => Model.CreationDate)
     </td>
     <td>
-        <span> <a class="btn btn-primary" href="~/daytimetable/details/@Model.Id">View details</a></span>
+        @if((int?)ViewData["Flag"]==1)
+        {
+            <span> <a class="btn btn-link"  href="~/appointment/view/@Model.Id">View appointments</a></span>
+        }
+         else
+        {
+            <span> <a class="btn btn-link" href="~/appointment/create/@Model.Id">Add an appointment</a></span>
+        }
     </td>
 
 </tr>

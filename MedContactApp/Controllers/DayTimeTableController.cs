@@ -112,7 +112,7 @@ namespace MedContactApp.Controllers
                 items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
              }
              
-            int flag = 0;
+            ViewData["Flag"] = 0;
             if (User.Identities.Any(identity => identity.IsAuthenticated))
             {
                 var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
@@ -120,7 +120,7 @@ namespace MedContactApp.Controllers
                     !string.IsNullOrEmpty(reflink) && reflink?.Contains(@"daytimetable/selelctspec") == true
                     || reflink?.Contains(@"adminpaneldoctor/doctordataindex") == true)
                 {
-                    flag = 1;
+                    ViewData["Flag"] = 1;
                 }
             }
 
@@ -132,7 +132,7 @@ namespace MedContactApp.Controllers
             string processOptions = $"&dataid={dataid}&sortorder={sortOrder}&reflink={reflink}";
 
             TimeTableDoctIndexModel model = new(
-                   items, processOptions,dInfo, flag, reflink,
+                   items, processOptions,dInfo, reflink,
                    new PageViewModel(count, page, pageSize, pageRoute),
                    new SortViewModel(sortOrder));
 

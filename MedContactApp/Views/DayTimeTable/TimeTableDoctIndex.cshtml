@@ -12,7 +12,7 @@
 }
 <h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
 <h6>Speciality @Model.DoctorInfo.Speciality</h6>
-@if(Model.Flag==1)
+@if ((int?)ViewData["Flag"] == 1)
 {
     <h6>User Id: @Model.DoctorInfo.UserId</h6>
     <p>
@@ -60,7 +60,7 @@
                 <tbody>
                     @foreach (var item in Model.TableList)
                     {
-                    await Html.RenderPartialAsync("TableListPartialView", item);
+                    await Html.RenderPartialAsync("TableListPartialView", item, ViewData);
                     }
 
                 </tbody>
