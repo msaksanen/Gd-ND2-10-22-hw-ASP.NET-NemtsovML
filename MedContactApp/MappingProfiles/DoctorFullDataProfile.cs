@@ -38,7 +38,9 @@ namespace MedContactApp.MappingProfiles
                 .ForMember(dto => dto.SpecialityId,
                  opt => opt.MapFrom(d => d.Item1.SpecialityId))
                 .ForMember(dto => dto.SpecNameReserved,
-                 opt => opt.MapFrom(d => d.Item1.SpecNameReserved));
+                 opt => opt.MapFrom(d => d.Item1.SpecNameReserved))
+                 .ForMember(dto => dto.ForDeletion,
+                 opt => opt.MapFrom(d => d.Item1.ForDeletion));
 
             CreateMap<User, DoctorFullDataDto>()
                   .ForMember(dto => dto.UserId,

@@ -20,5 +20,6 @@ namespace MedContactApp.Models
         public Guid[]? SpecialityBlockIds { get; set; }
         public List <SpecialityDto>? Specialities { get; set; }
         public string? SystemInfo { get; set; }
+        public string? Reflink { get; set; }
     }
 }

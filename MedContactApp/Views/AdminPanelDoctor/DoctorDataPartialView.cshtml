@@ -49,9 +49,14 @@
     </td>
    
     <td>
-        <span> <a class="btn btn-link" href="~/adminpaneldoctor/specdetails/?userid=@Model.UserId">Speciality details</a></span>
+        @if (!string.IsNullOrEmpty(Model.SpecialityName))
+        {
+            <span> <a class="btn btn-link" href="~/daytimetable/timetabledoctindex/?dataid=@Model.Id&reflink=@ViewData["Reflink"]">DayTimeTables</a></span>
+
+        }
+
         <br />
-        <span> <a class="btn btn-link" href="~/adminpaneldoctor/doctordetails/?userid=@Model.UserId">Doctor details</a></span>
+        <span> <a class="btn btn-link" href="~/adminpaneldoctor/doctordetails/?userid=@Model.UserId&reflink=@ViewData["Reflink"]">Doctor details</a></span>
     </td>
 
 </tr>

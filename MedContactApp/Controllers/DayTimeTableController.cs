@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using MedContactApp.FilterSortPageHelpers;
 using System.Data;
 using System.Drawing;
+using System.Security.Claims;
 
 namespace MedContactApp.Controllers
 {
@@ -80,7 +81,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TimeTableDoctIndex(string? dataid, SortState sortOrder = SortState.DateDesc, int page = 1 )
+        public async Task<IActionResult> TimeTableDoctIndex(string? dataid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1 )
         {
             if (string.IsNullOrEmpty(dataid))
                 return BadRequest();
@@ -111,11 +112,27 @@ namespace MedContactApp.Controllers
                 items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
              }
              
-             string pageRoute = @"/daytimetable/timetabledoctindex?page=";
-             string processOptions = $"&dataid={dataid}&sortorder={sortOrder}";
+            int flag = 0;
+            if (User.Identities.Any(identity => identity.IsAuthenticated))
+            {
+                var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")) &&
+                    !string.IsNullOrEmpty(reflink) && reflink?.Contains(@"daytimetable/selelctspec") == true
+                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex") == true)
+                {
+                    flag = 1;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(reflink))
+                reflink = reflink.Replace("*", "&");
+   
+
+            string pageRoute = @"/daytimetable/timetabledoctindex?page=";
+            string processOptions = $"&dataid={dataid}&sortorder={sortOrder}&reflink={reflink}";
 
             TimeTableDoctIndexModel model = new(
-                   items, processOptions,dInfo,
+                   items, processOptions,dInfo, flag, reflink,
                    new PageViewModel(count, page, pageSize, pageRoute),
                    new SortViewModel(sortOrder));
 

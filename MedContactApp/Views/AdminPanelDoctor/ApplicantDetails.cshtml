@@ -107,7 +107,7 @@
                             <a href="@item.Path"><i>@item.Name</i></a>
                        </td>
                        <td>
-                            <i class="bi bi-x-circle"></i><a href="/adminpaneldoctor/applicantdetails/?id=@Model.Id&filedata=@item.Id"><i>Delete</i></a>
+                            <i class="bi bi-x-circle"></i><a href="/adminpaneldoctor/applicantdetails/?id=@Model.Id&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
                        </td>
                      </tr>
                   }                      
@@ -138,8 +138,15 @@
    
     <div>
     <a href="~/adminpanel/userdetails/?id=@Model.Id&reflink=/adminpaneldoctor/applicantdetails/?id=@Model.Id"><h6>Edit user details &#5125</h6></a>
+     @if (!string.IsNullOrEmpty(Model.Reflink))
+        {
+            <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
+        }
+        else
+        {
+            <a asp-controller="AdminPanelDoctor" asp-action="ApplicationIndex"><h6>&#5130 Back to applicant table</h6></a>
+        }
     
-    <a asp-controller="AdminPanelDoctor" asp-action="ApplicationIndex"><h6>&#5130 Back to applicant table</h6></a>
     <br />
     </div>
 }

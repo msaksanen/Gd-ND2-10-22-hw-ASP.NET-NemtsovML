@@ -22,9 +22,10 @@ function calctimetable() {
     let consultDurationVal = parseInt(consultDuration.value);
     time = "Consult time " + consultDurationVal + " mins";  
 
-    let ticketQty = Math.floor((finishHrs * 60 + finishMins - (startHrs * 60 + startMins)) / consultDurationVal);
+    let diff = Math.floor(finishHrs * 60 + finishMins - (startHrs * 60 + startMins));
+    let ticketQty = diff/ consultDurationVal;
 
-    if (isNaN(ticketQty) || consultDurationVal <= 0 || ticketQty < 0)
+    if (isNaN(ticketQty) || consultDurationVal <= 0 || ticketQty < 0 || diff < 0)
         text = 'Input correct values!'; 
     else 
         text = `Estimated quantity of tickets is ${ticketQty}`; 

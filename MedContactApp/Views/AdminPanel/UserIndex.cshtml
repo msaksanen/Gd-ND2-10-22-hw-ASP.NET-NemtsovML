@@ -139,7 +139,7 @@
 {
     foreach (var item in Model.Users)
     {
-        await Html.RenderPartialAsync("UserPartialView", item);
+                        await Html.RenderPartialAsync("UserPartialView", item, ViewData);
     }
 }
 

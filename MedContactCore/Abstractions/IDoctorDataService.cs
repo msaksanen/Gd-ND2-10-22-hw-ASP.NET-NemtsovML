@@ -10,7 +10,7 @@ namespace MedContactCore.Abstractions
 {
     public interface IDoctorDataService
     {
-      Task<DoctorInfo> GetDoctorInfoById(Guid? doctorDataId);
+      Task<DoctorInfo?> GetDoctorInfoById(Guid? doctorDataId);
       Task<int> CreateDoctorDataAsync(DoctorDataDto dto);
       Task<DoctorData?> GetDoctorDataByUserIdSpecId(Guid? userId, Guid? specId);
       Task<List<DoctorDataDto>> GetDoctorDataListByUserId(Guid userId);

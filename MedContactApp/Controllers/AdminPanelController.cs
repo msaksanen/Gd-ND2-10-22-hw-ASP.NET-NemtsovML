@@ -1,43 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MedContactCore;
+﻿using AutoMapper;
+using MedContactApp.AdminPanelHelpers;
+using MedContactApp.FilterSortHelpers;
+using MedContactApp.FilterSortPageHelpers;
+using MedContactApp.Models;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
-using MedContactApp.Models;
-using AutoMapper;
-using Serilog;
-using System.ComponentModel.Design;
-using System.Configuration;
-using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Configuration;
 using MedContactDb.Entities;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using MedContactBusiness.ServicesImplementations;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using System.Runtime.InteropServices;
-using MedContactApp.Helpers;
-using Microsoft.CodeAnalysis.Differencing;
-using MedContactApp.FilterSortHelpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Microsoft.EntityFrameworkCore.Query;
-using MedContactApp.FilterSortPageHelpers;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using Microsoft.Build.Framework;
+using Serilog;
 using System.Data;
-using System.Xml.Linq;
-using System;
-using System.ComponentModel.DataAnnotations;
-using MedContactDb.Migrations;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Linq.Expressions;
-using MedContactApp.AdminPanelHelpers;
+using System.Security.Claims;
 
 namespace MedContactApp.Controllers
 {
@@ -47,11 +20,6 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
         private readonly IConfiguration _configuration;
-        //private readonly ModelUserBuilder _modelBuilder;
-        //private readonly IFileDataService _fileDataService;
-        //private readonly IDoctorDataService _doctorDataService;
-        //private readonly ISpecialityService _specialityService;
-        //private readonly IWebHostEnvironment _appEnvironment;
         private readonly AdminModelBuilder _adminModelBuilder;
         private readonly AdminSortFilter _adminSortFilter;
         private int _pageSize = 7;
@@ -60,18 +28,12 @@ namespace MedContactApp.Controllers
             IMapper mapper, IRoleService roleService, IConfiguration configuration,
             AdminModelBuilder adminModelBuilder,
             AdminSortFilter adminSortFilter)
-            // ModelUserBuilder modelBuilder, IFileDataService fileDataService, IDoctorDataService doctorDataService,
-           // IWebHostEnvironment appEnvironment, ISpecialityService specialityService,
+          
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
             _configuration = configuration;
-            //_modelBuilder = modelBuilder;
-            //_fileDataService = fileDataService;
-            //_doctorDataService = doctorDataService;
-            //_appEnvironment = appEnvironment;
-            //_specialityService = specialityService;
             _adminModelBuilder = adminModelBuilder;
             _adminSortFilter = adminSortFilter;
         }
@@ -139,6 +101,10 @@ namespace MedContactApp.Controllers
                 string pageRoute = @"/adminpanel/userindex?page=";
                 string processOptions = $"&grouporder={groupOrder}&email{email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
 
+                string link= Request.Path.Value + Request.QueryString.Value ;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+
                 UserIndexViewModel viewModel = new(
                     items, processOptions, groupOrder, icon,
                     new PageViewModel(count, page, pageSize, pageRoute),
@@ -157,16 +123,18 @@ namespace MedContactApp.Controllers
         }
        
         [HttpGet]
-        public async Task<IActionResult> UserDetails(string? id, string? reflink = "")
+        public async Task<IActionResult> UserDetails(string? id, string? reflink="")
         {
 
             AdminUserEditModel emptyModel = new();
             var model = await _adminModelBuilder.AdminUserModelBuildAsync(emptyModel, id);
             if (model == null)
                 return NotFound();
-
-            model.Reflink = reflink;
-
+            if (!string.IsNullOrEmpty(reflink))
+                model.Reflink = reflink.Replace("*", "&");
+            else 
+                model.Reflink = reflink;
+               
             return View(model);
         }
 
@@ -178,6 +146,7 @@ namespace MedContactApp.Controllers
             int addresult = 0;
             int subtract = 0;
             int changeRes = 0;
+
             try
             {
                 var modelFull = await _adminModelBuilder.AdminUserModelBuildAsync(model, String.Empty);

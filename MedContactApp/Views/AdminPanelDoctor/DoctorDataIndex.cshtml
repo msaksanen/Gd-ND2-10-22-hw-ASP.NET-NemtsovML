@@ -46,7 +46,7 @@
         <th>
             <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
              opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-             opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.EmailSort">Email</sort-header>
  
@@ -54,7 +54,7 @@
         <th>
             <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
              opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-             opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SpecialitySort">Speciality</sort-header>
  
@@ -62,7 +62,7 @@
         <th>
              <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
              opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-             opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
              current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
      
@@ -70,7 +70,7 @@
         <th>
               <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
                opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-               opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
 
@@ -78,7 +78,7 @@
         <th>
                <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
                opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-               opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
                opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth Date</sort-header>
      
@@ -86,21 +86,21 @@
         <th>
                <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
                opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-               opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
                opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.GenderSort">Gender</sort-header>
         </th>
          <th>
               <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
               opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-              opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+              opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsBlockedSort">Speciality Blocked</sort-header>
         </th>
         <th>
               <sort-header action="DoctorDataIndex" up="@Model.SortViewModel.Up"
               opt-url-email="@(Model.FilterViewModel.SelectedEmail)"
-              opt-url-email="@(Model.FilterViewModel.SelectedSpeciality)"
+              opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
               opt-url-name="@(Model.FilterViewModel.SelectedName)"  opt-url-roleid="@(Model.FilterViewModel.SelectedRole)"
               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.IsMarkedSort">Marked For Delete</sort-header>
         </th>
@@ -121,7 +121,7 @@
 {
     foreach (var item in Model.Users)
     {
-        await Html.RenderPartialAsync("DoctorDataPartialView", item);
+        await Html.RenderPartialAsync("DoctorDataPartialView", item, ViewData);
     }
 }
 

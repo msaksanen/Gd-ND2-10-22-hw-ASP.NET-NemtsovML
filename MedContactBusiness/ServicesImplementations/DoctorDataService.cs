@@ -28,21 +28,18 @@ namespace MedContactBusiness.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<DoctorInfo> GetDoctorInfoById(Guid? doctorDataId)
+        public async Task<DoctorInfo?> GetDoctorInfoById(Guid? doctorDataId)
         {
             var dData = await _unitOfWork.DoctorDataRepository
-                .FindBy(t => t.Id.Equals(doctorDataId) && t.ForDeletion != true && t.SpecialityId!=null ,t => t.User!, t => t.Speciality!)
+                .FindBy(t => t.Id.Equals(doctorDataId)&& t.SpecialityId!=null ,t => t.User!, t => t.Speciality!)
                 .FirstOrDefaultAsync();
-           
+           // && t.ForDeletion != true
             if (dData?.Speciality != null && dData?.User != null)
             {
                 var doctInfo= _mapper.Map<DoctorInfo>((dData.User, dData.Speciality, dData));
                 return doctInfo;
             }
-            else
-            {
-                throw new ArgumentException(nameof(dData));
-            }
+            return null;
         }
 
         public async Task<List<DoctorInfo>?> GetDoctorInfoByUserId(Guid? userId)

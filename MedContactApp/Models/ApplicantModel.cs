@@ -7,5 +7,6 @@ namespace MedContactApp.Models
         public List<FileDataDto>? fileDatas { get; set; }
         public List<DoctorInfo>? doctorInfos { get; set; }
         public string? SystemInfo { get; set; }
+        public string? Reflink { get; set; }
     }
 }

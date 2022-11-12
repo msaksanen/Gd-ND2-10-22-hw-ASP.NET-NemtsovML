@@ -8,6 +8,15 @@
 <h1>Selelct Specialities</h1>
 
 <h6>Select speciality in order to view/modify corresponding daytimetable</h6>
+
+ @if (Model.SystemInfo != null)
+    {
+        <div>
+            <p>
+                @Html.Raw(@Model.SystemInfo)
+            </p>
+        </div>
+    }
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -25,7 +34,7 @@
                                     <b>Speciality Id: @item.SpecialityId</b>
                                 </td>          
                                 <td>
-                                    <i class="bi bi-check2-circle"></i><a href="/daytimetable/timetabledoctindex/?dataid=@item.DoctorDataId"><i>@item.Speciality</i></a>
+                                    <i class="bi bi-check2-circle"></i><a href="/daytimetable/timetabledoctindex/?dataid=@item.DoctorDataId&reflink=/daytimetable/selelctspec/"><i>@item.Speciality</i></a>
                                 </td>
                             </tr>
                         }
@@ -35,15 +44,6 @@
         </Table>
         
     </div>
-    <br />
-    @if (Model.SystemInfo != null)
-    {
-        <div>
-            <p>
-                @Html.Raw(@Model.SystemInfo)
-            </p>
-        </div>
-    }
 
 </div>
 

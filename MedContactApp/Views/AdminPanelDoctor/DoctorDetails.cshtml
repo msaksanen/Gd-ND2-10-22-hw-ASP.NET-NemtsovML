@@ -65,6 +65,10 @@
                 <input asp-for="UserId" class="form-control" type="hidden"/>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <input class="form-control" type="hidden" id="Reflink" name="Reflink" value="@Model.Reflink" />
+                <span asp-validation-for="Reflink" class="text-danger"></span>
+            </div>
              <div class="form-group">
                   <label><b>Marked by user for deletion speclialities:</b></label>
                     <hr/>
@@ -169,7 +173,17 @@
 
 @section Footer
 {
-    <a asp-controller="AdminPanelDoctor" asp-action="DoctorDataIndex"><h6>&#5130 Back to List</h6></a>
+   <div>
+        @if (!string.IsNullOrEmpty(Model.Reflink))
+        {
+            <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
+        }
+        else
+        {
+            <a asp-controller="AdminPanelDoctor" asp-action="DoctorDataIndex"><h6>&#5130 Back to List</h6></a>
+        }
+    </div>
+ 
     <br />
 
 }

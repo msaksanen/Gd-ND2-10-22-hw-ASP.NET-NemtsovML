@@ -12,8 +12,9 @@ namespace MedContactApp.Models
         public FilterSpecViewModel FilterViewModel { get; }
         public SortViewModel SortViewModel { get; }
         public string ProcessOptions { get; } = string.Empty;
+        public string Reflink { get; } = string.Empty;
         public DoctDataIndexViewModel (IEnumerable<DoctorFullDataDto> users,
-            string processOptions, PageViewModel pageViewModel,
+            string processOptions, string reflink, PageViewModel pageViewModel,
             FilterSpecViewModel filterViewModel, SortViewModel sortViewModel)
         {
             Users = users;
@@ -21,6 +22,7 @@ namespace MedContactApp.Models
             PageViewModel = pageViewModel;
             FilterViewModel = filterViewModel;
             SortViewModel = sortViewModel;
+            Reflink = reflink;
         }
     }
 }

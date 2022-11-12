@@ -14,6 +14,10 @@ using MedContactApp.Helpers;
 using MedContactDb.Entities;
 using MedContactBusiness.ServicesImplementations;
 using System.Security.Claims;
+using MedContactApp.AdminPanelHelpers;
+using MedContactApp.FilterSortHelpers;
+using MedContactApp.FilterSortPageHelpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedContactApp.Controllers
 {
@@ -25,16 +29,20 @@ namespace MedContactApp.Controllers
         private int _pageSize = 7;
         private readonly IConfiguration _configuration;
         private readonly IRoleService _roleService;
-        //private readonly IRoleAllUserService<DoctorDto> _roleAllUserService;
+        private readonly AdminSortFilter _adminSortFilter;
+        private readonly IDoctorDataService _doctorDataService;
 
         public DoctorController (IUserService userService, IConfiguration configuration,
-            IMapper mapper, EmailChecker emailChecker, IRoleService roleService)
+            IMapper mapper, EmailChecker emailChecker, IRoleService roleService, 
+            AdminSortFilter adminSortFilter, IDoctorDataService doctorDataService)
         {
             _userService = userService;
             _mapper = mapper;
             _configuration = configuration;
             _emailChecker = emailChecker;
             _roleService = roleService;
+            _adminSortFilter = adminSortFilter;
+            _doctorDataService = doctorDataService; 
         }
 
         [HttpGet]
@@ -50,34 +58,52 @@ namespace MedContactApp.Controllers
             return BadRequest();
         }
 
-        public async Task<IActionResult> Index(int page)
+        [HttpGet]
+        public async Task<IActionResult> Index(string name, string surname,
+              string speciality, int page = 1, SortState sortOrder = SortState.SpecialityAsc)
         {
+
             try
             {
-               bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-               if (result) _pageSize=pageSize;
+                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+                if (result) _pageSize = pageSize;
+                IQueryable<DoctorData> dDatas = _doctorDataService
+                                                    .GetDoctorData()
+                                                    .Include(d => d.Speciality)
+                                                    //.Include(d => d.DayTimeTables)
+                                                    .Include(d => d.User)
+                                                    .ThenInclude(u => u!.Roles);
 
-               var doctorsDto = await _userService
-                    .GetUsersByPageNumberAndPageSizeAsync(page, _pageSize);
+                dDatas = dDatas.Where(d => d.SpecialityId != null && d.IsBlocked != true && d.ForDeletion != true);
+                dDatas = _adminSortFilter.DoctorDataFilter(dDatas, "", name, surname, speciality);
+                dDatas = _adminSortFilter.DoctorDataSort(dDatas, sortOrder);
 
-                if (doctorsDto.Any())
-                {
-                    double count= await _userService.GetUserEntitiesCountAsync();
-                    double pageCount = Math.Ceiling(count/ _pageSize);
-                    ViewBag.pageCount = pageCount;
-                    ViewBag.currentPage = page;
-                    return View(doctorsDto);
-                }
-                else
-                {
-                    throw new ArgumentException(nameof(page));
-                }
+                var count = await dDatas.CountAsync();
+                var doctorDatas = await dDatas.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                var items = doctorDatas.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality)));
+
+                string pageRoute = @"/doctor/index?page=";
+                string processOptions = $"&name={name}&speciality={speciality}&sortorder={sortOrder}";
+               
+                string link = Request.Path.Value + Request.QueryString.Value;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+
+                DoctDataIndexViewModel viewModel = new(
+                    items, processOptions,link,
+                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new FilterSpecViewModel(null,null, name, "", speciality),
+                    new SortViewModel(sortOrder)
+                );
+                return View(viewModel);
+
             }
             catch (Exception e)
             {
                 Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
                 return BadRequest();
             }
+
         }
 
         [HttpGet]

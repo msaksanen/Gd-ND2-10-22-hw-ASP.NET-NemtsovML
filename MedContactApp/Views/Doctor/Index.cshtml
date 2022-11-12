@@ -1,60 +1,80 @@
-﻿@using MedContactApp.Helpers;
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
 
-@model IEnumerable<UserDto>
+
+@model DoctDataIndexViewModel
 
 @{
-    ViewData["Title"] = "Doctors Table";
-    ViewBag.pageRoute = "/index/doctor";
+    ViewData["Title"] = "Doctors Table"; 
 }
 
-<a href="~/doctor/create">Add doctor</a>
 
+<Table class="delivery">
+<tbody>
+  <tr>
+    <form method="get">
+     <td style="border:none">
+                <label>Name/Surname: </label>
+                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+     </td>
+      <td style="border:none">
+                <label>Speciality: </label>
+                <input name="speciality" value="@Model!.FilterViewModel.SelectedSpeciality" />
+                <input type="submit" value="Filter" />
+     </td>
+    </form>
+ </tr>
+</tbody>
+</Table>
 
-<Table class="delivery">  @*" table table-bordered"*@
-    <caption>Doctors Info Table</caption>
+<Table class="delivery">  
+    <caption>Doctor Info Table</caption>
     <thead>
     <tr>
         <th>
-           Username
+               <sort-header action="Index" up="@Model.SortViewModel.Up"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url--url-name="@(Model.FilterViewModel.SelectedName)" 
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SpecialitySort">Speciality</sort-header>
+ 
         </th>
         <th>
-           Email
+               <sort-header action="Index" up="@Model.SortViewModel.Up"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)"
+               current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
+     
         </th>
         <th>
-           User Id
+               <sort-header action="Index" up="@Model.SortViewModel.Up" 
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" 
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
+
         </th>
         <th>
-           Name
-        </th>
-        <th>
-           Middle Name
-        </th>
-        <th>
-           Surname
-        </th>
-        @*<th>
-           Age
-        </th>*@
-        <th>
-           Gender
-        </th>
-        <th>
-           Address
+               <sort-header action="Index" up="@Model.SortViewModel.Up"              
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)"  
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth Date</sort-header>
+     
         </th>
         <th>
            Details
-        </th>
+         </th>
     </tr>
     <thead>
     <tbody>
     
         
 
-@if (Model.Any())
+@if (Model.Users.Any())
 {
-    foreach (var item in Model)
+    foreach (var item in Model.Users)
     {
-        await Html.RenderPartialAsync("DoctorPartialView", item);
+        await Html.RenderPartialAsync("DoctorPartialView", item, ViewData);
     }
 }
 
@@ -62,15 +82,21 @@
 </Table>
 
 
-@Html.GenerateOldPaginator((int)ViewBag.pageCount, (int)ViewBag.currentPage, (string)ViewBag.pageRoute)
+@section Footer
+{
+
+    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+                             @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
+ }
+
 
 @section CssStyles
-    {
+{
     <style>
        caption {
           caption-side: top;
           text-align: center;
           padding: 10px 0;
-          font-size: 14px;}
+          font-size: 14px;}        
     </style>
 }

@@ -125,8 +125,12 @@ namespace MedContactApp.Controllers
                 string pageRoute = @"/adminpaneldoctor/doctordataindex?page=";
                 string processOptions = $"&email{email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
 
+                string link = Request.Path.Value + Request.QueryString.Value;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+
                 DoctDataIndexViewModel viewModel = new(
-                    items, processOptions,
+                    items, processOptions,link,
                     new PageViewModel(count, page, pageSize, pageRoute),
                     new FilterSpecViewModel(roles, roleId, name, email, speciality),
                     new SortViewModel(sortOrder)
@@ -167,6 +171,10 @@ namespace MedContactApp.Controllers
                 string pageRoute = @"/adminpaneldoctor/applicationindex?page=";
                 string processOptions = $"&email={email}&name={name}&sortorder={sortOrder}";
 
+                string link = Request.Path.Value + Request.QueryString.Value;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+
                 UserIndexApplViewModel viewModel = new(
                     items, processOptions,
                     new PageViewModel(count, page, pageSize, pageRoute),
@@ -185,7 +193,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "")
+        public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "", string? reflink="")
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest();
@@ -198,6 +206,11 @@ namespace MedContactApp.Controllers
                 return NotFound();
 
             var model = _mapper.Map<ApplicantModel>(usr);
+
+            if (!string.IsNullOrEmpty(reflink))
+                model.Reflink = reflink.Replace("*", "&");
+            else
+                model.Reflink = reflink;
 
             if (!string.IsNullOrEmpty(filedata))
             {
@@ -235,8 +248,15 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DoctorDetails(string? userid, string? specr, string? specd)
+        public async Task<IActionResult> DoctorDetails(string? userid, string? specr, string? specd, string? reflink="")
         {
+            AdminEditDoctorModel smodel = new();
+
+            if (!string.IsNullOrEmpty(reflink))
+                smodel.Reflink = reflink.Replace("*", "&");
+            else
+                smodel.Reflink = reflink;
+
             if (string.IsNullOrEmpty(userid))
                 return NotFound();
             var res = Guid.TryParse(userid, out Guid userId);
@@ -245,7 +265,7 @@ namespace MedContactApp.Controllers
                 return NotFound("User Id is incorrect");
             try
             {
-                var model = await _adminModelBuilder.AdminDoctorModelBuildAsync(new AdminEditDoctorModel(), userId, specr, specd);
+                var model = await _adminModelBuilder.AdminDoctorModelBuildAsync(smodel, userId, specr, specd);
                 if (model != null)
                 {
                     return View(model);

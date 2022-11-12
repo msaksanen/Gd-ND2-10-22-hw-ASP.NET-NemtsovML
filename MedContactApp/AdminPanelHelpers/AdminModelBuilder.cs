@@ -50,6 +50,7 @@ namespace MedContactApp.AdminPanelHelpers
                 model.Specialities = spec;
                 model.SpecialityIds = smodel.SpecialityIds;
                 model.SpecialityBlockIds = smodel.SpecialityBlockIds;
+                model.Reflink = smodel.Reflink;
                 if (doctorData == null || doctorData.Count == 0)
                     return model;
                 var resSpecR = Guid.TryParse(specr, out Guid specRId); //restore speciality
@@ -81,6 +82,7 @@ namespace MedContactApp.AdminPanelHelpers
                             sp.IsSpecBlocked = true;
                     }
                 }
+
                 return model;
             }
             return null;
@@ -121,6 +123,8 @@ namespace MedContactApp.AdminPanelHelpers
                     newModel!.RoleNames = roleList!;
             }
 
+            if(!string.IsNullOrEmpty(model.Reflink))
+                newModel.Reflink = model.Reflink;   
 
             if (model.Id != null)
             {

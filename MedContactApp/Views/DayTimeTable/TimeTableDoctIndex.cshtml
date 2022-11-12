@@ -12,10 +12,13 @@
 }
 <h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
 <h6>Speciality @Model.DoctorInfo.Speciality</h6>
-<h6>User Id: @Model.DoctorInfo.UserId</h6>
-<p>
-    <a href="~/daytimetable/create/?dataid=@Model.DoctorInfo.DoctorDataId">Create New DayTimeTable</a>
-</p>
+@if(Model.Flag==1)
+{
+    <h6>User Id: @Model.DoctorInfo.UserId</h6>
+    <p>
+        <a href="~/daytimetable/create/?dataid=@Model.DoctorInfo.DoctorDataId">Create New DayTimeTable</a>
+    </p>
+}
 <hr />
 
 
@@ -28,6 +31,7 @@
                 <th>
                     <sort-header action="TimeTableDoctIndex" up="@Model.SortViewModel.Up"
                      opt-url-dataid="@(Model.DoctorInfo.DoctorDataId)"
+                     opt-url-reflink=@Model.Reflink
                      current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Date</sort-header>
                 </th>
                 <th>
@@ -43,7 +47,7 @@
                     Total Ticket Quantity
                 </th>
                 <th>
-                    FreeTicketQty
+                    Free Ticket Quantity
                 </th>
                 <th>
                     Creation Date
@@ -66,6 +70,16 @@
 
 @section Footer
 {
+    <div>
+        @if (!string.IsNullOrEmpty(Model.Reflink))
+        {
+            <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home page</h6></a>
+        }
+    </div>
 
     @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
