@@ -21,6 +21,7 @@ namespace MedContactDataAbstractions.Repositories
 
         //UPDATE
         void Update(T entity);
+        void UpdateRange(IEnumerable<T> entities);
         Task PatchAsync(Guid id, List<PatchModel> patchData);
 
 

@@ -13,5 +13,6 @@ namespace MedContactCore.Abstractions
       Task<List<DayTimeTableDto>> GetDayTimeTableByPageNumberAndPageSizeAsync(int pageNumber, int pageSize);
       Task<int> GetDayTimeTableEntitiesCountAsync();
       Task<IEnumerable<DayTimeTableDto>?> GetDayTimeTableByDoctorDataId(Guid dataId);
+      Task<DayTimeTableDto?> GetDayTimeTableByIdAsync(Guid dttId);
     }
 }

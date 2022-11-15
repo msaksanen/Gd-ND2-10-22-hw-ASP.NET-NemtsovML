@@ -63,9 +63,11 @@ namespace MedContactApp
             builder.Services.AddScoped<IRepository<Family>, Repository<Family>>();
      
             builder.Services.AddScoped<IRepository<DoctorData>, Repository<DoctorData>>();
+            builder.Services.AddScoped<IRepository<CustomerData>, Repository<CustomerData>>();
             builder.Services.AddScoped<IRepository<AcsData>, Repository<AcsData>>();
             builder.Services.AddScoped<IRepository<ExtraData>, Repository<ExtraData>>();
             builder.Services.AddScoped<IRepository<FileData>, Repository<FileData>>();
+            builder.Services.AddScoped<IRepository<Appointment>, Repository<Appointment>>();
             builder.Services.AddScoped<IRepository<Speciality>, Repository<Speciality>>();
             builder.Services.AddScoped<IRepository<DayTimeTable>, Repository<DayTimeTable>>();
             builder.Services.AddScoped<IRepository<Role>, Repository<Role>>();
@@ -76,11 +78,13 @@ namespace MedContactApp
            
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IFamilyService, FamilyService>();
-           
+
+            builder.Services.AddScoped<ICustomerDataService, CustomerDataService>();
             builder.Services.AddScoped<IDoctorDataService, DoctorDataService>();
             builder.Services.AddScoped<IFileDataService, FileDataService>();
             builder.Services.AddScoped<ISpecialityService, SpecialityService>();
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
             builder.Services.AddScoped<ModelUserBuilder>();
             builder.Services.AddScoped<AdminModelBuilder>();

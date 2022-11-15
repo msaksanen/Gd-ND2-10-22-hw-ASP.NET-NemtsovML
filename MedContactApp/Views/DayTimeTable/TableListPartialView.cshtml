@@ -25,11 +25,11 @@
     <td>
         @if((int?)ViewData["Flag"]==1)
         {
-            <span> <a class="btn btn-link"  href="~/appointment/view/@Model.Id">View appointments</a></span>
+            <span> <a class="btn btn-link" href="~/appointment/viewindex/?id=@Model.Id">View appointments</a></span>
         }
          else
         {
-            <span> <a class="btn btn-link" href="~/appointment/create/@Model.Id">Add an appointment</a></span>
+            <span> <a class="btn btn-link" href="~/appointment/createindex/?id=@Model.Id">Add an appointment</a></span>
         }
     </td>
 

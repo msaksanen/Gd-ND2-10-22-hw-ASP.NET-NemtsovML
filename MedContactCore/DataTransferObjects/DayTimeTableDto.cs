@@ -27,7 +27,8 @@ namespace MedContactCore.DataTransferObjects
         public int? TotalTicketQty { get; set; }
         public int? FreeTicketQty { get; set; }  
         public Guid? DoctorDataId { get; set; }
-        public List<Appointment>? Appointments { get; set; }
+        public DoctorDataDto? DoctorData { get; set; }
+        public List<AppointmentDto>? Appointments { get; set; }
 
     }
 }

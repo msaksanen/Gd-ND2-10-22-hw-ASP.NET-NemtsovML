@@ -8,6 +8,7 @@ public interface IUnitOfWork
    
     IRepository<User> UserRepository { get; }
     IRepository<DoctorData> DoctorDataRepository { get; }
+    IRepository<CustomerData> CustomerDataRepository { get; }
     IRepository<Speciality> SpecialityRepository { get; }
     IRepository<DayTimeTable> DayTimeTableRepository { get; }
     IRepository<Role> RoleRepository { get; }
@@ -15,6 +16,7 @@ public interface IUnitOfWork
     IRepository<AcsData> AcsDataRepository { get; }
     IRepository<ExtraData> ExtraDataRepository { get; }
     IRepository<FileData> FileDataRepository { get; }
+    IRepository<Appointment> AppointmentRepository { get; }
 
     Task<int> Commit();
 }

@@ -47,13 +47,21 @@ namespace MedContactApp.Helpers
             return null;
         }
 
-        internal async Task<UserDto?> BuildUserById(HttpContext context, string? id = "")
+        internal async Task<UserDto?> BuildUserById(HttpContext context, string? id = "", int? flag=1)
         {
             string userId;
             if (string.IsNullOrEmpty(id))
             {
-                var UserIdClaim = context.User.FindFirst("MUId");
-                userId = UserIdClaim!.Value;
+               if (flag == 2)
+                {
+                    var UserIdClaim = context.User.FindFirst("UId");
+                    userId = UserIdClaim!.Value;
+                }
+               else
+                {
+                    var UserIdClaim = context.User.FindFirst("MUId");
+                    userId = UserIdClaim!.Value;
+                }
             }
             else
                 userId = id;

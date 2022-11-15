@@ -10,6 +10,7 @@ namespace MedContactDataRepositories
         private readonly MedContactContext _database;
         public IRepository<User> UserRepository { get; }
         public IRepository<DoctorData> DoctorDataRepository { get; }
+        public IRepository<CustomerData> CustomerDataRepository { get; }
         public IRepository<Speciality> SpecialityRepository { get; }
         public IRepository<DayTimeTable> DayTimeTableRepository { get; }
         public IRepository<Role> RoleRepository { get; }              
@@ -17,15 +18,17 @@ namespace MedContactDataRepositories
         public IRepository<AcsData> AcsDataRepository { get; }
         public IRepository<ExtraData> ExtraDataRepository { get; }
         public IRepository<FileData> FileDataRepository { get; }
+        public IRepository<Appointment> AppointmentRepository { get; }
 
 
         public UnitOfWork(MedContactContext database,
                IRepository<User> userRepository, 
                IRepository<DayTimeTable> dayTimeTableRepository,
-               IRepository<Role> roleRepository, IRepository<DoctorData> doctorDataRepository, 
+               IRepository<Role> roleRepository, IRepository<DoctorData> doctorDataRepository,
                IRepository<Family> familyRepository, IRepository<Speciality> specialityRepository,
-               IRepository<AcsData> acsDataRepository, IRepository<ExtraData> extraDataRepository, 
-               IRepository<FileData> fileDataRepository)
+               IRepository<AcsData> acsDataRepository, IRepository<ExtraData> extraDataRepository,
+               IRepository<FileData> fileDataRepository, IRepository<Appointment> appointmentRepository,
+               IRepository<CustomerData> customerDataRepository)
         {
             _database = database;
             UserRepository = userRepository;
@@ -37,6 +40,8 @@ namespace MedContactDataRepositories
             AcsDataRepository = acsDataRepository;
             ExtraDataRepository = extraDataRepository;
             FileDataRepository = fileDataRepository;
+            AppointmentRepository = appointmentRepository;
+            CustomerDataRepository = customerDataRepository;
         }
 
         public async Task<int> Commit()

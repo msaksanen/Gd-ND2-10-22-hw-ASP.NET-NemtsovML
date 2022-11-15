@@ -1,0 +1,49 @@
+﻿@model MedContactApp.Models.AppointmentIndexCreateModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create Appointment</h1>
+
+<h4>Doctor: @Model?.DoctorInfo?.Name @Model?.DoctorInfo?.Surname</h4>
+<h6>Speciality: @Model?.DoctorInfo?.Speciality</h6>
+@if (@Model?.DayTimeTable?.Date!.Value!=null)
+{
+    <h6>Date: @Model.DayTimeTable.Date.Value.ToShortDateString()</h6>
+}
+<h6>Customer: @Model?.User?.Name @Model?.User?.Surname (@Model?.User?.Email)</h6>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <Table class="delivery">
+            <tbody>
+                @if (Model?.Appointments != null && Model.Appointments.Any() && @Model?.DayTimeTable?.ConsultDuration!=null)
+                {
+                    foreach (var @item in @Model?.Appointments!)
+                    {
+                        <tr>
+                             <td>
+                                @item?.StartTime!.Value!.ToShortTimeString() - @item?.EndTime!.Value!.ToShortTimeString()
+                            </td>
+                            <td>
+                                <i class="bi bi-calendar2-event"></i><a style="text-decoration: none" 
+                                href="/appointment/create/?dttid=@item?.DayTimeTableId&cdid=@item?.CustomerDataId&stime=@item?.StartTime"><i> &nbsp Add an appointment</i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </Table>
+        
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

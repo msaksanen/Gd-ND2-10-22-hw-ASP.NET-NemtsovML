@@ -10,5 +10,6 @@ namespace MedContactCore.DataTransferObjects
     {
         public string? Name { get; set; }
         public int IntResult { get; set; } = 0;
+        public Guid? GuidResult { get; set; }
     }
 }

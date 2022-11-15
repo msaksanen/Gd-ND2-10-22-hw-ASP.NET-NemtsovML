@@ -92,5 +92,13 @@ namespace MedContactBusiness.ServicesImplementations
             return list;
         }
 
+        public async Task<DayTimeTableDto?> GetDayTimeTableByIdAsync(Guid dttId)
+        {
+            var ent = await _unitOfWork.DayTimeTableRepository.GetByIdAsync(dttId);
+            if (ent==null)
+                return null;
+            return _mapper.Map<DayTimeTableDto>(ent);   
+        }
+
     }
 }

@@ -1,0 +1,55 @@
+﻿@model MedContactApp.Models.AppointmentCreateModel
+
+@{
+    ViewData["Title"] = " Appointment Creation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1> Appointment Creation"</h1>
+<hr />
+@if (Model.Result > 0 && Model.User != null && Model.DoctorInfo != null && Model.Appointment != null)
+{
+    <h6> Appointment successfully created <br/> You can view and manage your appointments  at "My Appointments"  menu (top right)</h6>
+    <div>
+        <dl class="row">
+            <dt class="col-sm-2">
+               Customer
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model!.User!.Name!)
+                @Html.DisplayFor(model => model!.User!.Surname!)
+            </dd>
+            <dt class="col-sm-2">
+                Doctor (@Model.DoctorInfo.Speciality)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model!.DoctorInfo!.Name!)
+                @Html.DisplayFor(model => model!.DoctorInfo!.Surname!)
+            </dd>
+            <dt class="col-sm-2">
+               Date
+            </dt>
+            <dd class="col-sm-10">
+                @Model!.Appointment!.StartTime!.Value.ToShortDateString()
+            </dd>
+            <dt class="col-sm-2">
+                Time
+            </dt>
+            <dd class="col-sm-10">
+                @Model!.Appointment!.StartTime!.Value.ToShortTimeString() -   @Model!.Appointment!.EndTime!.Value.ToShortTimeString()
+            </dd>
+        </dl>
+    </div>
+}
+else 
+{
+    <h6> Somethong went wrong( <br/> Try again or contact with administration</h6>
+}
+
+@section Footer
+{
+<div>
+    <a class="btn btn-link" href="~/appointment/createindex/?id=@Model.DayTimeTableId">&#5130 Back to appointments list</a>
+   
+</div>
+}

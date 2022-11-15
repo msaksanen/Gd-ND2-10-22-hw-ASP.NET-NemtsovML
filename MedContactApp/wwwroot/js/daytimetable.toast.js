@@ -12,23 +12,25 @@ function calctimetable() {
 
     let text;
     let startWorkTimeVal = startWorkTime.value;
+    let startViewTime = startWorkTimeVal.split(':')[0] + ':' + startWorkTimeVal.split(':')[1];
     let startHrs = parseInt(startWorkTimeVal.split(":")[0]);
     let startMins = parseInt(startWorkTimeVal.split(":")[1]);
 
     let finishWorkTimeVal = finishWorkTime.value;
+    let finishViewTime = finishWorkTimeVal.split(':')[0] + ':' + finishWorkTimeVal.split(':')[1];
     let finishHrs = parseInt(finishWorkTimeVal.split(":")[0]);
     let finishMins = parseInt(finishWorkTimeVal.split(":")[1]);
 
     let consultDurationVal = parseInt(consultDuration.value);
     time = "Consult time " + consultDurationVal + " mins";  
 
-    let diff = Math.floor(finishHrs * 60 + finishMins - (startHrs * 60 + startMins));
-    let ticketQty = diff/ consultDurationVal;
+    let diff = finishHrs * 60 + finishMins - (startHrs * 60 + startMins);
+    let ticketQty = Math.floor(diff/ consultDurationVal);
 
     if (isNaN(ticketQty) || consultDurationVal <= 0 || ticketQty < 0 || diff < 0)
         text = 'Input correct values!'; 
-    else 
-        text = `Estimated quantity of tickets is ${ticketQty}`; 
+    else
+        text = `Estimated quantity of tickets is ${ticketQty}.<br/> DayTimeTable ${startViewTime} - ${finishViewTime}`; 
 
    
     let num = (Math.floor(Math.random() * 1000));

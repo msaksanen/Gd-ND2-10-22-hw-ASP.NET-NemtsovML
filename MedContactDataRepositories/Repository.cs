@@ -71,6 +71,12 @@ namespace MedContactDataRepositories
             DbSet.Update(entity);
         }
 
+        public virtual void UpdateRange(IEnumerable<T> entities)
+        {
+            DbSet.UpdateRange (entities);
+        }
+
+
         public virtual async Task PatchAsync(Guid id, List<PatchModel> patchData)
         {
             var model = await DbSet.FirstOrDefaultAsync(entity => entity.Id.Equals(id));
