@@ -190,13 +190,7 @@ namespace MedContactApp.Controllers
             if (model == null || model.DoctorDataId == null)
                 return BadRequest();
             try
-            {
-               if (model.Date < DateTime.Now)
-                {
-                    model.SystemInfo = "<b>Daytimetable was not created<br/>Input correct date!</b>";
-                    return View(model);
-                }
-
+            {  
                 var dInfo = await _doctorDataService.GetDoctorInfoById(model.DoctorDataId);
                 if (dInfo == null)
                     return NotFound();
@@ -210,16 +204,22 @@ namespace MedContactApp.Controllers
                 var dto = _mapper.Map<DayTimeTableDto>(model);
                 model.SystemInfo = "<b>DayTimeTable was not created<br/>Something went wrong(</b>";
 
+                if (model?.Date!.Value !=null && model?.Date!.Value!.AddDays(1) < DateTime.Now)
+                {
+                    model.SystemInfo = "<b>Daytimetable was not created<br/>Input correct date!</b>";
+                    return View(model);
+                }
+
                 if (dto != null)
                 {
                     var result = await _dayTimeTableService.CreateDayTimeTableAsync(dto);
                     if (result > 0)
                     {
-                        model.SystemInfo = "<b>Daytimetable was successfully created</b>";
+                        model!.SystemInfo = "<b>Daytimetable was successfully created</b>";
                     }
                     else if (result == -1)
                     {
-                        model.SystemInfo = "<b>DayTimeTable was not created<br/>It overlaps with previously created daytimetable</b>";
+                        model!.SystemInfo = "<b>DayTimeTable was not created<br/>It overlaps with previously created daytimetable</b>";
                     }
                 }
             }

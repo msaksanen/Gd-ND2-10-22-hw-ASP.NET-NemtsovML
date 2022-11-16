@@ -12,6 +12,10 @@ using System.Data;
 using System.Security.Claims;
 using MedContactDb.Entities;
 using System.Linq;
+using MedContactApp.AdminPanelHelpers;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Drawing.Printing;
+using System.Drawing;
 
 namespace MedContactApp.Controllers
 {
@@ -24,11 +28,12 @@ namespace MedContactApp.Controllers
         private readonly ICustomerDataService _customerDataService;
         private readonly IConfiguration _configuration;
         private readonly ModelUserBuilder _modelBuilder;
+        private readonly AdminSortFilter _adminSortFilter;
 
 
         public AppointmentController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
             IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder, 
-            IAppointmentService appointmentService, ICustomerDataService customerDataService)
+            IAppointmentService appointmentService, ICustomerDataService customerDataService, AdminSortFilter adminSortFilter)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
@@ -37,6 +42,7 @@ namespace MedContactApp.Controllers
             _modelBuilder = modelBuilder;
             _appointmentService = appointmentService;
             _customerDataService = customerDataService;
+            _adminSortFilter = adminSortFilter; 
         }
 
         [HttpGet]
@@ -138,7 +144,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> MyAppointments(string? name, string? speciality, string? date,
+        public async Task<IActionResult> MyAppointments(string name, string speciality, string date,
                SortState sortOrder = SortState.DateDesc)
         {
 
@@ -149,18 +155,19 @@ namespace MedContactApp.Controllers
                var list = await _appointmentService.GetAppointmentsByUserId(usr.Id);
                if (list != null && list.Any())
                {
-                    if (!string.IsNullOrEmpty(date))
-                    {
-                        var resTime = DateTime.TryParse(date, out DateTime sDate);
-                        if (resTime)
-                        {
-                            list = list.Where(a => a.StartTime.Equals(sDate) || 
-                            (a.DayTimeTable!=null && a.DayTimeTable.Date.Equals(sDate)));
-                        }
-                    }
+                    list = _adminSortFilter.AppointmentFilter(list, speciality, name, date);
+                    list = _adminSortFilter.AppointmentSort(list, sortOrder);
+                }
 
-               }
-                return View(list);
+                string link = Request.Path.Value + Request.QueryString.Value;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+
+                AppointmentIndexViewModel viewModel = new(list,
+                    new FilterAppointViewModel(speciality, name, date),
+                    new SortViewModel(sortOrder));
+               
+                    return View(viewModel);
             }
 
             catch (Exception e)

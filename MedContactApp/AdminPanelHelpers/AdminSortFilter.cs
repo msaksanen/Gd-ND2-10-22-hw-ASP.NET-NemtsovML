@@ -10,7 +10,9 @@ using MedContactDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 namespace MedContactApp.AdminPanelHelpers
 {
@@ -109,37 +111,108 @@ namespace MedContactApp.AdminPanelHelpers
         {
             if (!string.IsNullOrEmpty(email))
             {
-                users = users.Where(p => p.Email!.Contains(email));
+                email = email.ToUpperInvariant();
+                users = users.Where(p => p.Email!.ToUpperInvariant().Contains(email));
             }
             if (!string.IsNullOrEmpty(name))
             {
-                users = users.Where(p => p.Name!.Contains(name) || p.MidName!.Contains(name) || p.Surname!.Contains(name));
+                name = name.ToUpperInvariant();
+                users = users.Where(p => p.Name!.ToUpperInvariant().Contains(name) || p.MidName!.ToUpperInvariant().Contains(name) || 
+                                    p.Surname!.ToUpperInvariant().Contains(name));
             }
             if (!string.IsNullOrEmpty(surname))
             {
-                users = users.Where(p => p.Surname!.Contains(surname));
+                surname = surname.ToUpperInvariant();
+                users = users.Where(p => p.Surname!.ToUpperInvariant().Contains(surname));
             }
             return users;
+        }
+
+        internal IEnumerable<AppointmentDto> AppointmentFilter(IEnumerable<AppointmentDto> apms, string? speciality, string? name, string? date)
+        {
+            if (!string.IsNullOrEmpty(date))
+            {
+                var resTime = DateTime.TryParse(date, out DateTime sDate);
+                if (resTime)
+                {
+                    apms = apms.Where(a => a.StartTime.Equals(sDate) ||
+                    (a.DayTimeTable != null && a.DayTimeTable.Date.Equals(sDate)));
+                }
+            }
+            if (!string.IsNullOrEmpty(speciality))
+            {
+                speciality = speciality.ToUpperInvariant();
+                apms = apms.Where(p => p?.DayTimeTable?.DoctorData?.Speciality?.Name != null && 
+                                  p.DayTimeTable.DoctorData.Speciality.Name.ToUpperInvariant().Contains(speciality));
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+                name = name.ToUpperInvariant();
+                apms = apms.Where(p =>
+                p?.DayTimeTable?.DoctorData?.User?.Name != null && p.DayTimeTable.DoctorData.User.Name.ToUpperInvariant().Contains(name) ||
+                p?.DayTimeTable?.DoctorData?.User?.MidName != null && p.DayTimeTable.DoctorData.User.MidName.ToUpperInvariant().Contains(name) ||
+                p?.DayTimeTable?.DoctorData?.User?.Surname != null && p.DayTimeTable.DoctorData.User.Surname.ToUpperInvariant().Contains(name));
+            }
+           
+            return apms;
+        }
+
+        internal IEnumerable<AppointmentDto> AppointmentSort(IEnumerable<AppointmentDto> apms, SortState sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case SortState.DateAsc:
+                    apms = apms.OrderBy(s => s.StartTime);
+                    break;
+                case SortState.NameAsc:
+                    apms = apms.OrderBy(s => s?.DayTimeTable?.DoctorData?.User?.Name);
+                    break;
+                case SortState.NameDesc:
+                    apms = apms.OrderByDescending(s => s?.DayTimeTable?.DoctorData?.User?.Name);
+                    break;
+                case SortState.SurnameAsc:
+                    apms = apms.OrderBy(s => s?.DayTimeTable?.DoctorData?.User?.Surname);
+                    break;
+                case SortState.SurnameDesc:
+                    apms = apms.OrderByDescending(s => s?.DayTimeTable?.DoctorData?.User?.Surname);
+                    break;
+                case SortState.SpecialityAsc:
+                    apms = apms.OrderBy(s => s?.DayTimeTable?.DoctorData?.Speciality?.Name);
+                    break;
+                case SortState.SpecialityDesc:
+                    apms = apms.OrderByDescending(s => s?.DayTimeTable?.DoctorData?.Speciality?.Name);
+                    break;
+
+                default:
+                    apms = apms.OrderByDescending(s => s.StartTime);
+                    break;
+            }
+
+            return apms;
         }
         internal IQueryable<DoctorData> DoctorDataFilter(IQueryable<DoctorData> dDatas, string email, string name, string surname, string speciality)
         {
             if (!string.IsNullOrEmpty(email))
             {
-                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.Contains(email));
+                email = email.ToUpperInvariant();
+                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.ToUpperInvariant().Contains(email));
             }
             if (!string.IsNullOrEmpty(name))
             {
-                dDatas = dDatas.Where(p => p.User!.Name != null && p.User.Name.Contains(name)
-                                        || p.User!.MidName != null && p.User.MidName.Contains(name)
-                                        || p.User!.Surname != null && p.User.Surname.Contains(name));
+                name = name.ToUpperInvariant();
+                dDatas = dDatas.Where(p => p.User!.Name != null && p.User.Name.ToUpperInvariant().Contains(name)
+                                        || p.User!.MidName != null && p.User.MidName.ToUpperInvariant().Contains(name)
+                                        || p.User!.Surname != null && p.User.Surname.ToUpperInvariant().Contains(name));
             }
             if (!string.IsNullOrEmpty(surname))
             {
-                dDatas = dDatas.Where(p => p.User!.Surname != null && p.User.Surname.Contains(surname));
+                surname = surname.ToUpperInvariant();
+                dDatas = dDatas.Where(p => p.User!.Surname != null && p.User.Surname.ToUpperInvariant().Contains(surname));
             }
             if (!string.IsNullOrEmpty(speciality))
             {
-                dDatas = dDatas.Where(p => p.Speciality!.Name != null && p.Speciality.Name.Contains(speciality));
+                speciality = speciality.ToUpperInvariant();
+                dDatas = dDatas.Where(p => p.Speciality!.Name != null && p.Speciality.Name.ToUpperInvariant().Contains(speciality));
             }
             return dDatas;
         }

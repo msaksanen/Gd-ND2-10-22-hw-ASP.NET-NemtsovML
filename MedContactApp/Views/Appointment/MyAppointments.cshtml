@@ -1,0 +1,110 @@
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
+
+@model AppointmentIndexViewModel
+
+@{
+    ViewData["Title"] = "My Appointments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<Table class="delivery">
+<tbody>
+  <tr>
+    <form method="get">
+                  
+     <td style="border:none">
+                <label>Speciality: </label>
+                <input name="speciality" value="@Model!.FilterViewModel.SelectedSpeciality" />
+     </td>
+     <td style="border:none">
+                <label>Name/Surname: </label>
+                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+     </td>
+     <td style="border:none">
+                <label>Date: </label>
+                <input name="date"  type="date" value="@Model!.FilterViewModel.SelectedDate"></>
+
+                <input type="submit" value="Filter" />
+
+    </td>
+    </form>
+ </tr>
+</tbody>
+</Table>
+
+<Table class="delivery">  
+    <caption>My Appointments Table</caption>
+    <thead>
+    <tr>
+        <th>
+             <sort-header action="MyAppointments" up="@Model.SortViewModel.Up"
+              opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-date="@(Model.FilterViewModel.SelectedDate)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Date</sort-header>
+ 
+        </th>
+        <th>
+              <sort-header action="MyAppointments" up="@Model.SortViewModel.Up"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-date="@(Model.FilterViewModel.SelectedDate)"
+               current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
+     
+        </th>
+        <th>
+              <sort-header action="MyAppointments" up="@Model.SortViewModel.Up"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-date="@(Model.FilterViewModel.SelectedDate)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
+
+        </th>
+        <th>
+              <sort-header action="MyAppointments" up="@Model.SortViewModel.Up"
+               opt-url-speciality="@(Model.FilterViewModel.SelectedSpeciality)"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-date="@(Model.FilterViewModel.SelectedDate)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SpecialitySort">Speciality</sort-header>
+     
+        </th>
+        <th>
+           Details
+         </th>
+    </tr>
+    <thead>
+    <tbody>
+    
+        
+
+@if (Model.Appointments!= null && Model.Appointments.Any())
+{
+    foreach (var item in Model.Appointments)
+    {
+                        await Html.RenderPartialAsync("AppointsPartialView", item, ViewData);
+    }
+}
+
+    </tbody>
+</Table>
+
+
+@section Footer
+{
+    <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home page</h6></a>
+   
+}
+
+
+@section CssStyles
+{
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}        
+    </style>
+}
