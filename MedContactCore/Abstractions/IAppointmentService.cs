@@ -14,6 +14,7 @@ namespace MedContactCore.Abstractions
        Task<int> UpdateRange(IEnumerable<AppointmentDto> apms);
        Task<int> Add(AppointmentDto apm);
        Task<IEnumerable<AppointmentDto>?> GetAppointmentsByUserId(Guid usrId);
+       Task<int?> RemoveById(Guid apmId);
 
 
 

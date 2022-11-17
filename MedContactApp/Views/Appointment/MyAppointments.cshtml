@@ -38,6 +38,8 @@
 </tbody>
 </Table>
 
+<h6>@Model.SysInfo</h6>
+
 <Table class="delivery">  
     <caption>My Appointments Table</caption>
     <thead>
@@ -83,7 +85,30 @@
 {
     foreach (var item in Model.Appointments)
     {
-                        await Html.RenderPartialAsync("AppointsPartialView", item, ViewData);
+    <tr>
+
+    <td area-label="Appointment Date">
+        @item.StartTime
+    </td>
+    <td area-label="Names">
+        @item?.DayTimeTable?.DoctorData?.User?.Name 
+        @item?.DayTimeTable?.DoctorData?.User?.MidName
+    </td>
+    <td area-label="Surname">
+        @item?.DayTimeTable?.DoctorData?.User?.Surname
+    </td>
+    <td area-label="Speciality">
+        @item?.DayTimeTable?.DoctorData?.Speciality?.Name
+    </td>
+    <td>
+            <span>
+                <i class="bi bi-x-circle"></i>
+                <a class="confirmation" style=" text-decoration: none"
+                 href="~/appointment/delete/?id=@item?.Id&reflink=@ViewData["Reflink"]">Cancel</a>
+            </span>
+    </td>
+
+    </tr>
     }
 }
 
@@ -96,7 +121,11 @@
     <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home page</h6></a>
    
 }
-
+@section Scripts 
+{
+   
+    <script src="~/js/confirmation.js"></script>
+}
 
 @section CssStyles
 {

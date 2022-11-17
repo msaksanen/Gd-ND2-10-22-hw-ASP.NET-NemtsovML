@@ -16,6 +16,7 @@ namespace MedContactCore.DataTransferObjects
         public Guid? DayTimeTableId { get; set; }
         public DayTimeTableDto? DayTimeTable { get; set; }
         public Guid? CustomerDataId { get; set; }
-      
+        public CustomerDataDto? CustomerData { get; set; }
+
     }
 }

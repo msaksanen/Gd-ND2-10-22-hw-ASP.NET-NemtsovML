@@ -31,6 +31,8 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<List<AppointmentDto>?> GetAppointmentsByDTTableIdAsync(Guid dttId)
         {
             var list = await _unitOfWork.AppointmentRepository.Get()
+                                        .Include(a => a.CustomerData)
+                                        .ThenInclude(c => c!.User)
                                         .Where(a => a.DayTimeTableId != null && a.DayTimeTableId.Equals(dttId))
                                         .Select(a => _mapper.Map<AppointmentDto>(a))
                                         .ToListAsync();
@@ -55,6 +57,21 @@ namespace MedContactBusiness.ServicesImplementations
             {
                 var dtt = await _unitOfWork.DayTimeTableRepository.GetByIdTrackAsync((Guid)ent?.DayTimeTableId!);
                 if (dtt != null) dtt.FreeTicketQty--;
+            }
+
+            var res = await _unitOfWork.Commit();
+
+            return res;
+        }
+        public async Task<int?> RemoveById(Guid apmId)
+        {
+            var ent = await _unitOfWork.AppointmentRepository.GetByIdAsync(apmId);   
+
+            if (ent != null)
+            {
+                _unitOfWork.AppointmentRepository.Remove(ent);
+                var dtt = await _unitOfWork.DayTimeTableRepository.GetByIdTrackAsync((Guid)ent?.DayTimeTableId!);
+                if (dtt != null) dtt.FreeTicketQty++;
             }
 
             var res = await _unitOfWork.Commit();

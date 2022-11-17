@@ -49,14 +49,14 @@
     </td>
    
     <td>
-        @if (!string.IsNullOrEmpty(Model.SpecialityName))
+        @if (!string.IsNullOrEmpty(Model.SpecialityName) && !Model?.SpecialityName!.Equals("Underfined")==true)
         {
-            <span> <a class="btn btn-link" href="~/daytimetable/timetabledoctindex/?dataid=@Model.Id&reflink=@ViewData["Reflink"]">DayTimeTables</a></span>
+            <span> <a class="btn btn-link" href="~/daytimetable/timetabledoctindex/?dataid=@Model?.Id&reflink=@ViewData["Reflink"]">DayTimeTables</a></span>
 
         }
 
         <br />
-        <span> <a class="btn btn-link" href="~/adminpaneldoctor/doctordetails/?userid=@Model.UserId&reflink=@ViewData["Reflink"]">Doctor details</a></span>
+        <span> <a class="btn btn-link" href="~/adminpaneldoctor/doctordetails/?userid=@Model?.UserId&reflink=@ViewData["Reflink"]">Doctor details</a></span>
     </td>
 
 </tr>

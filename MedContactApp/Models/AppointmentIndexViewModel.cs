@@ -10,10 +10,13 @@ namespace MedContactApp.Models
         public IEnumerable<AppointmentDto>? Appointments { get; }
         public FilterAppointViewModel FilterViewModel { get; }
         public SortViewModel SortViewModel { get; }
-        public AppointmentIndexViewModel(IEnumerable<AppointmentDto>? apms,
+
+        public string SysInfo { get; } = string.Empty;
+        public AppointmentIndexViewModel(IEnumerable<AppointmentDto>? apms, string sysInfo,
             FilterAppointViewModel filterViewModel, SortViewModel sortViewModel)
         {
             Appointments = apms;
+            SysInfo = sysInfo;  
             FilterViewModel = filterViewModel;
             SortViewModel = sortViewModel;
         }

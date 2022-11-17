@@ -9,17 +9,18 @@ namespace MedContactApp.FilterSortPageHelpers
 {
     public class FilterAppointViewModel
     {
-        public FilterAppointViewModel(string speciality, string name, string date)
+        public FilterAppointViewModel(string speciality, string name, string date, string birthdate)
         {
             SelectedName = name;
             SelectedSpeciality = speciality;
-            SelectedDate = date;    
-        }
+            SelectedDate = date;
+            SelectedBirthDate = birthdate;  
+    }
 
         public string SelectedName { get; }
         public string SelectedSpeciality { get; }
         public string SelectedDate { get; }
-
+        public string SelectedBirthDate { get; }
 
     }
 }

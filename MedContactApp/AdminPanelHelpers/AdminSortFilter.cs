@@ -111,19 +111,20 @@ namespace MedContactApp.AdminPanelHelpers
         {
             if (!string.IsNullOrEmpty(email))
             {
-                email = email.ToUpperInvariant();
-                users = users.Where(p => p.Email!.ToUpperInvariant().Contains(email));
+
+                users = users.Where(p => p.Email!.Contains(email));
             }
             if (!string.IsNullOrEmpty(name))
             {
-                name = name.ToUpperInvariant();
-                users = users.Where(p => p.Name!.ToUpperInvariant().Contains(name) || p.MidName!.ToUpperInvariant().Contains(name) || 
-                                    p.Surname!.ToUpperInvariant().Contains(name));
+
+                users = users.Where(p => p.Name!.Contains(name) || 
+                                    p.MidName!.Contains(name) || 
+                                    p.Surname!.Contains(name));
             }
             if (!string.IsNullOrEmpty(surname))
             {
-                surname = surname.ToUpperInvariant();
-                users = users.Where(p => p.Surname!.ToUpperInvariant().Contains(surname));
+                
+                users = users.Where(p => p.Surname!.Contains(surname));
             }
             return users;
         }
@@ -141,22 +142,77 @@ namespace MedContactApp.AdminPanelHelpers
             }
             if (!string.IsNullOrEmpty(speciality))
             {
-                speciality = speciality.ToUpperInvariant();
+                
                 apms = apms.Where(p => p?.DayTimeTable?.DoctorData?.Speciality?.Name != null && 
-                                  p.DayTimeTable.DoctorData.Speciality.Name.ToUpperInvariant().Contains(speciality));
+                                  p.DayTimeTable.DoctorData.Speciality.Name.Contains(speciality, StringComparison.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(name))
             {
-                name = name.ToUpperInvariant();
+                
                 apms = apms.Where(p =>
-                p?.DayTimeTable?.DoctorData?.User?.Name != null && p.DayTimeTable.DoctorData.User.Name.ToUpperInvariant().Contains(name) ||
-                p?.DayTimeTable?.DoctorData?.User?.MidName != null && p.DayTimeTable.DoctorData.User.MidName.ToUpperInvariant().Contains(name) ||
-                p?.DayTimeTable?.DoctorData?.User?.Surname != null && p.DayTimeTable.DoctorData.User.Surname.ToUpperInvariant().Contains(name));
+                p?.DayTimeTable?.DoctorData?.User?.Name != null && p.DayTimeTable.DoctorData.User.Name.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+                p?.DayTimeTable?.DoctorData?.User?.MidName != null && p.DayTimeTable.DoctorData.User.MidName.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+                p?.DayTimeTable?.DoctorData?.User?.Surname != null && p.DayTimeTable.DoctorData.User.Surname.Contains(name, StringComparison.OrdinalIgnoreCase));
             }
            
             return apms;
         }
+        internal IEnumerable<AppointmentDto> AppointmentCustomerFilter(IEnumerable<AppointmentDto> apms, string? name, string? birthdate)
+        {
+            if (!string.IsNullOrEmpty(birthdate))
+            {
+                var resTime = DateTime.TryParse(birthdate, out DateTime bDate);
+                if (resTime)
+                {   
+                    apms = apms.Where(a => a.CustomerData?.User?.BirthDate!= null && a.CustomerData?.User?.BirthDate.Value.Year.Equals(bDate.Year) ==true);
+                }
+            }
 
+            if (!string.IsNullOrEmpty(name))
+            {
+
+                apms = apms.Where(p =>
+                p?.CustomerData?.User?.Name != null && p.CustomerData?.User?.Name?.Contains(name, StringComparison.OrdinalIgnoreCase)==true ||
+                p?.CustomerData?.User?.MidName != null && p.CustomerData?.User?.MidName.Contains(name, StringComparison.OrdinalIgnoreCase)==true ||
+                p?.CustomerData?.User?.Surname != null && p.CustomerData?.User?.Surname.Contains(name, StringComparison.OrdinalIgnoreCase) == true);
+            }
+
+            return apms;
+        }
+
+        internal IEnumerable<AppointmentDto> AppointmentCustomerSort(IEnumerable<AppointmentDto> apms, SortState sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case SortState.DateDesc:
+                    apms = apms.OrderByDescending(s => s.StartTime);
+                    break;
+                case SortState.NameAsc:
+                    apms = apms.OrderBy(s => s?.CustomerData?.User?.Name);
+                    break;
+                case SortState.NameDesc:
+                    apms = apms.OrderByDescending(s => s?.CustomerData?.User?.Name);
+                    break;
+                case SortState.BirtDateAsc:
+                    apms = apms.OrderBy(s => s?.CustomerData?.User?.BirthDate);
+                    break;
+                case SortState.BirthDateDesc:
+                    apms = apms.OrderByDescending(s => s?.CustomerData?.User?.BirthDate);
+                    break;
+                case SortState.SurnameAsc:
+                    apms = apms.OrderBy(s => s?.CustomerData?.User?.Surname);
+                    break;
+                case SortState.SurnameDesc:
+                    apms = apms.OrderByDescending(s => s?.CustomerData?.User?.Surname);
+                    break;
+                default:
+
+                    apms = apms.OrderBy(s => s.StartTime);
+                    break;
+            }
+
+            return apms;
+        }
         internal IEnumerable<AppointmentDto> AppointmentSort(IEnumerable<AppointmentDto> apms, SortState sortOrder)
         {
             switch (sortOrder)
@@ -194,25 +250,25 @@ namespace MedContactApp.AdminPanelHelpers
         {
             if (!string.IsNullOrEmpty(email))
             {
-                email = email.ToUpperInvariant();
-                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.ToUpperInvariant().Contains(email));
+
+                dDatas = dDatas.Where(p => p.User!.Email != null && p.User.Email.Contains(email));
             }
             if (!string.IsNullOrEmpty(name))
             {
-                name = name.ToUpperInvariant();
-                dDatas = dDatas.Where(p => p.User!.Name != null && p.User.Name.ToUpperInvariant().Contains(name)
-                                        || p.User!.MidName != null && p.User.MidName.ToUpperInvariant().Contains(name)
-                                        || p.User!.Surname != null && p.User.Surname.ToUpperInvariant().Contains(name));
+            
+                dDatas = dDatas.Where(p => p.User!.Name != null && p.User.Name.Contains(name)
+                                        || p.User!.MidName != null && p.User.MidName.Contains(name)
+                                        || p.User!.Surname != null && p.User.Surname.Contains(name));
             }
             if (!string.IsNullOrEmpty(surname))
             {
-                surname = surname.ToUpperInvariant();
-                dDatas = dDatas.Where(p => p.User!.Surname != null && p.User.Surname.ToUpperInvariant().Contains(surname));
+               
+                dDatas = dDatas.Where(p => p.User!.Surname != null && p.User.Surname.Contains(surname));
             }
             if (!string.IsNullOrEmpty(speciality))
             {
-                speciality = speciality.ToUpperInvariant();
-                dDatas = dDatas.Where(p => p.Speciality!.Name != null && p.Speciality.Name.ToUpperInvariant().Contains(speciality));
+                
+                dDatas = dDatas.Where(p => p.Speciality!.Name != null && p.Speciality.Name.Contains(speciality));
             }
             return dDatas;
         }

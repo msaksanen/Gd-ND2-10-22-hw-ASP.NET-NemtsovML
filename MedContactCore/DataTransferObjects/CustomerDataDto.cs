@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MedContactCore.DataTransferObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace MedContactDb.Entities
         public Guid Id { get; set; }
         public Guid? RoleId { get; set; }
         public Guid? UserId { get; set; }
+        public UserDto? User { get; set; }
         public bool? IsBlocked { get; set; }
         public List<Appointment>? Appointments { get; set; }
         public List<MedData>? MedData { get; set; }

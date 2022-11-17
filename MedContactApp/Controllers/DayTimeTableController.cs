@@ -86,6 +86,42 @@ namespace MedContactApp.Controllers
            
             bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
             if (result) _pageSize = pageSize;
+            ViewData["Flag"] = 0;
+
+            if(!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
+                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true))
+            {
+                if (User.Identities.Any(identity => identity.IsAuthenticated))
+                {
+                    var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                    if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")))
+                        ViewData["Flag"] = 1;
+                }
+            }
+            else
+            {
+                if (timeTableList != null)
+                    timeTableList = timeTableList.Where
+                                  (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+            }
+
+
+            //if (User.Identities.Any(identity => identity.IsAuthenticated))
+            //{
+            //    var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+            //    if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")) &&
+            //        !string.IsNullOrEmpty(reflink) && reflink?.Contains(@"daytimetable/selelctspec") == true
+            //        || reflink?.Contains(@"adminpaneldoctor/doctordataindex") == true)
+            //    {
+            //        ViewData["Flag"] = 1;
+            //    }    
+            //}
+            //else
+            //{
+            //    if (timeTableList != null)
+            //        timeTableList = timeTableList.Where
+            //                      (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now);
+            //}
 
             if (sortOrder==SortState.DateAsc && timeTableList != null)
              {
@@ -103,17 +139,7 @@ namespace MedContactApp.Controllers
                 items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
              }
              
-            ViewData["Flag"] = 0;
-            if (User.Identities.Any(identity => identity.IsAuthenticated))
-            {
-                var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-                if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")) &&
-                    !string.IsNullOrEmpty(reflink) && reflink?.Contains(@"daytimetable/selelctspec") == true
-                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex") == true)
-                {
-                    ViewData["Flag"] = 1;
-                }
-            }
+           
 
             if (!string.IsNullOrEmpty(reflink))
                 reflink = reflink.Replace("*", "&");
@@ -204,7 +230,7 @@ namespace MedContactApp.Controllers
                 var dto = _mapper.Map<DayTimeTableDto>(model);
                 model.SystemInfo = "<b>DayTimeTable was not created<br/>Something went wrong(</b>";
 
-                if (model?.Date!.Value !=null && model?.Date!.Value!.AddDays(1) < DateTime.Now)
+                if (model?.Date!.Value !=null && model?.Date!.Value!>= DateTime.Now.Date)
                 {
                     model.SystemInfo = "<b>Daytimetable was not created<br/>Input correct date!</b>";
                     return View(model);
