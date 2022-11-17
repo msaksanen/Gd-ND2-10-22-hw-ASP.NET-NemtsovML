@@ -6,6 +6,7 @@ using MedContactApp.Models;
 using MedContactCore;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
+using MedContactDb.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Data;
@@ -86,16 +87,21 @@ namespace MedContactApp.Controllers
            
             bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
             if (result) _pageSize = pageSize;
-            ViewData["Flag"] = 0;
+            int flag = 0;
 
             if(!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
-                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true))
+                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true) 
+                    || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
             {
                 if (User.Identities.Any(identity => identity.IsAuthenticated))
                 {
                     var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-                    if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")))
-                        ViewData["Flag"] = 1;
+                    if (roles != null && roles.Any(r => r.Equals("Admin")))
+                        flag  =1;
+                    if (roles != null && roles.Any(r => r.Equals("Doctor")))
+                        flag +=2;
+                    if (reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+                        flag+=10;
                 }
             }
             else
@@ -105,24 +111,8 @@ namespace MedContactApp.Controllers
                                   (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
             }
 
-
-            //if (User.Identities.Any(identity => identity.IsAuthenticated))
-            //{
-            //    var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-            //    if (roles != null && roles.Any(r => r.Equals("Admin") || r.Equals("Doctor")) &&
-            //        !string.IsNullOrEmpty(reflink) && reflink?.Contains(@"daytimetable/selelctspec") == true
-            //        || reflink?.Contains(@"adminpaneldoctor/doctordataindex") == true)
-            //    {
-            //        ViewData["Flag"] = 1;
-            //    }    
-            //}
-            //else
-            //{
-            //    if (timeTableList != null)
-            //        timeTableList = timeTableList.Where
-            //                      (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now);
-            //}
-
+            ViewData["Flag"]=flag;
+         
             if (sortOrder==SortState.DateAsc && timeTableList != null)
              {
                 timeTableList = timeTableList.OrderBy(x => x.Date);
@@ -226,11 +216,18 @@ namespace MedContactApp.Controllers
                 model.DoctorSpeciality = dInfo.Speciality;
                 model.DoctorName = dInfo.Name;
                 model.DoctorSurname = dInfo.Surname;
-                model.UserId = dInfo.UserId;    
+                model.UserId = dInfo.UserId;
+                if (model.StartWorkTime!=null && model.FinishWorkTime!=null)
+                {
+                    model!.StartWorkTime = model?.Date?.Date!.Add((TimeSpan)model?.StartWorkTime!.Value.TimeOfDay!);
+                    model!.FinishWorkTime = model?.Date?.Date!.Add((TimeSpan)model?.FinishWorkTime!.Value.TimeOfDay!);
+                }
+                
+                
                 var dto = _mapper.Map<DayTimeTableDto>(model);
-                model.SystemInfo = "<b>DayTimeTable was not created<br/>Something went wrong(</b>";
+                model!.SystemInfo = "<b>DayTimeTable was not created<br/>Something went wrong(</b>";
 
-                if (model?.Date!.Value !=null && model?.Date!.Value!>= DateTime.Now.Date)
+                if (model?.Date!.Value !=null && model?.Date!.Value! < DateTime.Now.Date)
                 {
                     model.SystemInfo = "<b>Daytimetable was not created<br/>Input correct date!</b>";
                     return View(model);

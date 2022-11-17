@@ -23,7 +23,7 @@
         @Html.DisplayFor(modelItem => Model.CreationDate)
     </td>
     <td>
-        @if((int?)ViewData["Flag"]==1)
+        @if((int?)ViewData["Flag"]>=1)
         {
             <span> <a class="btn btn-link" href="~/appointment/viewindex/?id=@Model.Id">View appointments</a></span>
         }

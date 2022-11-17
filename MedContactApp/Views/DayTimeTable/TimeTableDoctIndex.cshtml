@@ -12,7 +12,7 @@
 }
 <h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
 <h6>Speciality @Model.DoctorInfo.Speciality</h6>
-@if ((int?)ViewData["Flag"] == 1)
+@if ((int?)ViewData["Flag"] >= 1)
 {
     <h6>User Id: @Model.DoctorInfo.UserId</h6>
     <p>
@@ -77,8 +77,19 @@ else
     <div>
         @if (!string.IsNullOrEmpty(Model.Reflink))
         {
-            <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
-        }
+           if ((int?)ViewData["Flag"] == 11)
+           {
+             <a href="~/AdminPanelDoctor/DoctorDataIndex"><h6>&#5130 Back to doctor data index</h6></a>
+   
+           }
+           else if ((int?)ViewData["Flag"] >=12)
+           {
+                <a href="~/DayTimeTable/SelelctSpec"><h6>&#5130 Back to speciality index</h6></a>
+   
+           }
+           else
+               @Html.Raw(@$"<a href=""{@Model.Reflink}""><h6>&#5130 Back</h6></a>");
+           }
         else
         {
             <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home page</h6></a>

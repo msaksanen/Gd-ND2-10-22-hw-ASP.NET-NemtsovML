@@ -16,10 +16,11 @@
 <Table class="delivery">
 <tbody>
   <tr>
-    <form method="get">
+     <form action="~/appointment/viewindex" method="get">
                 
      <td style="border:none">
                 <label>Customer Name/Surname: </label>
+                <input type="hidden" name="id" value="@Model.DayTimeTableId" />
                 <input name="name" value="@Model!.FilterViewModel.SelectedName" />
      </td>
     <td style="border:none">
@@ -40,24 +41,28 @@
     <tr>
         <th>
              <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
+              opt-url-id="@Model.DayTimeTableId"
               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Appointment Date</sort-header>
  
         </th>
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
+               opt-url-id="@Model.DayTimeTableId"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
      
         </th>
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up" 
+               opt-url-id="@Model.DayTimeTableId"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
 
         </th>
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
+               opt-url-id="@Model.DayTimeTableId"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth date</sort-header>
      
@@ -108,7 +113,8 @@
 
 @section Footer
 {
-    <a asp-controller="DayTimeTable" asp-action="TimeTableDoctIndex"><h6>&#5130 Back to daytimetable index</h6></a>
+    <a href="~/daytimetable/timetabledoctindex/?dataid=@Model.DoctorDataId&reflink=@ViewData["Reflink"]">
+        <h6>&#5130 Back to daytimetable index</h6></a>
    
 }
 @section Scripts 

@@ -228,7 +228,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewIndex(string? id, string name, string birhtdate, string? reflink = "",
+        public async Task<IActionResult> ViewIndex(string? id, string name, string birhtdate,
             string sysInfo = "", SortState sortOrder = SortState.DateAsc)
         {
             if (id == null)
@@ -241,17 +241,21 @@ namespace MedContactApp.Controllers
             if (apmList == null)
                 return NotFound();
 
-            //var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
-            //if (dttDto == null)
-            //    return NotFound();
-
-            //var doctInfo = await _doctorDataService.GetDoctorInfoById(dttDto.DoctorDataId);
-            //if (doctInfo == null)
-            //    return NotFound();
+            var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
+            if (dttDto == null || dttDto.DoctorDataId==null)
+                return NotFound();
 
             string link = Request.Path.Value + Request.QueryString.Value;
             link = link.Replace("&", "*");
             ViewData["Reflink"] = link;
+            if (!string.IsNullOrEmpty(sysInfo) && sysInfo.Equals("ok"))
+            {
+                sysInfo = "Appointment was successfully deleted";
+            }
+            if (!string.IsNullOrEmpty(sysInfo) && sysInfo.Equals("no"))
+            {
+                sysInfo = "Appointment was not deleted";
+            }
 
             try 
             {
@@ -264,7 +268,8 @@ namespace MedContactApp.Controllers
                 AppointmentIndexViewModel viewModel = new(apmList, sysInfo,
                    new FilterAppointViewModel("", name, "", birhtdate),
                    new SortViewModel(sortOrder));
-
+                viewModel.DayTimeTableId = dttId;
+                viewModel.DoctorDataId = (Guid)dttDto.DoctorDataId;
                 return View(viewModel);
             }
             catch (Exception e)
