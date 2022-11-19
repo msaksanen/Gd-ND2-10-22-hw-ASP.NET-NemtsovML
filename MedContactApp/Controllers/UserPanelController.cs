@@ -40,6 +40,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> AccSettings(string? id)
         {
             var model = await _modelBuilder.BuildById(HttpContext, id);
@@ -52,6 +53,7 @@ namespace MedContactApp.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> AccSettingsEdit(string? id)
         {  
             var model = await _modelBuilder.BuildById(HttpContext, id);
@@ -65,6 +67,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> AccSettingsEdit(CustomerModel model)
         {
             try
@@ -95,6 +98,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task <IActionResult> ChangePassword(string? id)
         {
             var model = await _modelBuilder.BuildById(HttpContext, id);
@@ -108,6 +112,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             if (model != null && model.Id != null && model.Password != null && model.OldPassword != null)

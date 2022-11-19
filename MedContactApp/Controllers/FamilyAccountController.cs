@@ -12,6 +12,7 @@ using MedContactApp.Helpers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedContactApp.Controllers
 {
@@ -36,6 +37,7 @@ namespace MedContactApp.Controllers
        
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Family()
         {
             var mainUserId = User.FindFirst("MUId");
@@ -53,6 +55,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> AddRelative()
         {
             var mainUserId = User.FindFirst("MUId");
@@ -74,6 +77,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> AddRelative(RelativeModel model)
         {
             if (ModelState.IsValid)
@@ -128,6 +132,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> SetActiveRelative(string? id)
         {
             var result= Guid.TryParse(id, out Guid relativeId);
@@ -150,7 +155,7 @@ namespace MedContactApp.Controllers
 
         }
 
-
+        [Authorize(Policy = "FullBlocked")]
         private async Task ChangeClaims(UserDto relativeDto)
         {
             if (User.Identity is ClaimsIdentity claimsIdentity)

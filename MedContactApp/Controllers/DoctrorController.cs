@@ -18,6 +18,8 @@ using MedContactApp.AdminPanelHelpers;
 using MedContactApp.FilterSortHelpers;
 using MedContactApp.FilterSortPageHelpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace MedContactApp.Controllers
 {
@@ -54,7 +56,6 @@ namespace MedContactApp.Controllers
                 if (roles != null && roles.Any(r => r.Equals("Doctor")))
                     return View();
             }
-
             return BadRequest();
         }
 

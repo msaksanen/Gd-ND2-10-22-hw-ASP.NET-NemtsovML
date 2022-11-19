@@ -6,6 +6,7 @@ using MedContactApp.Models;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
 using MedContactDb.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -52,6 +53,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> UserIndex(string email, string name, string surname, string role, int page = 1,
                SortState sortOrder = SortState.EmailAsc, GroupState groupOrder = GroupState.FamilyGroupOff)
 
@@ -121,24 +123,33 @@ namespace MedContactApp.Controllers
             }
 
         }
-       
-        [HttpGet]
-        public async Task<IActionResult> UserDetails(string? id, string? reflink="")
-        {
 
+        [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
+        public async Task<IActionResult> UserDetails(string? id, string? reflink = "")
+        {
+           try
+           { 
             AdminUserEditModel emptyModel = new();
             var model = await _adminModelBuilder.AdminUserModelBuildAsync(emptyModel, id);
             if (model == null)
                 return NotFound();
             if (!string.IsNullOrEmpty(reflink))
                 model.Reflink = reflink.Replace("*", "&");
-            else 
+            else
                 model.Reflink = reflink;
-               
+
             return View(model);
+           }
+           catch (Exception e)
+           {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+           }
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> UserDetails(AdminUserEditModel model)
         {
             if (model == null || model.Id == null)

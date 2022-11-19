@@ -41,10 +41,10 @@ namespace MedContactApp
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                     options.LoginPath = new PathString(@"/Account/Login");
                     options.LogoutPath = new PathString(@"/Account/Logout");
-                    //options.AccessDeniedPath = new PathString(@"/Account/Login");
+                    options.AccessDeniedPath = new PathString(@"/Account/RestrictedLogin");
                 });
             builder.Services.AddAuthorization(opts => {
-                opts.AddPolicy("FullBlockedUser", policy => {
+                opts.AddPolicy("FullBlocked", policy => {
                     policy.RequireClaim("FullBlocked", "false");
                 });
             });

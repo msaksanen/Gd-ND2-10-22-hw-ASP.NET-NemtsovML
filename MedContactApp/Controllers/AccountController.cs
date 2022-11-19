@@ -43,6 +43,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(CustomerModel model)
         {
             if (ModelState.IsValid)
@@ -74,6 +75,15 @@ namespace MedContactApp.Controllers
             return View();
         }
 
+
+
+        [HttpGet]
+        public IActionResult RestrictedLogin()
+        {
+            return View();
+        }
+
+        
         [HttpGet]
         public IActionResult Login()
         {
@@ -81,6 +91,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (model.Email != null && model.Password != null)
@@ -105,30 +116,41 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            var UserIdClaim = HttpContext.User.FindFirst("MUId");
-            var userId = UserIdClaim!.Value;
-            var result = Guid.TryParse(userId, out Guid guid_id);
-            if (result)
-                 await _userService.ChangeUserStatusById(guid_id, 1);
+            try
+            {
+                var UserIdClaim = HttpContext.User.FindFirst("MUId");
+                var userId = UserIdClaim!.Value;
+                var result = Guid.TryParse(userId, out Guid guid_id);
+                if (result)
+                    await _userService.ChangeUserStatusById(guid_id, 1);
 
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
         }
 
         
         private async Task Authenticate (string email, Guid userId)
         {
             string isfullBlocked="false";
-            var dto = await _userService.GetUserByIdAsync(userId);
-            var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
-
-            if (dto.Email != null && dto.Username!=null  && roleList!=null)
+            try
             {
-                if (dto.IsFullBlocked == true)
-                    isfullBlocked = "true";
+                var dto = await _userService.GetUserByIdAsync(userId);
+                var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
 
-                string id = dto.Id.ToString();
-                var claims = new List<Claim>()
+                if (dto.Email != null && dto.Username != null && roleList != null)
+                {
+                    if (dto.IsFullBlocked == true)
+                        isfullBlocked = "true";
+
+
+                    string id = dto.Id.ToString();
+                    var claims = new List<Claim>()
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
                 new Claim(ClaimTypes.Email, dto.Email),
@@ -136,20 +158,25 @@ namespace MedContactApp.Controllers
                 new Claim("UId",id),
                 new Claim("FullBlocked", isfullBlocked)
             };
-                foreach (var role in roleList)
-                    if (role.Name != null)
-                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+                    foreach (var role in roleList)
+                        if (role.Name != null)
+                            claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
 
-            var identity = new ClaimsIdentity(claims,
-                    "ApplicationCookie",
-                    ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
+                    var identity = new ClaimsIdentity(claims,
+                            "ApplicationCookie",
+                            ClaimsIdentity.DefaultNameClaimType,
+                            ClaimsIdentity.DefaultRoleClaimType);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(identity));
-            await _userService.ChangeUserStatusById(dto.Id,0);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(identity));
+                    await _userService.ChangeUserStatusById(dto.Id, 0);
+                }
             }
-           
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");    
+            }
+
         }
 
         [HttpGet]
@@ -170,56 +197,64 @@ namespace MedContactApp.Controllers
                 {
                     return BadRequest();
                 }
-
-                if (sUserId != null && sMainUserId != null)
+                try 
                 {
-                    if (sUserId.Value.Equals(sMainUserId.Value))
-                    {
-                        if (Guid.TryParse(sUserId!.Value, out Guid userId))
-                        {
-                            var user = await _userService.GetUserByIdAsync(userId);
-                            var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c =>c.Value).ToList();
-                            if (user != null && roles!=null)
-                            {
-                                string fName = user.Name + " " + user.Surname;
-                                UserDataModel model = new()
-                                {
-                                    ActiveEmail = user.Email,
-                                    ActiveFullName = fName,
-                                    MainEmail = user.Email,
-                                    MainFullName = fName,
-                                    RoleNames = roles
-                                };
-                                return View(model);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        UserDataModel model = new UserDataModel();
 
-                        if (Guid.TryParse(sUserId!.Value, out Guid userId))
+                    if (sUserId != null && sMainUserId != null)
+                    {
+                        if (sUserId.Value.Equals(sMainUserId.Value))
                         {
-                            var user = await _userService.GetUserByIdAsync(userId);
-                            if (user != null)
+                            if (Guid.TryParse(sUserId!.Value, out Guid userId))
                             {
-                                string fName = user.Name + " " + user.Surname;
-                                model.ActiveFullName = fName;
-                                model.ActiveEmail = user.Email;
+                                var user = await _userService.GetUserByIdAsync(userId);
+                                var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                                if (user != null && roles != null)
+                                {
+                                    string fName = user.Name + " " + user.Surname;
+                                    UserDataModel model = new()
+                                    {
+                                        ActiveEmail = user.Email,
+                                        ActiveFullName = fName,
+                                        MainEmail = user.Email,
+                                        MainFullName = fName,
+                                        RoleNames = roles
+                                    };
+                                    return View(model);
+                                }
                             }
                         }
-                        if (Guid.TryParse(sMainUserId!.Value, out Guid mainUserId))
+                        else
                         {
-                            var mainUser = await _userService.GetUserByIdAsync(mainUserId);
-                            if (mainUser != null)
+                            UserDataModel model = new UserDataModel();
+
+                            if (Guid.TryParse(sUserId!.Value, out Guid userId))
                             {
-                                string fName = mainUser.Name + " " + mainUser.Surname;
-                                model.MainFullName = fName;
-                                model.MainEmail = mainUser.Email;
+                                var user = await _userService.GetUserByIdAsync(userId);
+                                if (user != null)
+                                {
+                                    string fName = user.Name + " " + user.Surname;
+                                    model.ActiveFullName = fName;
+                                    model.ActiveEmail = user.Email;
+                                }
                             }
+                            if (Guid.TryParse(sMainUserId!.Value, out Guid mainUserId))
+                            {
+                                var mainUser = await _userService.GetUserByIdAsync(mainUserId);
+                                if (mainUser != null)
+                                {
+                                    string fName = mainUser.Name + " " + mainUser.Surname;
+                                    model.MainFullName = fName;
+                                    model.MainEmail = mainUser.Email;
+                                }
+                            }
+                            return View(model);
                         }
-                        return View(model);
                     }
+                }
+
+                catch (Exception e)
+                {
+                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
                 }
             }
 

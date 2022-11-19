@@ -53,6 +53,7 @@ namespace MedContactApp.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
         public async Task<IActionResult> EditDoctorData()
         {
             EditDoctorDataModel model = new();
@@ -93,6 +94,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
         public async Task<IActionResult> EditDoctorData(EditDoctorDataModel model)
         {
           try
@@ -149,12 +151,7 @@ namespace MedContactApp.Controllers
 
                         model.SystemInfo = $"<b>Specialities:<br/>{addresult} was/were added<br/>{subtract} was/were marked for deletion</b>";
                         return View(model);
-                    //}
-                    //else
-                    //{
-                    //    model.SystemInfo = $"<b>You have not chosen any speciality</b>";
-                    //    return View(model);
-                    //}
+                 
                 }
                 model.SystemInfo = "You have entered incorrect password";
                 return View(model);
@@ -170,6 +167,7 @@ namespace MedContactApp.Controllers
       }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task <IActionResult> RegDoctorData()
         {
             var model = await _modelUserBuilder.BuildById(HttpContext);
@@ -186,6 +184,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> RegDoctorData (RegDoctorDataModel model)
         {
             int result = 0;
@@ -196,53 +195,61 @@ namespace MedContactApp.Controllers
             }
             var UserIdClaim = User.FindFirst("MUId");
             var userId = UserIdClaim?.Value;
-            if (Guid.TryParse(userId, out Guid UId) && model.Password != null)
+            try
             {
-                if (await _userService.CheckUserPassword(UId, model.Password))
-                { 
-                    result = await _roleService.AddRoleByNameToUser(UId, "Applicant");
-                 
-                    List<FileDataDto> list = new();
-                    if (result > 0)
-                        model.SystemInfo = "<b>You have been added to applicants<br/>";
-                    else
-                        model.SystemInfo = "<b>You have been added to applicants before<br/>";
-
-                    foreach (var uploadedFile in model.Uploads)
+                if (Guid.TryParse(userId, out Guid UId) && model.Password != null)
+                {
+                    if (await _userService.CheckUserPassword(UId, model.Password))
                     {
-                        string ext = Path.GetExtension(uploadedFile.FileName);
-                        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
-                        string path = "/files/cv/" + name;
-                        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                        result = await _roleService.AddRoleByNameToUser(UId, "Applicant");
+
+                        List<FileDataDto> list = new();
+                        if (result > 0)
+                            model.SystemInfo = "<b>You have been added to applicants<br/>";
+                        else
+                            model.SystemInfo = "<b>You have been added to applicants before<br/>";
+
+                        foreach (var uploadedFile in model.Uploads)
                         {
-                            await uploadedFile.CopyToAsync(fileStream);
+                            string ext = Path.GetExtension(uploadedFile.FileName);
+                            string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
+                            string path = "/files/cv/" + name;
+                            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                            {
+                                await uploadedFile.CopyToAsync(fileStream);
+                            }
+                            FileDataDto file = new FileDataDto
+                            {
+                                Id = Guid.NewGuid(),
+                                UserId = UId,
+                                Name = uploadedFile.FileName,
+                                Path = path,
+                                Category = "Applicant"
+                            };
+                            list.Add(file);
                         }
-                        FileDataDto file = new FileDataDto
-                        {
-                            Id = Guid.NewGuid(),
-                            UserId = UId,
-                            Name = uploadedFile.FileName,
-                            Path = path,
-                            Category = "Applicant"
-                        };
-                        list.Add(file);
+                        var fileResult = await _fileDataService.AddListToFileData(list);
+
+                        if (fileResult > 1)
+                            model.SystemInfo = model.SystemInfo + $"{fileResult} files were uploaded</b>";
+                        else if (fileResult == 1)
+                            model.SystemInfo = model.SystemInfo + $"1 file was uploaded</b>";
+                        else
+                            model.SystemInfo = model.SystemInfo + $"No files were uploaded</b>";
+
+                        return View(model);
                     }
-                    var fileResult = await _fileDataService.AddListToFileData(list);
-
-                    if (fileResult > 1)
-                        model.SystemInfo = model.SystemInfo + $"{fileResult} files were uploaded</b>";
-                    else if (fileResult == 1)
-                        model.SystemInfo = model.SystemInfo + $"1 file was uploaded</b>";
-                    else
-                        model.SystemInfo = model.SystemInfo + $"No files were uploaded</b>";
-
+                    model.SystemInfo = "<b>You have entered incorrect password</b>";
                     return View(model);
                 }
-                model.SystemInfo = "<b>You have entered incorrect password</b>";
+                model.SystemInfo = "<b>Something went wrong (</b>";
                 return View(model);
             }
-            model.SystemInfo = "<b>Something went wrong (</b>";
-            return View(model);
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
         }
     }
 }

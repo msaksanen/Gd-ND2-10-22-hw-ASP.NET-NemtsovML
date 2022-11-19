@@ -7,6 +7,7 @@ using MedContactApp.Models;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
 using MedContactDb.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -50,6 +51,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> DoctorDataIndex(string email, string name, string surname, string role,
             string speciality, int page = 1, SortState sortOrder = SortState.EmailAsc)
         {
@@ -147,6 +149,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> ApplicationIndex(string email, string name, string surname, int page = 1,
              SortState sortOrder = SortState.EmailAsc)
 
@@ -193,6 +196,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "", string? reflink="")
         {
             if (string.IsNullOrEmpty(id))
@@ -201,53 +205,63 @@ namespace MedContactApp.Controllers
             var res = Guid.TryParse(id, out Guid Id);
             if (!res)
                 return BadRequest();
-            var usr = await _userService.GetUserByIdAsync(Id);
-            if (usr == null)
-                return NotFound();
+          try
+          {
+                var usr = await _userService.GetUserByIdAsync(Id);
+                if (usr == null)
+                    return NotFound();
 
-            var model = _mapper.Map<ApplicantModel>(usr);
+                var model = _mapper.Map<ApplicantModel>(usr);
 
-            if (!string.IsNullOrEmpty(reflink))
-                model.Reflink = reflink.Replace("*", "&");
-            else
-                model.Reflink = reflink;
+                if (!string.IsNullOrEmpty(reflink))
+                    model.Reflink = reflink.Replace("*", "&");
+                else
+                    model.Reflink = reflink;
 
-            if (!string.IsNullOrEmpty(filedata))
-            {
-                var resfile = Guid.TryParse(filedata, out Guid fdId);
-                if (!resfile)
-                    model.SystemInfo = $"<b>File data Id({filedata}) for deletion is incorrect.</b>";
-                var removeResult = await _fileDataService.RemoveFileDataWithFileById(fdId, _appEnvironment.WebRootPath);
-
-                switch (removeResult)
+                if (!string.IsNullOrEmpty(filedata))
                 {
-                    case -2:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) was not found <br/>File cannot be deleted</b>";
-                        break;
-                    case -1:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) has incorrect path <br/>File cannot be deleted</b>";
-                        break;
-                    case 1:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) was deleted <br/>The file was removed before</b>";
-                        break;
-                    case 2:
-                        model.SystemInfo = $"<b>FileData with Id({filedata}) and its file were deleted</b>";
-                        break;
+                    var resfile = Guid.TryParse(filedata, out Guid fdId);
+                    if (!resfile)
+                        model.SystemInfo = $"<b>File data Id({filedata}) for deletion is incorrect.</b>";
+                    var removeResult = await _fileDataService.RemoveFileDataWithFileById(fdId, _appEnvironment.WebRootPath);
+
+                    switch (removeResult)
+                    {
+                        case -2:
+                            model.SystemInfo = $"<b>FileData with Id({filedata}) was not found <br/>File cannot be deleted</b>";
+                            break;
+                        case -1:
+                            model.SystemInfo = $"<b>FileData with Id({filedata}) has incorrect path <br/>File cannot be deleted</b>";
+                            break;
+                        case 1:
+                            model.SystemInfo = $"<b>FileData with Id({filedata}) was deleted <br/>The file was removed before</b>";
+                            break;
+                        case 2:
+                            model.SystemInfo = $"<b>FileData with Id({filedata}) and its file were deleted</b>";
+                            break;
+                    }
                 }
+                var fileList = await _fileDataService.FileDataTolistByUserId(Id);
+                if (fileList != null && fileList.Any())
+                    fileList = fileList.Where(x => x.Category != null && x.Category.Equals("Applicant")).ToList();
+                model.fileDatas = fileList;
+
+                var doctInfoList = await _doctorDataService.GetDoctorInfoByUserId(Id);
+                if (doctInfoList != null && doctInfoList.Any())
+                    model.doctorInfos = doctInfoList;
+
+                return View(model);
             }
-            var fileList = await _fileDataService.FileDataTolistByUserId(Id);
-            if (fileList != null && fileList.Any())
-                fileList = fileList.Where(x => x.Category != null && x.Category.Equals("Applicant")).ToList();
-            model.fileDatas = fileList;
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
 
-            var doctInfoList = await _doctorDataService.GetDoctorInfoByUserId(Id);
-            if (doctInfoList != null && doctInfoList.Any())
-                model.doctorInfos = doctInfoList;
-
-            return View(model);
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> DoctorDetails(string? userid, string? specr, string? specd, string? reflink="")
         {
             AdminEditDoctorModel smodel = new();
@@ -281,6 +295,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> DoctorDetails(AdminEditDoctorModel model)
         {
             if (model == null && model?.UserId == null)
@@ -376,40 +391,49 @@ namespace MedContactApp.Controllers
     }
 
         [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
         public async Task<IActionResult> SpecialityManager(string? delid, string? newspeciality)
         {
             AdminSpecModel model = new();
          
-            if (!string.IsNullOrEmpty(newspeciality))
-            {
-                SpecialityDto newSpeciality = new() { Id = Guid.NewGuid(), Name = newspeciality };
-                var addres = await _specialityService.AddSpecialityToDb(newSpeciality);
-                if (addres > 0)
-                    model.SystemInfo = $"<b>Speciality {newspeciality} was added to database.</b>";
-                if (addres == 0)
-                    model.SystemInfo = $"<b> No speciality was added to database.</b>";
-            }
-
-            if (!string.IsNullOrEmpty(delid))
-            {
-                var res = Guid.TryParse(delid, out var id);
-                if (res)
+          try
+          {
+                if (!string.IsNullOrEmpty(newspeciality))
                 {
-                    var delres = await _specialityService.RemoveSpecialityById(id);
-                    if (delres.IntResult > 0)
-                        model.SystemInfo += $"<br/><b>Speciality {delres.Name} was removed from database.</b>";
+                    SpecialityDto newSpeciality = new() { Id = Guid.NewGuid(), Name = newspeciality };
+                    var addres = await _specialityService.AddSpecialityToDb(newSpeciality);
+                    if (addres > 0)
+                        model.SystemInfo = $"<b>Speciality {newspeciality} was added to database.</b>";
+                    if (addres == 0)
+                        model.SystemInfo = $"<b> No speciality was added to database.</b>";
                 }
+
+                if (!string.IsNullOrEmpty(delid))
+                {
+                    var res = Guid.TryParse(delid, out var id);
+                    if (res)
+                    {
+                        var delres = await _specialityService.RemoveSpecialityById(id);
+                        if (delres.IntResult > 0)
+                            model.SystemInfo += $"<br/><b>Speciality {delres.Name} was removed from database.</b>";
+                    }
+                }
+
+                var specList = await _specialityService.GetSpecialitiesListAsync();
+
+                if (specList != null)
+                {
+
+                    model.Specialities = specList;
+                }
+
+                return View(model);
             }
-
-            var specList = await _specialityService.GetSpecialitiesListAsync();
-
-            if (specList != null)
+            catch (Exception e)
             {
-
-                model.Specialities = specList;
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
             }
-
-            return View(model);
         }     
     }
 }

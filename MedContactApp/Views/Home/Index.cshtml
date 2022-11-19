@@ -2,8 +2,39 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to Medcontact!</h1>
+    <p class="lead">Our system provides wide opportunities for all groups of our clients</p>
+    <hr class="my-4">
+    <ul class="nav flex-column lead">
+        <li class="nav-item">
+            <i class="bi bi-check2-circle"></i> Simple registration for customers and their family members
+            <br/>
+        </li>
+        <li class="nav-item">
+            <i class="bi bi-check2-circle"></i> Simpe planning of appointmens in advance
+            <br />
+        </li>
+        <li class="nav-item">
+           <i class="bi bi-check2-circle"></i> Registration of doctors with different/multiple specilaities
+            <br />
+        </li>
+        <li class="nav-item">
+            <i class="bi bi-check2-circle"></i> Capabilities for organizing doctors' schedules
+            <br />
+        </li>
+        <li class="nav-item">
+            <i class="bi bi-check2-circle"></i> A variety of tools for administration
+            <br />
+        </li>
+        <li class="nav-item">
+            <i class="bi bi-check2-circle"></i> And many other features...
+            <br />
+        </li>
+
+    </ul>
+</div>
+
+<div>
     @Html.ValidationMessage("CustomError")
 </div>

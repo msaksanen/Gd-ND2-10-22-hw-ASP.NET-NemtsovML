@@ -18,6 +18,7 @@ using System.Drawing.Printing;
 using System.Drawing;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedContactApp.Controllers
 {
@@ -48,6 +49,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize (Policy = "FullBlocked")]
         public async Task<IActionResult> CreateIndex(string? id)
         {
             if (string.IsNullOrEmpty(id))
@@ -55,58 +57,68 @@ namespace MedContactApp.Controllers
             var res = Guid.TryParse(id, out Guid dttId);
             if (!res)
                 return BadRequest();
-            var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
-            if (dttDto == null)
-                return NotFound();
-            var doctInfo = await _doctorDataService.GetDoctorInfoById(dttDto.DoctorDataId);
-            if (doctInfo == null)
-                return NotFound();
-            var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
-            if (usr == null)
-                return NotFound();
-
-            var customerData = await _customerDataService.GetOrCreateByUserIdAsync(usr.Id);
-
-            var apmList = await _appointmentService.GetAppointmentsByDTTableIdAsync(dttId);
-
-            if (dttDto.ConsultDuration != null && dttDto.StartWorkTime != null && dttDto.TotalTicketQty != null
-                && (apmList != null || apmList?.Count != 0) && customerData != null)
+            try
             {
-                AppointmentIndexCreateModel model = new();
-                model.DayTimeTable = dttDto;
-                model.User = usr;
-                model.DoctorInfo = doctInfo;
-                var newApms = new List<AppointmentDto>();
+                var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
+                if (dttDto == null)
+                    return NotFound();
+                var doctInfo = await _doctorDataService.GetDoctorInfoById(dttDto.DoctorDataId);
+                if (doctInfo == null)
+                    return NotFound();
+                var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                if (usr == null)
+                    return NotFound();
 
-                for (int i = 0; i < dttDto.TotalTicketQty; i++)
+                var customerData = await _customerDataService.GetOrCreateByUserIdAsync(usr.Id);
+
+                var apmList = await _appointmentService.GetAppointmentsByDTTableIdAsync(dttId);
+
+                if (dttDto.ConsultDuration != null && dttDto.StartWorkTime != null && dttDto.TotalTicketQty != null
+                    && (apmList != null || apmList?.Count != 0) && customerData != null)
                 {
-                    var startTime = dttDto.StartWorkTime!.Value;
-                    int diff = (int)(i * dttDto.ConsultDuration!);
-                    startTime = startTime.AddMinutes(diff);
-                    if (apmList!.Any(x => x.StartTime == startTime) || startTime<DateTime.Now)
-                        continue;
-                    else
-                    {
-                        var apm = new AppointmentDto()
-                        {
-                            StartTime = startTime,
-                            EndTime = startTime.AddMinutes((double)dttDto.ConsultDuration),
-                            DayTimeTableId = dttId,
-                            CustomerDataId = customerData?.Id
-                        };
-                        newApms.Add(apm);
-                    }
-                }
+                    AppointmentIndexCreateModel model = new();
+                    model.DayTimeTable = dttDto;
+                    model.User = usr;
+                    model.DoctorInfo = doctInfo;
+                    var newApms = new List<AppointmentDto>();
 
-                model.Appointments = newApms;
-                return View(model);
+                    for (int i = 0; i < dttDto.TotalTicketQty; i++)
+                    {
+                        var startTime = dttDto.StartWorkTime!.Value;
+                        int diff = (int)(i * dttDto.ConsultDuration!);
+                        startTime = startTime.AddMinutes(diff);
+                        if (apmList!.Any(x => x.StartTime == startTime) || startTime < DateTime.Now)
+                            continue;
+                        else
+                        {
+                            var apm = new AppointmentDto()
+                            {
+                                StartTime = startTime,
+                                EndTime = startTime.AddMinutes((double)dttDto.ConsultDuration),
+                                DayTimeTableId = dttId,
+                                CustomerDataId = customerData?.Id
+                            };
+                            newApms.Add(apm);
+                        }
+                    }
+
+                    model.Appointments = newApms;
+                    return View(model);
+                }
+                else
+                    return NoContent();
+
             }
-            else
-                return NoContent();
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
 
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> Create(string? dttid, string? cdid, string? stime)
         {
             if (string.IsNullOrEmpty(dttid) && string.IsNullOrEmpty(cdid) && string.IsNullOrEmpty(stime))
@@ -116,45 +128,54 @@ namespace MedContactApp.Controllers
             var resSTime = DateTime.TryParse(stime, out DateTime startTime);
             if (!resCdId || !resSTime || !resDttId)
                 return BadRequest();
-
-            var customerData = await _customerDataService.GetByIdAsync(cdId);
-            var dttData = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
-
-            if (customerData == null || dttData == null)
-                return NotFound();
-
-            var doctInfo = await _doctorDataService.GetDoctorInfoById(dttData.DoctorDataId);
-            if (doctInfo == null)
-                return NotFound();
-            var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
-            if (usr == null)
-                return NotFound();
-
-            AppointmentDto apmDto = new()
+            try
             {
-                Id = Guid.NewGuid(),
-                CreationDate = DateTime.Now,
-                CustomerDataId = cdId,
-                DayTimeTableId = dttId,
-                StartTime = startTime,
-                EndTime = startTime.AddMinutes((double)dttData?.ConsultDuration!)
-            };
+                var customerData = await _customerDataService.GetByIdAsync(cdId);
+                var dttData = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
 
-            var res = await _appointmentService.Add(apmDto);
+                if (customerData == null || dttData == null)
+                    return NotFound();
 
-            AppointmentCreateModel model = new()
+                var doctInfo = await _doctorDataService.GetDoctorInfoById(dttData.DoctorDataId);
+                if (doctInfo == null)
+                    return NotFound();
+                var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                if (usr == null)
+                    return NotFound();
+
+                AppointmentDto apmDto = new()
+                {
+                    Id = Guid.NewGuid(),
+                    CreationDate = DateTime.Now,
+                    CustomerDataId = cdId,
+                    DayTimeTableId = dttId,
+                    StartTime = startTime,
+                    EndTime = startTime.AddMinutes((double)dttData?.ConsultDuration!)
+                };
+
+                var res = await _appointmentService.Add(apmDto);
+
+                AppointmentCreateModel model = new()
+                {
+                    DayTimeTableId = dttId,
+                    Result = res,
+                    Appointment = apmDto,
+                    DoctorInfo = doctInfo,
+                    User = usr
+                };
+
+                return View(model);
+            }
+            catch (Exception e)
             {
-                DayTimeTableId = dttId,
-                Result = res,
-                Appointment = apmDto,
-                DoctorInfo = doctInfo,
-                User = usr
-            };
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
 
-            return View(model);
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> MyAppointments(string name, string speciality, string date, string sysInfo = "",
                SortState sortOrder = SortState.DateDesc)
         {
@@ -200,6 +221,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> Delete(string? id, string? reflink = "")
         {
             string sysInfo = string.Empty;
@@ -209,25 +231,34 @@ namespace MedContactApp.Controllers
             var resId = Guid.TryParse(id, out Guid apmId);
             if (!resId)
                 return BadRequest();
+            try
+            {
+                var resDel = await _appointmentService.RemoveById(apmId);
+                if (resDel != null && resDel > 0)
+                    sysInfo = "ok";
 
-            var resDel = await _appointmentService.RemoveById(apmId);
-            if (resDel != null && resDel > 0)
-                sysInfo = "ok";
+                else
+                    sysInfo = "no";
 
-            else
-                sysInfo = "no";
+                if (!string.IsNullOrEmpty(reflink))
+                    reflink = reflink.Replace("*", "&");
+                if (!string.IsNullOrEmpty(reflink) && reflink.Contains('?'))
+                    redirect = string.Join("", reflink, "&sysInfo=", sysInfo);
+                if (!string.IsNullOrEmpty(reflink) && reflink.Contains('?') == false)
+                    redirect = string.Join("", reflink, "?sysInfo=", sysInfo);
 
-            if (!string.IsNullOrEmpty(reflink))
-                reflink = reflink.Replace("*", "&");
-            if (!string.IsNullOrEmpty(reflink) && reflink.Contains('?'))
-                redirect = string.Join("", reflink, "&sysInfo=", sysInfo);
-            if (!string.IsNullOrEmpty(reflink) && reflink.Contains('?')==false)
-                redirect = string.Join("", reflink, "?sysInfo=", sysInfo);
+                return Redirect(redirect);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
 
-            return Redirect(redirect);
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
         public async Task<IActionResult> ViewIndex(string? id, string name, string birhtdate,
             string sysInfo = "", SortState sortOrder = SortState.DateAsc)
         {

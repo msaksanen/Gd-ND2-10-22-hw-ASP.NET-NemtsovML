@@ -7,6 +7,7 @@ using MedContactCore;
 using MedContactCore.Abstractions;
 using MedContactCore.DataTransferObjects;
 using MedContactDb.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Data;
@@ -35,41 +36,51 @@ namespace MedContactApp.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Doctor", Policy = "FullBlocked")]
         public async Task<IActionResult> SelelctSpec()
         {
-            var usr = await _modelBuilder.BuildUserById(HttpContext);
-            if (usr==null ) return NotFound();
-            DoctorSelectSpecModel model = new();
-            model.User = usr;
+           try
+           {
+                var usr = await _modelBuilder.BuildUserById(HttpContext);
+                if (usr == null) return NotFound();
+                DoctorSelectSpecModel model = new();
+                model.User = usr;
 
-            var dDataList = await _doctorDataService.GetDoctorInfoByUserId((Guid)usr.Id!);
+                var dDataList = await _doctorDataService.GetDoctorInfoByUserId((Guid)usr.Id!);
 
-            if (dDataList==null || dDataList.Count==0)
-            {
-                model.SystemInfo = @"<b>You do not have any specialities<br/>
+                if (dDataList == null || dDataList.Count == 0)
+                {
+                    model.SystemInfo = @"<b>You do not have any specialities<br/>
                                      You can add speciality at ""Edit Doctor Data"" menu in your settings </b>";
 
-            }
+                }
 
-            else if (dDataList != null && (dDataList.All(dd => dd.SpecialityId == null) || dDataList.All(dd => dd.IsBlocked==true)))
-            {
-                model.SystemInfo = @"<b>You do not have any active specialities<br/>
+                else if (dDataList != null && (dDataList.All(dd => dd.SpecialityId == null) || dDataList.All(dd => dd.IsBlocked == true)))
+                {
+                    model.SystemInfo = @"<b>You do not have any active specialities<br/>
                                      Contact with administration, please </b>";
 
-            }
-            else if (dDataList != null && (dDataList.Any(dd => dd.SpecialityId == null) || dDataList.Any(dd => dd.IsBlocked == true) ||
-                     dDataList.Any(dd => dd.ForDeletion == true)))
-            {
-                model.SystemInfo = @"<b>You have some inactive/removed specialities<br/>
+                }
+                else if (dDataList != null && (dDataList.Any(dd => dd.SpecialityId == null) || dDataList.Any(dd => dd.IsBlocked == true) ||
+                         dDataList.Any(dd => dd.ForDeletion == true)))
+                {
+                    model.SystemInfo = @"<b>You have some inactive/removed specialities<br/>
                                      Contact with administration for details, please </b>";
-                model.DoctorInfos = dDataList;
+                    model.DoctorInfos = dDataList;
+                }
+                else
+                {
+                    model.DoctorInfos = dDataList;
+                }
+
+                return View(model);
             }
-            else
+            catch (Exception e)
             {
-                model.DoctorInfos = dDataList;
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
             }
 
-            return View(model);
         }
 
         [HttpGet]
@@ -80,74 +91,84 @@ namespace MedContactApp.Controllers
             var res = Guid.TryParse(dataid, out Guid dataId);
             if (res == false)
                 return BadRequest();
-            var dInfo = await _doctorDataService.GetDoctorInfoById(dataId);
-            if (dInfo == null || dInfo.DoctorDataId == null)
-                return NotFound();
-            IEnumerable <DayTimeTableDto>? timeTableList = await _dayTimeTableService.GetDayTimeTableByDoctorDataId((Guid)dInfo.DoctorDataId);
-           
-            bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-            if (result) _pageSize = pageSize;
-            int flag = 0;
-
-            if(!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
-                    || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true) 
-                    || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+            try
             {
-                if (User.Identities.Any(identity => identity.IsAuthenticated))
+                var dInfo = await _doctorDataService.GetDoctorInfoById(dataId);
+                if (dInfo == null || dInfo.DoctorDataId == null)
+                    return NotFound();
+                IEnumerable<DayTimeTableDto>? timeTableList = await _dayTimeTableService.GetDayTimeTableByDoctorDataId((Guid)dInfo.DoctorDataId);
+
+                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+                if (result) _pageSize = pageSize;
+                int flag = 0;
+
+                if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
+                        || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
+                        || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-                    if (roles != null && roles.Any(r => r.Equals("Admin")))
-                        flag  =1;
-                    if (roles != null && roles.Any(r => r.Equals("Doctor")))
-                        flag +=2;
-                    if (reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
-                        flag+=10;
+                    if (User.Identities.Any(identity => identity.IsAuthenticated))
+                    {
+                        var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                        if (roles != null && roles.Any(r => r.Equals("Admin")))
+                            flag = 1;
+                        if (roles != null && roles.Any(r => r.Equals("Doctor")))
+                            flag += 2;
+                        if (reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+                            flag += 10;
+                    }
                 }
-            }
-            else
-            {
+                else
+                {
+                    if (timeTableList != null)
+                        timeTableList = timeTableList.Where
+                                      (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+                }
+
+                ViewData["Flag"] = flag;
+
+                if (sortOrder == SortState.DateAsc && timeTableList != null)
+                {
+                    timeTableList = timeTableList.OrderBy(x => x.Date);
+                }
+                if (sortOrder == SortState.DateDesc && timeTableList != null)
+                {
+                    timeTableList = timeTableList.OrderByDescending(x => x.Date);
+                }
+                var items = timeTableList;
+                int count = 0;
                 if (timeTableList != null)
-                    timeTableList = timeTableList.Where
-                                  (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+                {
+                    count = timeTableList.Count();
+                    items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+
+
+                if (!string.IsNullOrEmpty(reflink))
+                    reflink = reflink.Replace("*", "&");
+
+
+                string pageRoute = @"/daytimetable/timetabledoctindex?page=";
+                string processOptions = $"&dataid={dataid}&sortorder={sortOrder}&reflink={reflink}";
+
+                TimeTableDoctIndexModel model = new(
+                       items, processOptions, dInfo, reflink,
+                       new PageViewModel(count, page, pageSize, pageRoute),
+                       new SortViewModel(sortOrder));
+
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
             }
 
-            ViewData["Flag"]=flag;
-         
-            if (sortOrder==SortState.DateAsc && timeTableList != null)
-             {
-                timeTableList = timeTableList.OrderBy(x => x.Date);
-             }
-             if (sortOrder == SortState.DateDesc && timeTableList != null)
-             {
-                timeTableList = timeTableList.OrderByDescending(x => x.Date);
-             }
-              var items = timeTableList;
-              int count = 0;
-             if (timeTableList != null)
-             {
-                count = timeTableList.Count();
-                items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-             }
-             
-           
-
-            if (!string.IsNullOrEmpty(reflink))
-                reflink = reflink.Replace("*", "&");
-   
-
-            string pageRoute = @"/daytimetable/timetabledoctindex?page=";
-            string processOptions = $"&dataid={dataid}&sortorder={sortOrder}&reflink={reflink}";
-
-            TimeTableDoctIndexModel model = new(
-                   items, processOptions,dInfo, reflink,
-                   new PageViewModel(count, page, pageSize, pageRoute),
-                   new SortViewModel(sortOrder));
-
-            return View(model);
         }
 
 
         [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> Index(int page)
         {
             try
@@ -185,6 +206,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
         public  async Task<IActionResult> Create (string? dataid)
         {
             if (string.IsNullOrEmpty(dataid))
@@ -192,15 +214,25 @@ namespace MedContactApp.Controllers
             var res = Guid.TryParse(dataid, out Guid dataId);
             if (res == false)
                 return BadRequest();
-            var dData = await _doctorDataService.GetDoctorInfoById((Guid)dataId);
-            if (dData == null)
-                return NotFound();
-            
+            try
+            {
+                var dData = await _doctorDataService.GetDoctorInfoById((Guid)dataId);
+                if (dData == null)
+                    return NotFound();
+
                 var model = _mapper.Map<DayTimeTableModel>(dData);
                 return View(model);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
+
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
         public async Task<IActionResult> Create (DayTimeTableModel model)
         {
             if (model == null || model.DoctorDataId == null)
