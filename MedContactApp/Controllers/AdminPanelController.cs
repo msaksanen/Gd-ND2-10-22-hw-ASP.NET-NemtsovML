@@ -133,7 +133,8 @@ namespace MedContactApp.Controllers
             AdminUserEditModel emptyModel = new();
             var model = await _adminModelBuilder.AdminUserModelBuildAsync(emptyModel, id);
             if (model == null)
-                return NotFound();
+                //return NotFound();
+                return NotFound("User is not found");
             if (!string.IsNullOrEmpty(reflink))
                 model.Reflink = reflink.Replace("*", "&");
             else
@@ -153,7 +154,8 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> UserDetails(AdminUserEditModel model)
         {
             if (model == null || model.Id == null)
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("Model is null");
             int addresult = 0;
             int subtract = 0;
             int changeRes = 0;
@@ -161,7 +163,8 @@ namespace MedContactApp.Controllers
             try
             {
                 var modelFull = await _adminModelBuilder.AdminUserModelBuildAsync(model, String.Empty);
-                if (modelFull == null) throw new Exception();
+                if (modelFull == null) //throw new Exception();
+                    return new BadRequestObjectResult("User data was not received");
 
                 if (modelFull != null && modelFull.BlockStateIds != null)
                 {

@@ -64,7 +64,7 @@ namespace MedContactApp.Controllers
                 catch (Exception e)
                 {
                     Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                    return BadRequest();
+                    return BadRequest();   
                 }
             }
             return View(model);

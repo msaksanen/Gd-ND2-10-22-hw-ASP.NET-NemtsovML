@@ -200,16 +200,19 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> ApplicantDetails(string? id, string? filedata = "", string? reflink="")
         {
             if (string.IsNullOrEmpty(id))
-                return BadRequest();
+                //return BadRequest();
+                 return new BadRequestObjectResult("Applicant Id is null");
 
             var res = Guid.TryParse(id, out Guid Id);
             if (!res)
-                return BadRequest();
-          try
+                //return BadRequest();
+                return new BadRequestObjectResult("Applicant Id is incorrect");
+            try
           {
                 var usr = await _userService.GetUserByIdAsync(Id);
                 if (usr == null)
-                    return NotFound();
+                    //return NotFound();
+                      return NotFound("User is not found");
 
                 var model = _mapper.Map<ApplicantModel>(usr);
 
@@ -272,7 +275,8 @@ namespace MedContactApp.Controllers
                 smodel.Reflink = reflink;
 
             if (string.IsNullOrEmpty(userid))
-                return NotFound();
+                //return NotFound();
+                  return NotFound("User Id is null");
             var res = Guid.TryParse(userid, out Guid userId);
 
             if (!res)
@@ -284,7 +288,8 @@ namespace MedContactApp.Controllers
                 {
                     return View(model);
                 }
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("Model is null");
             }
 
             catch (Exception e)
@@ -299,7 +304,8 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> DoctorDetails(AdminEditDoctorModel model)
         {
             if (model == null && model?.UserId == null)
-                return BadRequest();
+                //return BadRequest();
+                  return new BadRequestObjectResult("User Id is null"); 
 
             int addresult = 0;
             int updresult = 0;
@@ -308,8 +314,9 @@ namespace MedContactApp.Controllers
          { 
             var modelFull = await _adminModelBuilder.AdminDoctorModelBuildAsync(model, (Guid)model.UserId!);
             if (modelFull == null)
-                return BadRequest();
-            var doctorData = await _doctorDataService.GetDoctorDataListByUserId((Guid)model.UserId);
+                  //return BadRequest();
+                    return new BadRequestObjectResult("Model is null");
+                var doctorData = await _doctorDataService.GetDoctorDataListByUserId((Guid)model.UserId);
             var roleId = await _roleService.GetRoleIdByNameAsync("Doctor");
            
             if (modelFull.SpecialityIds != null)

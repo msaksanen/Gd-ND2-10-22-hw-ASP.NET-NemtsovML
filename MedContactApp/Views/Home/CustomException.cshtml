@@ -1,0 +1,35 @@
+﻿@model CustomExceptionModel
+
+@{
+    ViewData["Title"] = "Exception";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Exception</h1>
+<p class="lead">
+    An exception has arisen ...<br/>
+    Try again, please<br/>
+    If you encounter similar issues again, contact the administrator<br />
+</p>
+<hr />
+
+<p>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" 
+             aria-expanded="false" aria-controls="collapseExample">Details</button>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        @Model.ExceptionMessage<br />
+        @Model.ExceptionStack<br />
+    </div>
+</div>
+
+
+@section Footer
+{
+
+    <div>
+        <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home</h6></a>
+    </div>
+    <br />
+}

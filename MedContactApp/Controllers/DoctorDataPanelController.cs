@@ -177,9 +177,9 @@ namespace MedContactApp.Controllers
 
                 return View(regModel);
             }
-                
 
-            return NotFound();
+           //return NotFound();
+            return new BadRequestObjectResult("Model is null");
 
         }
 

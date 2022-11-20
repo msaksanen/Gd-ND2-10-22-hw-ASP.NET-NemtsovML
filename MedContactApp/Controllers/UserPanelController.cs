@@ -47,7 +47,8 @@ namespace MedContactApp.Controllers
             if (model!= null) 
                 return View(model);
 
-            return NotFound();
+            //return NotFound();
+            return NotFound("User is not found");
         }
 
 
@@ -63,7 +64,8 @@ namespace MedContactApp.Controllers
                     HttpContext.Session.SetInt32("isDependent", 1);
                 return View(model);
             }
-            return NotFound();
+            //return NotFound();
+            return NotFound("User is not found");
         }
 
         [HttpPost]
@@ -87,7 +89,8 @@ namespace MedContactApp.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    //return BadRequest();
+                    return new BadRequestObjectResult("Model is null");
                 }
             }
             catch (Exception ex)

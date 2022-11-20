@@ -42,7 +42,9 @@ namespace MedContactApp.Controllers
            try
            {
                 var usr = await _modelBuilder.BuildUserById(HttpContext);
-                if (usr == null) return NotFound();
+                if (usr == null) 
+                    //return NotFound();
+                      return NotFound("User is not found");
                 DoctorSelectSpecModel model = new();
                 model.User = usr;
 
@@ -87,15 +89,18 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> TimeTableDoctIndex(string? dataid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1 )
         {
             if (string.IsNullOrEmpty(dataid))
-                return BadRequest();
+                //return BadRequest();
+                 return new BadRequestObjectResult("DoctorData Id is null");
             var res = Guid.TryParse(dataid, out Guid dataId);
             if (res == false)
-                return BadRequest();
+                //return BadRequest();
+                 return new BadRequestObjectResult("DoctorData Id is incorrect");
             try
             {
                 var dInfo = await _doctorDataService.GetDoctorInfoById(dataId);
                 if (dInfo == null || dInfo.DoctorDataId == null)
-                    return NotFound();
+                    //return NotFound();
+                      return NotFound("Doctor Data/Info is not found");
                 IEnumerable<DayTimeTableDto>? timeTableList = await _dayTimeTableService.GetDayTimeTableByDoctorDataId((Guid)dInfo.DoctorDataId);
 
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
@@ -141,8 +146,6 @@ namespace MedContactApp.Controllers
                     count = timeTableList.Count();
                     items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 }
-
-
 
                 if (!string.IsNullOrEmpty(reflink))
                     reflink = reflink.Replace("*", "&");
@@ -210,15 +213,18 @@ namespace MedContactApp.Controllers
         public  async Task<IActionResult> Create (string? dataid)
         {
             if (string.IsNullOrEmpty(dataid))
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("DoctorData Id is null");
             var res = Guid.TryParse(dataid, out Guid dataId);
             if (res == false)
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("DoctorData Id is incorrect");
             try
             {
                 var dData = await _doctorDataService.GetDoctorInfoById((Guid)dataId);
                 if (dData == null)
-                    return NotFound();
+                    //return NotFound();
+                    return NotFound("Doctor info is not found");
 
                 var model = _mapper.Map<DayTimeTableModel>(dData);
                 return View(model);
@@ -236,12 +242,14 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> Create (DayTimeTableModel model)
         {
             if (model == null || model.DoctorDataId == null)
-                return BadRequest();
+                //return BadRequest();
+                  return new BadRequestObjectResult("Model/DoctorData Id is null");
             try
             {  
                 var dInfo = await _doctorDataService.GetDoctorInfoById(model.DoctorDataId);
                 if (dInfo == null)
-                    return NotFound();
+                    //return NotFound();
+                   return NotFound("Doctor info is not found");
 
                 model.Id = Guid.NewGuid();
                 model.CreationDate = DateTime.Now;

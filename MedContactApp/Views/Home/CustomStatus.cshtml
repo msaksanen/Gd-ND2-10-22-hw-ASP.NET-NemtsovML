@@ -1,0 +1,50 @@
+﻿@model CustomStatusModel
+@{
+    ViewData["Title"] = "Status Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>
+    @if (Model?.Code != null)
+        @Html.Raw($"{@Model.Status}")
+    else
+        @Html.Raw($"Status Page")
+</h1>
+<h6 class="lead"> <b>
+        @if (!string.IsNullOrEmpty(Model?.Text))
+            @Html.Raw($"{@Model.Text}")
+</b></h6>
+<p class="lead">
+    Try again, please<br/>
+    If you encounter similar issues again, contact the administrator<br />
+</p>
+<hr />
+@if (!string.IsNullOrEmpty(Model?.Name))
+{
+    <p>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+            Details
+        </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+            Controller/method: @Model.Name<br />
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+@section Footer
+{
+
+    <div>
+        <a asp-controller="Home" asp-action="Index"><h6>&#5130 Back to home</h6></a>
+    </div>
+    <br />
+}

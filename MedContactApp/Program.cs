@@ -16,6 +16,7 @@ using MedContactApp.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using MedContactApp.AdminPanelHelpers;
+using MedContactApp.Filters;
 
 namespace MedContactApp
 {
@@ -27,6 +28,11 @@ namespace MedContactApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            //builder.Services.AddControllersWithViews(options =>
+            //{
+            //    options.Filters.Add<CustomExceptionFilter>();
+            //    options.Filters.Add<StatusCodeResultFilter>();
+            //});
 
             builder.Host.UseSerilog((ctx, lc) =>
                lc.WriteTo.File(
@@ -105,7 +111,7 @@ namespace MedContactApp
             }
 
             app.UseSession();
-            app.UseHttpsRedirection();
+               app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

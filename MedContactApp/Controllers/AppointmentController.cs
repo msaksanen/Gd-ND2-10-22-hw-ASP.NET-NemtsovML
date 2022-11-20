@@ -53,21 +53,26 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> CreateIndex(string? id)
         {
             if (string.IsNullOrEmpty(id))
-                return BadRequest();
+                //return BadRequest();
+                  return new  BadRequestObjectResult("DayTimeTable Id is null");
             var res = Guid.TryParse(id, out Guid dttId);
             if (!res)
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("DayTimeTable Id is incorrect");
             try
             {
                 var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
                 if (dttDto == null)
-                    return NotFound();
+                    //return NotFound();
+                      return NotFound("DayTimeTable is not found");
                 var doctInfo = await _doctorDataService.GetDoctorInfoById(dttDto.DoctorDataId);
                 if (doctInfo == null)
-                    return NotFound();
+                    //return NotFound();
+                      return NotFound("Doctor info is not found");
                 var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
                 if (usr == null)
-                    return NotFound();
+                    //return NotFound();
+                     return NotFound("User is not found");
 
                 var customerData = await _customerDataService.GetOrCreateByUserIdAsync(usr.Id);
 
@@ -122,26 +127,31 @@ namespace MedContactApp.Controllers
         public async Task<IActionResult> Create(string? dttid, string? cdid, string? stime)
         {
             if (string.IsNullOrEmpty(dttid) && string.IsNullOrEmpty(cdid) && string.IsNullOrEmpty(stime))
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("DayTimeTable/CustomerData Id or time is null");
             var resDttId = Guid.TryParse(dttid, out var dttId);
             var resCdId = Guid.TryParse(cdid, out var cdId);
             var resSTime = DateTime.TryParse(stime, out DateTime startTime);
             if (!resCdId || !resSTime || !resDttId)
-                return BadRequest();
+               // return BadRequest();
+                  return new BadRequestObjectResult("DayTimeTable/CustomerData Id or time is incorrect");
             try
             {
                 var customerData = await _customerDataService.GetByIdAsync(cdId);
                 var dttData = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
 
                 if (customerData == null || dttData == null)
-                    return NotFound();
+                   //return NotFound();
+                     return NotFound("DayTimeTable/CustomerData is not found");
 
                 var doctInfo = await _doctorDataService.GetDoctorInfoById(dttData.DoctorDataId);
                 if (doctInfo == null)
-                    return NotFound();
+                    //return NotFound();
+                      return NotFound("Doctor info is not found");
                 var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
                 if (usr == null)
-                    return NotFound();
+                    //return NotFound();
+                     return NotFound("User is not found"); 
 
                 AppointmentDto apmDto = new()
                 {
@@ -227,10 +237,12 @@ namespace MedContactApp.Controllers
             string sysInfo = string.Empty;
             string redirect= string.Empty;
             if (id == null)
-                return BadRequest();
+                //return BadRequest();
+                  return new BadRequestObjectResult("Appointment Id is null");
             var resId = Guid.TryParse(id, out Guid apmId);
             if (!resId)
-                return BadRequest();
+                //return BadRequest();
+                  return new BadRequestObjectResult("Appointment Id is incorrect");
             try
             {
                 var resDel = await _appointmentService.RemoveById(apmId);
@@ -263,18 +275,22 @@ namespace MedContactApp.Controllers
             string sysInfo = "", SortState sortOrder = SortState.DateAsc)
         {
             if (id == null)
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("Daytimetable Id is null");
             var resId = Guid.TryParse(id, out Guid dttId);
             if (!resId)
-                return BadRequest();
+                //return BadRequest();
+                return new BadRequestObjectResult("Daytimetable Id is incorrect");
 
             IEnumerable<AppointmentDto>? apmList = await _appointmentService.GetAppointmentsByDTTableIdAsync(dttId);
             if (apmList == null)
-                return NotFound();
+                //return NotFound();
+                return NotFound("Appointment list is not found");
 
             var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
             if (dttDto == null || dttDto.DoctorDataId==null)
-                return NotFound();
+                //return NotFound();
+                return NotFound("Daytimetable is not found");
 
             string link = Request.Path.Value + Request.QueryString.Value;
             link = link.Replace("&", "*");

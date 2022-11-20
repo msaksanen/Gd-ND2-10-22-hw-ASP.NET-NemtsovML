@@ -62,18 +62,18 @@ namespace MedContactApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string name, string surname,
               string speciality, int page = 1, SortState sortOrder = SortState.SpecialityAsc)
-        {
 
+        {
             try
             {
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
                 IQueryable<DoctorData> dDatas = _doctorDataService
-                                                    .GetDoctorData()
-                                                    .Include(d => d.Speciality)
-                                                    //.Include(d => d.DayTimeTables)
-                                                    .Include(d => d.User)
-                                                    .ThenInclude(u => u!.Roles);
+                                             .GetDoctorData()
+                                             .Include(d => d.Speciality)
+                                             //.Include(d => d.DayTimeTables)
+                                             .Include(d => d.User)
+                                             .ThenInclude(u => u!.Roles);
 
                 dDatas = dDatas.Where(d => d.SpecialityId != null && d.IsBlocked != true && d.ForDeletion != true);
                 dDatas = _adminSortFilter.DoctorDataFilter(dDatas, "", name, surname, speciality);
@@ -85,15 +85,15 @@ namespace MedContactApp.Controllers
 
                 string pageRoute = @"/doctor/index?page=";
                 string processOptions = $"&name={name}&speciality={speciality}&sortorder={sortOrder}";
-               
+
                 string link = Request.Path.Value + Request.QueryString.Value;
                 link = link.Replace("&", "*");
                 ViewData["Reflink"] = link;
 
                 DoctDataIndexViewModel viewModel = new(
-                    items, processOptions,link,
+                    items, processOptions, link,
                     new PageViewModel(count, page, pageSize, pageRoute),
-                    new FilterSpecViewModel(null,null, name, "", speciality),
+                    new FilterSpecViewModel(null, null, name, "", speciality),
                     new SortViewModel(sortOrder)
                 );
                 return View(viewModel);
