@@ -37,7 +37,11 @@ namespace MedContactApp
             builder.Host.UseSerilog((ctx, lc) =>
                lc.WriteTo.File(
                    @"D:\Logs\medcontact\data.log",
-                   LogEventLevel.Information)
+                   LogEventLevel.Information,
+                    rollingInterval: RollingInterval.Day, 
+                    retainedFileCountLimit: null,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 4_194_304)
                    .WriteTo.Console(LogEventLevel.Verbose));
 
             builder.Services
