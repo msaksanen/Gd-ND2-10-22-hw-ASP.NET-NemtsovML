@@ -43,7 +43,9 @@ namespace MedContactApp.Controllers
             var mainUserId = User.FindFirst("MUId");
             try
             {
-                Guid MUid= Guid.Parse(mainUserId!.Value);
+                var res = Guid.TryParse(mainUserId!.Value, out Guid MUid);
+                if (!res)
+                    return new BadRequestObjectResult("Main User is not found" );
                 var customers = await _familyService.GetRelativesAsync(MUid);
                 return View(customers);    
             }
@@ -155,7 +157,7 @@ namespace MedContactApp.Controllers
 
         }
 
-        [Authorize(Policy = "FullBlocked")]
+
         private async Task ChangeClaims(UserDto relativeDto)
         {
             if (User.Identity is ClaimsIdentity claimsIdentity)
@@ -164,9 +166,9 @@ namespace MedContactApp.Controllers
                 if (claimsIdentity.TryRemoveClaim(userId))
                     claimsIdentity.AddClaim(new Claim("UId", relativeDto.Id.ToString()));
 
-                var username = claimsIdentity.FindFirst(ClaimsIdentity.DefaultNameClaimType);
-                if (claimsIdentity.TryRemoveClaim(username) && relativeDto.Username !=null)
-                    claimsIdentity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, relativeDto.Username));
+                //var username = claimsIdentity.FindFirst(ClaimsIdentity.DefaultNameClaimType);
+                //if (claimsIdentity.TryRemoveClaim(username) && relativeDto.Username !=null)
+                //    claimsIdentity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, relativeDto.Username));
                  
                 var name = claimsIdentity.FindFirst(ClaimTypes.Name);
                 if (claimsIdentity.TryRemoveClaim(name) && relativeDto.Name != null)

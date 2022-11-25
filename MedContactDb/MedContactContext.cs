@@ -20,6 +20,7 @@ namespace MedContactDb
         public DbSet<Speciality>? Specialities { get; set; }
         public DbSet<Appointment>? Appointments { get; set; }
         public DbSet<DayTimeTable>? DayTimeTables { get; set; }
+        public DbSet<RefreshToken>? RefreshTokens { get; set; }
 
         public MedContactContext(DbContextOptions<MedContactContext> options)
         : base(options)

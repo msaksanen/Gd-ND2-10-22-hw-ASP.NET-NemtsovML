@@ -26,6 +26,7 @@ namespace MedContactDb.Entities
         public bool? IsOnline { get; set; }
         public bool? IsDependent { get; set; }
         public bool? IsFullBlocked { get; set; }
+        public List<RefreshToken>? RefreshTokens { get; set; }
         public List <DoctorData>? DoctorDatas { get; set; }
         public List<FileData>? FileDatas { get; set; }
         public CustomerData? CustomerData { get; set; }  //one-to-one

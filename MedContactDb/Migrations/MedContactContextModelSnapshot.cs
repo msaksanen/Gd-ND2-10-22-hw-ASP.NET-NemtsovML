@@ -288,6 +288,25 @@ namespace MedContactDb.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("MedData");
                 });
 
+            modelBuilder.Entity("MedContactDb.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Token")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("MedContactDb.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -515,6 +534,17 @@ namespace MedContactDb.Migrations
                     b.Navigation("CustomerData");
                 });
 
+            modelBuilder.Entity("MedContactDb.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("MedContactDb.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MedContactDb.Entities.User", b =>
                 {
                     b.HasOne("MedContactDb.Entities.Family", "Family")
@@ -591,6 +621,8 @@ namespace MedContactDb.Migrations
                     b.Navigation("DoctorDatas");
 
                     b.Navigation("FileDatas");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

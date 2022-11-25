@@ -143,7 +143,7 @@ namespace MedContactApp.Controllers
                 var dto = await _userService.GetUserByIdAsync(userId);
                 var roleList = await _roleService.GetRoleListByUserIdAsync(dto.Id);
 
-                if (dto.Email != null && dto.Username != null && roleList != null)
+                if (dto.Email != null && roleList != null) // && dto.Username != null
                 {
                     if (dto.IsFullBlocked == true)
                         isfullBlocked = "true";
@@ -152,7 +152,7 @@ namespace MedContactApp.Controllers
                     string id = dto.Id.ToString();
                     var claims = new List<Claim>()
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
+                //new Claim(ClaimsIdentity.DefaultNameClaimType, dto.Username),
                 new Claim(ClaimTypes.Email, dto.Email),
                 new Claim("MUId",id),
                 new Claim("UId",id),

@@ -231,22 +231,6 @@ namespace MedContactBusiness.ServicesImplementations
                         .FirstOrDefaultAsync(u => u.IsDependent != true
                         && u.Email != null && u.Email.Equals(email)
                         && u.PasswordHash != null && u.PasswordHash.Equals(pwdHash));
-
-            //var usrList = await _unitOfWork.UserRepository.GetAllAsync();
-            //var selectedUsers  = from u in usrList
-            //                     where u.IsDependent != true
-            //                     where u.PasswordHash != null && u.PasswordHash.Equals(pwdHash)
-            //                     where u.Email != null && u.Email.Equals(email)
-            //                     select u;
-            //if (selectedUsers.Count() == 1)
-            //{
-            //    var user = selectedUsers.First();
-            //    return user?.Id;
-            //}
-            //else
-            //{
-            //    throw new ArgumentException(nameof(email));
-            //}
             return user1?.Id;
         }
     }
