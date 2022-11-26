@@ -1,4 +1,4 @@
-﻿namespace MedContactWebApi.Models.Responses
+﻿namespace MedContactWebApi.Models
 {
     /// <summary>
     /// Model for returning text response from api

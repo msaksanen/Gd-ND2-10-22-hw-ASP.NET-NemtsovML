@@ -1,4 +1,4 @@
-﻿namespace MedContactWebApi.Models.Responses
+﻿namespace MedContactWebApi.Models
 {
     /// <summary>
     /// UserDataModel for UserPreview

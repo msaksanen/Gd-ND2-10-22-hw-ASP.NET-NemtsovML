@@ -10,8 +10,7 @@ using MedContactDataCQS.Users.Commands;
 using MedContactDataCQS.Users.Queries;
 using MedContactDb.Entities;
 using MedContactWebApi.Helpers;
-using MedContactWebApi.Models.Requests;
-using MedContactWebApi.Models.Responses;
+using MedContactWebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -84,10 +83,9 @@ namespace MedContactWebApi.Controllers
         public async Task<IActionResult> AddRelative([FromBody] RelativeRegRequestModel model)
         {
             if (model == null)
-                return new BadRequestObjectResult(new TextResponse() { Message = "RegData is null" });
+                return BadRequest(new { model, Message = "RegData is null" });
             if (string.IsNullOrEmpty(model.Email))
-                return new BadRequestObjectResult(new TextResponse()
-                { Message = "Email is null or empty" });
+                return BadRequest(new {model, Message = "Email is null or empty" });
 
             try
             {                 
@@ -96,14 +94,14 @@ namespace MedContactWebApi.Controllers
                     {
                      var resMail = await _datachecker.CheckEmail(relativeDto.Email, HttpContext);
                      if (resMail == null)
-                        return new BadRequestObjectResult(new TextResponse() { Message = "Email check error" });
+                        return BadRequest(new {model, Message = "Email check error" });
                      if (resMail.isMatched == false)
-                        return new BadRequestObjectResult(resMail);
+                        return BadRequest(new { model, resMail });
                      var resAge = _datachecker.BirthDateCheck(relativeDto.BirthDate, true);
                      if (resAge == null)
-                        return new BadRequestObjectResult(new TextResponse() { Message = "Birth date check error" });
+                        return BadRequest(new {model, Message = "Birth date check error" });
                      if (resAge.isMatched == false)
-                        return new BadRequestObjectResult(resAge);
+                        return BadRequest(new { model, resAge });
 
                      int? result=0;
                         var mainUserId = User.FindFirst("MUId");
@@ -116,7 +114,7 @@ namespace MedContactWebApi.Controllers
                                 relativeDto.FamilyId = mainUserDto.FamilyId;
                                 result = await _mediator.Send(new CreateUserWithRoleCommand() { UserDto = relativeDto, RoleName = "Customer" });
                             if (result > 0)
-                                return Ok(new TextResponse() { Message = "Relative was added to existing family" });
+                                return Ok(new{model, Message = "Relative was added to existing family" });
                             }
                             else
                             {
@@ -128,7 +126,7 @@ namespace MedContactWebApi.Controllers
                                 result += await _mediator.Send(new CreateUserWithRoleCommand() 
                                                 { UserDto = relativeDto, RoleName = "Customer" });
                                 if (result > 3)
-                                return Ok(new TextResponse() { Message = "Relative was added to new family" });
+                                return Ok(new { model, Message = "Relative was added to new family" });
                             }
                         }
                         
@@ -140,7 +138,7 @@ namespace MedContactWebApi.Controllers
                     return BadRequest();
             }
       
-            return  BadRequest(new ErrorModel() {Message = "Something went wrong" });
+            return  BadRequest(new {model, Message = "Something went wrong" });
         }
 
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace MedContactWebApi.Models.Requests
+namespace MedContactWebApi.Models
 {
     /// <summary>
     /// CustomerRequestModel Register model

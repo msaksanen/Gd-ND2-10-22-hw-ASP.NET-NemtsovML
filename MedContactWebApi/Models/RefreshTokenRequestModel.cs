@@ -1,4 +1,4 @@
-﻿    namespace MedContactWebApi.Models.Requests
+﻿namespace MedContactWebApi.Models
 {
     /// <summary>
     /// RefreshTokenModel

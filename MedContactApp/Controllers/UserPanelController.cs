@@ -93,10 +93,10 @@ namespace MedContactApp.Controllers
                     return new BadRequestObjectResult("Model is null");
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Error(ex, ex.Message);
-                return StatusCode(500);
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
             }
         }
 

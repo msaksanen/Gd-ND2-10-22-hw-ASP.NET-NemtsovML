@@ -1,6 +1,5 @@
 ﻿using MedContactCore.DataTransferObjects;
 using MedContactDataCQS.Tokens.Commands;
-using MedContactWebApi.Models.Responses;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Text;
 using MedContactCore.Abstractions;
 using MedContactDataCQS.Users.Commands;
+using MedContactWebApi.Models;
 
 namespace MedContactWebApi.Helpers
 {

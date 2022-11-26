@@ -14,7 +14,7 @@
             Account Controller Ctor
             </summary>
         </member>
-        <member name="M:MedContactWebApi.Controllers.AccountController.Register(MedContactWebApi.Models.Requests.CustomerRegRequestModel)">
+        <member name="M:MedContactWebApi.Controllers.AccountController.Register(MedContactWebApi.Models.CustomerRegRequestModel)">
             <summary>
             Register User
             </summary>
@@ -71,7 +71,7 @@
             </summary>
             <returns> Collection of relatives</returns>
         </member>
-        <member name="M:MedContactWebApi.Controllers.FamilyAccountController.AddRelative(MedContactWebApi.Models.Requests.RelativeRegRequestModel)">
+        <member name="M:MedContactWebApi.Controllers.FamilyAccountController.AddRelative(MedContactWebApi.Models.RelativeRegRequestModel)">
             <summary>
             AddRelative to family
             </summary>
@@ -95,26 +95,71 @@
             Token Controller Ctor
             </summary>
         </member>
-        <member name="M:MedContactWebApi.Controllers.TokenController.CreateJwtToken(MedContactWebApi.Models.Requests.LoginUserRequestModel)">
+        <member name="M:MedContactWebApi.Controllers.TokenController.CreateJwtToken(MedContactWebApi.Models.LoginUserRequestModel)">
             <summary>
             Create JwtToken (Login)
             </summary>
             <param name="request LoginUserRequestModelLoginUserRequestModel"></param>
             <returns>ErrorModel || TokenResponse</returns>
         </member>
-        <member name="M:MedContactWebApi.Controllers.TokenController.RefreshToken(MedContactWebApi.Models.Requests.RefreshTokenRequestModel)">
+        <member name="M:MedContactWebApi.Controllers.TokenController.RefreshToken(MedContactWebApi.Models.RefreshTokenRequestModel)">
             <summary>
             Refresh JwtToken
             </summary>
             <param name="request RefreshTokenRequestModelRefreshTokenRequestModel"></param>
             <returns>ErrorModel || TokenResponse</returns>
         </member>
-        <member name="M:MedContactWebApi.Controllers.TokenController.RevokeToken(MedContactWebApi.Models.Requests.RefreshTokenRequestModel)">
+        <member name="M:MedContactWebApi.Controllers.TokenController.RevokeToken(MedContactWebApi.Models.RefreshTokenRequestModel)">
             <summary>
             Revoke Token Logout
             </summary>
             <param name="request RefreshTokenRequestModelRefreshTokenRequestModel"></param>
             <returns>StatusCode</returns>
+        </member>
+        <member name="T:MedContactWebApi.Controllers.UserPanelController">
+            <summary>
+            UserPanel Controller
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,MedContactWebApi.Helpers.ModelUserBuilder)">
+            <summary>
+            Account Controller Ctor
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.AccSettings(System.String)">
+            <summary>
+            AccSettings 
+            </summary>
+            <param name="id string? [FromQuery]string?[FromQuery]"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.AccSettingsEdit(System.String)">
+            <summary>
+            AccSettingsEdit
+            </summary>
+            <param name="id string? [FromQuery]string?[FromQuery]"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.AccSettingsEdit(MedContactWebApi.Models.BaseUserModel)">
+            <summary>
+            AccSettingsEdit
+            </summary>
+            <param name="model BaseUserModelBaseUserModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.ChangePassword(System.String)">
+            <summary>
+            ChangePassword Get
+            </summary>
+            <param name="id UserId string?UserIdstring?"></param>
+            <returns>ChangePasswordModel</returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.UserPanelController.ChangePassword(MedContactWebApi.Models.ChangePasswordModel)">
+            <summary>
+            ChangePassword Post
+            </summary>
+            <param name="model ChangePasswordModelChangePasswordModel"></param>
+            <returns>ChangePasswordModel</returns>
         </member>
         <member name="T:MedContactWebApi.Controllers.DataChecker">
             <summary>
@@ -164,6 +209,30 @@
             <summary>
             MD5 Ctor
             </summary>
+        </member>
+        <member name="T:MedContactWebApi.Helpers.ModelUserBuilder">
+            <summary>
+            ModelUserBuilder
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Helpers.ModelUserBuilder.#ctor(AutoMapper.IMapper,MediatR.IMediator)">
+            <summary>
+            ModelUserBuilder Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.Helpers.PatchMaker`1">
+            <summary>
+            PatchMaker
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:MedContactWebApi.Helpers.PatchMaker`1.Make(`0,`0)">
+            <summary>
+            Make Method
+            </summary>
+            <param name="newObj"></param>
+            <param name="source"></param>
+            <returns>List PatchModel</returns>
         </member>
         <member name="T:MedContactWebApi.MappingProfiles.CustomerRegRequestModelProfile">
             <summary>
@@ -215,214 +284,295 @@
             User Profile Mapping to UserDto
             </summary>
         </member>
-        <member name="T:MedContactWebApi.Models.Requests.CustomerRegRequestModel">
+        <member name="T:MedContactWebApi.Models.BaseUserModel">
+            <summary>
+            BaseUserModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Id">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Email">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.PhoneNumber">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Name">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Surname">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.MidName">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.BirthDate">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Gender">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Address">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.FamilyId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.CustomerDataId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.IsDependent">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.IsFullBlocked">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.RoleNames">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.RegistrationDate">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.IsOnline">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.LastLogin">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.BaseUserModel.Message">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.ChangePasswordModel">
+            <summary>
+            ChangePasswordModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.ChangePasswordModel.Id">
+            <summary>
+            UserId
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.ChangePasswordModel.Password">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.ChangePasswordModel.PasswordConfirmation">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.ChangePasswordModel.OldPassword">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.ChangePasswordModel.SystemInfo">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.CustomerRegRequestModel">
             <summary>
             CustomerRequestModel Register model
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Email">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Email">
             <summary>
             string? Email 
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Password">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Password">
             <summary>
             string? Password
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.PhoneNumber">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.PhoneNumber">
             <summary>
             string? PhoneNumber 
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Name">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Name">
             <summary>
             string? Name
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Surname">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Surname">
             <summary>
             string? Surname
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.MidName">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.MidName">
             <summary>
             string? MidName
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.BirthDate">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.BirthDate">
             <summary>
             DateTime? BirthDate
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Gender">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Gender">
             <summary>
             string? Gender 
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Requests.CustomerRegRequestModel.Address">
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Address">
             <summary>
             string? Address
             </summary>
         </member>
-        <member name="T:MedContactWebApi.Models.Requests.LoginUserRequestModel">
-            <summary>
-            LoginUserRequestModel
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.LoginUserRequestModel.Email">
-            <summary>
-            string? Email
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.LoginUserRequestModel.Password">
-            <summary>
-            string? Password
-            </summary>
-        </member>
-        <member name="T:MedContactWebApi.Models.Requests.RefreshTokenRequestModel">
-            <summary>
-            RefreshTokenModel
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RefreshTokenRequestModel.RefreshToken">
-            <summary>
-            Guid RefreshToken 
-            </summary>
-        </member>
-        <member name="T:MedContactWebApi.Models.Requests.RelativeRegRequestModel">
-            <summary>
-            RelativeRequestModel Register model
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.Email">
-            <summary>
-            string? Email 
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.PhoneNumber">
-            <summary>
-            string? PhoneNumber 
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.Name">
-            <summary>
-            string? Name
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.Surname">
-            <summary>
-            string? Surname
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.MidName">
-            <summary>
-            string? MidName
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.BirthDate">
-            <summary>
-            DateTime? BirthDate
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.Gender">
-            <summary>
-            string? Gender 
-            </summary>
-        </member>
-        <member name="P:MedContactWebApi.Models.Requests.RelativeRegRequestModel.Address">
-            <summary>
-            string? Address
-            </summary>
-        </member>
-        <member name="T:MedContactWebApi.Models.Responses.ErrorModel">
+        <member name="T:MedContactWebApi.Models.ErrorModel">
             <summary>
             Model for returning errors from api
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.ErrorModel.Message">
+        <member name="P:MedContactWebApi.Models.ErrorModel.Message">
             <summary>
             string? Error Message
             </summary>
         </member>
-        <member name="T:MedContactWebApi.Models.Responses.TextResponse">
+        <member name="T:MedContactWebApi.Models.LoginUserRequestModel">
+            <summary>
+            LoginUserRequestModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.LoginUserRequestModel.Email">
+            <summary>
+            string? Email
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.LoginUserRequestModel.Password">
+            <summary>
+            string? Password
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.RefreshTokenRequestModel">
+            <summary>
+            RefreshTokenModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RefreshTokenRequestModel.RefreshToken">
+            <summary>
+            Guid RefreshToken 
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.RelativeRegRequestModel">
+            <summary>
+            RelativeRequestModel Register model
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.Email">
+            <summary>
+            string? Email 
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.PhoneNumber">
+            <summary>
+            string? PhoneNumber 
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.Name">
+            <summary>
+            string? Name
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.Surname">
+            <summary>
+            string? Surname
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.MidName">
+            <summary>
+            string? MidName
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.BirthDate">
+            <summary>
+            DateTime? BirthDate
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.Gender">
+            <summary>
+            string? Gender 
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RelativeRegRequestModel.Address">
+            <summary>
+            string? Address
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.TextResponse">
             <summary>
             Model for returning text response from api
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TextResponse.Message">
+        <member name="P:MedContactWebApi.Models.TextResponse.Message">
             <summary>
             string? Response Message
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TextResponse.isMatched">
+        <member name="P:MedContactWebApi.Models.TextResponse.isMatched">
             <summary>
             bool? Response isMatched
             to requirements
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TextResponse.MatchResult">
+        <member name="P:MedContactWebApi.Models.TextResponse.MatchResult">
             <summary>
             int? Response MatchResult
             to requirements
             </summary>
         </member>
-        <member name="T:MedContactWebApi.Models.Responses.TokenResponse">
+        <member name="T:MedContactWebApi.Models.TokenResponse">
             <summary>
             TokenResponse Model
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TokenResponse.AccessToken">
+        <member name="P:MedContactWebApi.Models.TokenResponse.AccessToken">
             <summary>
             string? AccessToken
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TokenResponse.Roles">
+        <member name="P:MedContactWebApi.Models.TokenResponse.Roles">
             <summary>
             string? []? Roles 
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TokenResponse.UserId">
+        <member name="P:MedContactWebApi.Models.TokenResponse.UserId">
             <summary>
              Guid UserId
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TokenResponse.TokenExpiration">
+        <member name="P:MedContactWebApi.Models.TokenResponse.TokenExpiration">
             <summary>
              DateTime TokenExpiration
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.TokenResponse.RefreshToken">
+        <member name="P:MedContactWebApi.Models.TokenResponse.RefreshToken">
             <summary>
             Guid RefreshToken
             </summary>
         </member>
-        <member name="T:MedContactWebApi.Models.Responses.UserDataModelResponse">
+        <member name="T:MedContactWebApi.Models.UserDataModelResponse">
             <summary>
             UserDataModel for UserPreview
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.UserDataModelResponse.ActiveFullName">
+        <member name="P:MedContactWebApi.Models.UserDataModelResponse.ActiveFullName">
             <summary>
             Active User FullName
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.UserDataModelResponse.ActiveEmail">
+        <member name="P:MedContactWebApi.Models.UserDataModelResponse.ActiveEmail">
             <summary>
             Active User Email
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.UserDataModelResponse.MainFullName">
+        <member name="P:MedContactWebApi.Models.UserDataModelResponse.MainFullName">
             <summary>
             Main User FullName
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.UserDataModelResponse.MainEmail">
+        <member name="P:MedContactWebApi.Models.UserDataModelResponse.MainEmail">
             <summary>
             Main User Email
             </summary>
         </member>
-        <member name="P:MedContactWebApi.Models.Responses.UserDataModelResponse.RoleNames">
+        <member name="P:MedContactWebApi.Models.UserDataModelResponse.RoleNames">
             <summary>
             Main User RoleNames
             </summary>

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MedContactCore.DataTransferObjects;
 using MedContactDb.Entities;
-using MedContactWebApi.Models.Requests;
+using MedContactWebApi.Models;
 
 namespace MedContactWebApi.MappingProfiles
 {

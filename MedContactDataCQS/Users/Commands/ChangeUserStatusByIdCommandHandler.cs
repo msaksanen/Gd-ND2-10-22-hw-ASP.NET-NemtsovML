@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedContactDataCQS.Users.Commands
 {
-    public class ChangeUserStatusByIdCommandHelper : IRequestHandler<ChangeUserStatusByIdCommand, int?>
+    public class ChangeUserStatusByIdCommandHandler : IRequestHandler<ChangeUserStatusByIdCommand, int?>
     {
         private readonly MedContactContext _context;
         private readonly IMapper _mapper;
 
-        public ChangeUserStatusByIdCommandHelper(MedContactContext context, IMapper mapper)
+        public ChangeUserStatusByIdCommandHandler(MedContactContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

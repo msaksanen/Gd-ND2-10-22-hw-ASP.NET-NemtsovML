@@ -8,8 +8,7 @@ using MedContactDataCQS.Users.Commands;
 using MedContactDataCQS.Users.Queries;
 using MedContactDb.Entities;
 using MedContactWebApi.Helpers;
-using MedContactWebApi.Models.Requests;
-using MedContactWebApi.Models.Responses;
+using MedContactWebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,20 +54,19 @@ namespace MedContactWebApi.Controllers
                 {
                     var customerDto = _mapper.Map<UserDto>(model);
                     if (customerDto == null )
-                        return new BadRequestObjectResult(new TextResponse() { Message = "RegData is null" });
+                        return BadRequest(new { model, Message = "RegData is null" });
                 if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
-                         return new BadRequestObjectResult(new TextResponse()
-                         { Message = "Email or Password is null or empty" });
+                        return BadRequest(new { model, Message = "Email or Password is null or empty" });
                  var resMail = await  _datachecker.CheckEmail(customerDto.Email, HttpContext);
                 if (resMail == null)
-                    return new BadRequestObjectResult(new TextResponse() { Message = "Email check error" });
+                    return BadRequest(new {model, Message = "Email check error" });
                 if (resMail.isMatched == false)
-                    return new BadRequestObjectResult(resMail);
+                    return BadRequest(new { model, resMail });
                 var resAge = _datachecker.BirthDateCheck(customerDto.BirthDate, false);
                 if (resAge == null)
-                    return new BadRequestObjectResult(new TextResponse() { Message = "Birth date check error" });
+                    return BadRequest(new {model, Message = "Birth date check error" });
                 if (resAge.isMatched == false)
-                    return new BadRequestObjectResult(resAge);
+                    return BadRequest(new { model, resAge });
 
                 customerDto.PasswordHash = _md5.CreateMd5(model.Password);
                    var res = await _mediator.Send(new CreateUserWithRoleCommand() 
@@ -78,7 +76,7 @@ namespace MedContactWebApi.Controllers
                     var role = await _mediator.Send(new GetRoleByNameQuery() { RoleName = "Customer" });
 
                     if (role == null)
-                        return BadRequest(new ErrorModel() { Message = "User's roles are not found" });
+                        return BadRequest(new {model,  Message = "User's roles are not found" });
                     var response = await _jwtUtil.GenerateTokenAsync(customerDto, new List<RoleDto> { role });
                     return Ok(response);
                 }

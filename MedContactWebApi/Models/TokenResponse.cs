@@ -1,4 +1,4 @@
-﻿namespace MedContactWebApi.Models.Responses
+﻿namespace MedContactWebApi.Models
 {
     /// <summary>
     /// TokenResponse Model
@@ -13,7 +13,7 @@
         /// <summary>
         /// string? []? Roles 
         /// </summary>
-        public string? []? Roles { get; set; }
+        public string?[]? Roles { get; set; }
 
         /// <summary>
         ///  Guid UserId

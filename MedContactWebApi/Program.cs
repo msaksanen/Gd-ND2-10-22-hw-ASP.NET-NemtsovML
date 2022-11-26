@@ -91,6 +91,7 @@ namespace MedContactWebApi
             builder.Services.AddScoped<JWTSha256>();
             builder.Services.AddScoped<MD5>();
             builder.Services.AddScoped<DataChecker>();
+            builder.Services.AddScoped<ModelUserBuilder>();
 
             var app = builder.Build();
 
