@@ -4,6 +4,11 @@
         <name>MedContactWebApi</name>
     </assembly>
     <members>
+        <member name="T:MedContactWebApi.AdminPanelHelpers.AdminSortFilter">
+            <summary>
+            AdminSortFilter
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.Controllers.AccountController">
             <summary>
             Account Controller
@@ -54,6 +59,55 @@
              MatchResult = 1:  - OK
              MatchResult = 2 : age less or equal 17
             <returns>TextResponse(Message, isMatched,MatchResult)</returns>
+        </member>
+        <member name="T:MedContactWebApi.Controllers.DoctorController">
+            <summary>
+            Doctor Controller
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,Microsoft.Extensions.Configuration.IConfiguration,MedContactWebApi.Helpers.ModelUserBuilder,MedContactWebApi.AdminPanelHelpers.AdminSortFilter)">
+            <summary>
+            Doctor Controller Ctor
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorController.Index(MedContactWebApi.Models.DoctorIndexRequestModel)">
+            <summary>
+            Doctor Index
+            </summary>
+            <param name="model DoctorIndexRequestModel [FromQuery]DoctorIndexRequestModel[FromQuery]"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MedContactWebApi.Controllers.DoctorDataPanelController">
+            <summary>
+            DoctorDataPanel Controller
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorDataPanelController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,Microsoft.Extensions.Configuration.IConfiguration,MedContactWebApi.Helpers.ModelUserBuilder,MedContactWebApi.AdminPanelHelpers.AdminSortFilter,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Doctor Controller Ctor
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorDataPanelController.EditDoctorData">
+            <summary>
+            EditDoctorData (doctor's list of specialities)
+            </summary>
+            <returns>EditDoctorDataModel model</returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorDataPanelController.EditDoctorData(MedContactWebApi.Models.EditDoctorDataResponse)">
+            <summary>
+            EditDoctorData (doctor's list of specialities)
+            Client should return selected specialities as Guid[] SpecialityIds
+            </summary>
+            <param name="response EditDoctorDataResponse [FromBody]EditDoctorDataResponse[FromBody]"></param>
+            <returns>EditDoctorDataModel model</returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DoctorDataPanelController.RegDoctorData(MedContactWebApi.Models.RegDoctorDataModel)">
+            <summary>
+            RegDoctorData (doctor's list of specialities)
+            Client should send files for application
+            </summary>
+            <param name="model RegDoctorDataModel [FromForm]RegDoctorDataModel[FromForm]"></param>
+            <returns>RegDoctorDataModel model</returns>
         </member>
         <member name="T:MedContactWebApi.Controllers.FamilyAccountController">
             <summary>
@@ -123,7 +177,7 @@
         </member>
         <member name="M:MedContactWebApi.Controllers.UserPanelController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,MedContactWebApi.Helpers.ModelUserBuilder)">
             <summary>
-            Account Controller Ctor
+            UserPanel Controller Ctor
             </summary>
         </member>
         <member name="M:MedContactWebApi.Controllers.UserPanelController.AccSettings(System.String)">
@@ -190,6 +244,287 @@
              MatchResult = 2 : age less or equal 17
             <returns>TextResponse(Message, isMatched,MatchResult)</returns>
         </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel">
+            <summary>
+            FilterAppointViewModel
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            FilterAppointViewModel Ctor
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel.SelectedName">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel.SelectedSpeciality">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel.SelectedDate">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel.SelectedBirthDate">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.FilterNameViewModel">
+            <summary>
+            FilterNameViewModel
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.FilterNameViewModel.#ctor(System.String,System.String)">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterNameViewModel.SelectedName">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterNameViewModel.SelectedEmail">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel">
+            <summary>
+            FilterSpecViewModel
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.#ctor(System.Collections.Generic.List{MedContactCore.DataTransferObjects.RoleDto},System.Nullable{System.Guid},System.String,System.String,System.String)">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.Roles">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.SelectedRole">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.SelectedName">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.SelectedEmail">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel.SelectedSpeciality">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.FilterViewModel">
+            <summary>
+            FilterViewModel
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.FilterViewModel.#ctor(System.Collections.Generic.List{MedContactCore.DataTransferObjects.RoleDto},System.Guid,System.String,System.String)">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterViewModel.Roles">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterViewModel.SelectedRole">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterViewModel.SelectedName">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.FilterViewModel.SelectedEmail">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.GroupState">
+            <summary>
+            GroupState
+            </summary>
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.GroupState.FamilyGroupOn">
+            
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.GroupState.FamilyGroupOff">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.PageViewModel">
+            <summary>
+            PageViewModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.PageNumber">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.TotalPages">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.PageRoute">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.HasPreviousPage">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.HasNextPage">
+            
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.PageViewModel.#ctor(System.Int32,System.Int32,System.Int32,System.String)">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper">
+            <summary>
+            SortHeaderTagHelper
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.Property">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.Current">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.Action">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.Up">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.ViewContext">
+            
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.#ctor(Microsoft.AspNetCore.Mvc.Routing.IUrlHelperFactory)">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.OptUrlValues">
+            
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper.Process(Microsoft.AspNetCore.Razor.TagHelpers.TagHelperContext,Microsoft.AspNetCore.Razor.TagHelpers.TagHelperOutput)">
+            
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.SortState">
+            <summary>
+            SortState
+            </summary>
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.EmailAsc">
+            EmailAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.EmailDesc">
+            EmailDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.NameAsc">
+            NameAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.NameDesc">
+            NameDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.SurnameAsc">
+            SurnameAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.SurnameDesc">
+            SurnameDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.BirtDateAsc">
+            BirtDateAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.BirthDateDesc">
+            BirthDateDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.DateAsc">
+            DateAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.DateDesc">
+            DateDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.LastLoginAsc">
+            LastLoginAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.LastLoginDesc">
+            LastLoginDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsFullBlockedAsc">
+            IsFullBlockedAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsFullBlockedDesc">
+            IsFullBlockedDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsBlockedAsc">
+            IsBlockedAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsBlockedDesc">
+            IsBlockedDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsMarkedAsc">
+            IsMarkedAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsMarkedDesc">
+            IsMarkedDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsFamilyDependentAsc">
+            IsFamilyDependentAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsFamilyDependentDesc">
+            IsFamilyDependentDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsOnlineAsc">
+            IsOnlineAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.IsOnlineDesc">
+            IsOnlineDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.GenderAsc">
+            GenderAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.GenderDesc">
+            GenderDesc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.SpecialityAsc">
+            SpecialityAsc
+        </member>
+        <member name="F:MedContactWebApi.FilterSortPageHelpers.SortState.SpecialityDesc">
+            SpecialityDesc
+        </member>
+        <member name="T:MedContactWebApi.FilterSortPageHelpers.SortViewModel">
+            <summary>
+            SortViewModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.EmailSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.NameSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.SurnameSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.BirthDateSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.DateSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.LastLoginSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.IsFullBlockedSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.IsFamilyDependentSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.IsOnlineSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.GenderSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.IsBlockedSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.IsMarkedSort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.SpecialitySort">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.Current">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.PrevState">
+            
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.SortViewModel.Up">
+            
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.SortViewModel.#ctor(MedContactWebApi.FilterSortPageHelpers.SortState)">
+            
+        </member>
         <member name="T:MedContactWebApi.Helpers.JWTSha256">
             <summary>
             JWTSha256 Helper
@@ -244,6 +579,46 @@
             CustomerRegRequestModel Profile Mapping to UserDto
             </summary>
         </member>
+        <member name="T:MedContactWebApi.MappingProfiles.DayTimeTableProfile">
+            <summary>
+            DayTimeTableProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.DayTimeTableProfile.#ctor">
+            <summary>
+            DayTimeTableProfile Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.DoctorDataProfile">
+            <summary>
+            DoctorDataProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.DoctorDataProfile.#ctor">
+            <summary>
+            DoctorDataProfile Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.DoctorFullDataProfile">
+            <summary>
+            DoctorFullDataProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.DoctorFullDataProfile.#ctor">
+            <summary>
+            DoctorFullDataProfile Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.DoctorInfoProfile">
+            <summary>
+            DoctorInfoProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.DoctorInfoProfile.#ctor">
+            <summary>
+            DoctorInfoProfile Ctor
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.MappingProfiles.FamilyProfile">
             <summary>
             Family Mapping to FamilyDto
@@ -254,6 +629,12 @@
             Family Mapping to FamilyDto Profile
             </summary>
         </member>
+        <member name="T:MedContactWebApi.MappingProfiles.FileDataProfile">
+            <summary>
+            FileDataProfile Mapping
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:MedContactWebApi.MappingProfiles.FileDataProfile.#ctor" -->
         <member name="T:MedContactWebApi.MappingProfiles.RelativeRegRequestModelProfile">
             <summary>
             RelativeRegRequestModel Mapping to UserDto
@@ -272,6 +653,26 @@
         <member name="M:MedContactWebApi.MappingProfiles.RoleProfile.#ctor">
             <summary>
             Role Mapping to RoleDto Profile
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.SelectItemProfile">
+            <summary>
+            SelectItem Mapping from Role
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.SelectItemProfile.#ctor">
+            <summary>
+            SelectItem Mapping from Role Profile
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.SpecialityProfile">
+            <summary>
+            SpecialityProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.SpecialityProfile.#ctor">
+            <summary>
+            SpecialityProfile Ctor
             </summary>
         </member>
         <member name="T:MedContactWebApi.MappingProfiles.UserProfile">
@@ -338,9 +739,6 @@
             
         </member>
         <member name="P:MedContactWebApi.Models.BaseUserModel.LastLogin">
-            
-        </member>
-        <member name="P:MedContactWebApi.Models.BaseUserModel.Message">
             
         </member>
         <member name="T:MedContactWebApi.Models.ChangePasswordModel">
@@ -415,6 +813,139 @@
             string? Address
             </summary>
         </member>
+        <member name="T:MedContactWebApi.Models.DayTimeTableModel">
+            <summary>
+            DayTimeTableModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.Id">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.CreationDate">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.DoctorName">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.DoctorMidName">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.DoctorSurname">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.DoctorSpeciality">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.Date">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.StartWorkTime">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.FinishWorkTime">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.ConsultDuration">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.TotalTicketQty">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.FreeTicketQty">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.DoctorDataId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.UserId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DayTimeTableModel.SystemInfo">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.DoctDataIndexViewModel">
+            <summary>
+            DoctDataIndexViewModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.Users">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.PageViewModel">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.FilterViewModel">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.SortViewModel">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.ProcessOptions">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctDataIndexViewModel.Reflink">
+            
+        </member>
+        <member name="M:MedContactWebApi.Models.DoctDataIndexViewModel.#ctor(System.Collections.Generic.IEnumerable{MedContactCore.DataTransferObjects.DoctorFullDataDto},System.String,System.String,MedContactWebApi.FilterSortPageHelpers.PageViewModel,MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel,MedContactWebApi.FilterSortPageHelpers.SortViewModel)">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.DoctorIndexRequestModel">
+            <summary>
+            DoctorIndexRequestModel for Doctor Controller - Index
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.Name">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.Surname">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.Speciality">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.Page">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.SortOrder">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.EditDoctorDataModel">
+            <summary>
+            EditDoctorDataModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.Password">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.RoleId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.UserId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.IsBlocked">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.SpecialityIds">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.Specialities">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataModel.SystemInfo">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.EditDoctorDataResponse">
+            <summary>
+            EditDoctorDataResponse
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataResponse.Password">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.EditDoctorDataResponse.SpecialityIds">
+            
+        </member>
         <member name="T:MedContactWebApi.Models.ErrorModel">
             <summary>
             Model for returning errors from api
@@ -449,6 +980,20 @@
             <summary>
             Guid RefreshToken 
             </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.RegDoctorDataModel">
+            <summary>
+            RegDoctorDataModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RegDoctorDataModel.SystemInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.RegDoctorDataModel.Uploads">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.RegDoctorDataModel.Password">
+            
         </member>
         <member name="T:MedContactWebApi.Models.RelativeRegRequestModel">
             <summary>

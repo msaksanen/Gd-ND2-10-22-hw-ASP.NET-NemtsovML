@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Hosting;
 using System.Reflection;
 using MedContactDataCQS.Tokens.Commands;
 using MedContactWebApi.Controllers;
+using MedContactWebApi.AdminPanelHelpers;
+using System.Text.Json.Serialization;
 
 namespace MedContactWebApi
 {
@@ -44,7 +46,8 @@ namespace MedContactWebApi
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             var connectionString = builder.Configuration.GetConnectionString("Default");
 
@@ -92,6 +95,7 @@ namespace MedContactWebApi
             builder.Services.AddScoped<MD5>();
             builder.Services.AddScoped<DataChecker>();
             builder.Services.AddScoped<ModelUserBuilder>();
+            builder.Services.AddScoped<AdminSortFilter>();
 
             var app = builder.Build();
 

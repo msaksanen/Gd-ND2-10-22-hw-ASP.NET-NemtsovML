@@ -33,8 +33,8 @@ namespace MedContactApp.MappingProfiles
                  opt => opt.MapFrom(d => d.Item3.Name ?? "Removed"))
                 .ForMember(dto => dto.IsBlocked,
                  opt => opt.MapFrom(d => d.Item1.IsBlocked))
-                .ForMember(dto => dto.DayTimeTables,
-                 opt => opt.MapFrom(d => d.Item1.DayTimeTables))
+                //.ForMember(dto => dto.DayTimeTables,
+                // opt => opt.MapFrom(d => d.Item1.DayTimeTables))
                 .ForMember(dto => dto.SpecialityId,
                  opt => opt.MapFrom(d => d.Item1.SpecialityId))
                 .ForMember(dto => dto.SpecNameReserved,

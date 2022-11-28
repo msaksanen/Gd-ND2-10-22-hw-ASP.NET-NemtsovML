@@ -15,12 +15,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataAbstractions"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataRepositories", "MedContactDataRepositories\MedContactDataRepositories.csproj", "{EFEE04AF-34B3-4FBA-9AB5-104B9B1F9144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactWebApi", "MedContactWebApi\MedContactWebApi.csproj", "{5F5974C9-92FE-4F3C-927A-BFE797536AEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactWebApi", "MedContactWebApi\MedContactWebApi.csproj", "{5F5974C9-92FE-4F3C-927A-BFE797536AEE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6361394F-2212-4AF9-A10C-7E4BC3C43848} = {6361394F-2212-4AF9-A10C-7E4BC3C43848}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedContactDataCQS", "MedContactDataCQS\MedContactDataCQS.csproj", "{29B0B2AF-EC83-4B15-9772-3DB23DCFA7B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedContactDataCQS", "MedContactDataCQS\MedContactDataCQS.csproj", "{29B0B2AF-EC83-4B15-9772-3DB23DCFA7B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

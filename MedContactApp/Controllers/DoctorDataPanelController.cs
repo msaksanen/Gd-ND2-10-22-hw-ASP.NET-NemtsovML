@@ -115,8 +115,6 @@ namespace MedContactApp.Controllers
                 {
                         if (model.SpecialityIds != null)
                         {
-                            
-
                             foreach (var spec in model.SpecialityIds)
                             {
                                 if (doctorData.All(ddt => ddt.SpecialityId != spec) || 
@@ -143,9 +141,11 @@ namespace MedContactApp.Controllers
                             if (model!.SpecialityIds==null || model!.SpecialityIds.All(spec => spec != dd.SpecialityId))
                             {
                                 var specModel = model?.Specialities?.FirstOrDefault(sp => sp.Id.Equals(dd.SpecialityId));
-                                if (specModel != null) specModel.IsSelected = false;
-
-                                subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
+                                if (specModel != null && dd.ForDeletion != true)
+                                {
+                                    specModel.IsSelected = false;
+                                    subtract += await _doctorDataService.MarkForDeleteDoctorDataAsync(dd);
+                                }
                             }
                         }
 

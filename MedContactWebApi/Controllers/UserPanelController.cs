@@ -34,7 +34,7 @@ namespace MedContactWebApi.Controllers
         private readonly ModelUserBuilder _modelBuilder;
 
         /// <summary>
-        /// Account Controller Ctor
+        /// UserPanel Controller Ctor
         /// </summary>
         public UserPanelController(IMapper mapper, JWTSha256 jwtUtil, MD5 md5, IMediator mediator, DataChecker datachecker,
                                    ModelUserBuilder modelBuilder)
