@@ -37,12 +37,12 @@ namespace MedContactWebApi.Controllers
         private readonly IMapper _mapper;
         private readonly JWTSha256 _jwtUtil;
         private readonly MD5 _md5;
-        private readonly DataChecker _datachecker;
+        //private readonly DataChecker _datachecker;
         private readonly IMediator _mediator;
-        private readonly ModelUserBuilder _modelBuilder;
-        private readonly AdminSortFilter _adminSortFilter;
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _appEnvironment;
+        //private readonly ModelUserBuilder _modelBuilder;
+        //private readonly AdminSortFilter _adminSortFilter;
+        //private readonly IConfiguration _configuration;
+        //private readonly IWebHostEnvironment _appEnvironment;
         //private int _pageSize = 7;
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace MedContactWebApi.Controllers
             _jwtUtil = jwtUtil;
             _md5 = md5; 
             _mediator = mediator;   
-            _datachecker = datachecker;
-            _modelBuilder = modelBuilder;
-            _configuration = configuration;
-            _adminSortFilter = adminSortFilter;
-            _appEnvironment = webHostEnvironment;
+            //_datachecker = datachecker;
+            //_modelBuilder = modelBuilder;
+            //_configuration = configuration;
+            //_adminSortFilter = adminSortFilter;
+            //_appEnvironment = webHostEnvironment;
         }
 
         /// <summary>

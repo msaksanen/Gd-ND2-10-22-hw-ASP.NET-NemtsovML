@@ -21,7 +21,16 @@ namespace MedContactWebApi.Models
         public string ProcessOptions { get; } = string.Empty;
         ///
         public string Reflink { get; } = string.Empty;
-        ///
+        
+        /// <summary>
+        /// DoctDataIndexViewModel Ctor
+        /// </summary>
+        /// <param name="users"></param>
+        /// <param name="processOptions"></param>
+        /// <param name="reflink"></param>
+        /// <param name="pageViewModel"></param>
+        /// <param name="filterViewModel"></param>
+        /// <param name="sortViewModel"></param>
         public DoctDataIndexViewModel (IEnumerable<DoctorFullDataDto> users,
             string processOptions, string reflink, PageViewModel pageViewModel,
             FilterSpecViewModel filterViewModel, SortViewModel sortViewModel)

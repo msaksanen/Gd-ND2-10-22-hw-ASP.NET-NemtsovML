@@ -109,7 +109,8 @@ namespace MedContactApp.Controllers
 
                 if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
                         || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
-                        || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+                        || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true
+                        || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     if (User.Identities.Any(identity => identity.IsAuthenticated))
                     {

@@ -60,6 +60,44 @@
              MatchResult = 2 : age less or equal 17
             <returns>TextResponse(Message, isMatched,MatchResult)</returns>
         </member>
+        <member name="T:MedContactWebApi.Controllers.DayTimeTableController">
+            <summary>
+            DayTimeTableController
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DayTimeTableController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,Microsoft.Extensions.Configuration.IConfiguration,MedContactWebApi.Helpers.ModelUserBuilder,MedContactWebApi.AdminPanelHelpers.AdminSortFilter,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            DayTimeTable Controller Ctor
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DayTimeTableController.SelelctSpec">
+            <summary>
+            SelelctSpeciality to make/view daytimetable 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DayTimeTableController.TimeTableDoctIndex(MedContactWebApi.Models.TimeTableDoctIndexRqstModel)">
+            <summary>
+            TimeTableDoctIndex
+            </summary>
+            <param name="model TimeTableDoctIndexRqstModel [FromQuery]TimeTableDoctIndexRqstModel[FromQuery]"></param>
+            string? dataid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DayTimeTableController.Create(System.String)">
+            <summary>
+            Create  DayTimeTable
+            </summary>
+            <param name="dataid  string? [FromQuery]string?[FromQuery]"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.DayTimeTableController.Create(MedContactWebApi.Models.DayTimeTableModel)">
+            <summary>
+             Create  DayTimeTable
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="T:MedContactWebApi.Controllers.DoctorController">
             <summary>
             Doctor Controller
@@ -75,6 +113,7 @@
             Doctor Index
             </summary>
             <param name="model DoctorIndexRequestModel [FromQuery]DoctorIndexRequestModel[FromQuery]"></param>
+            string name, string surname, string speciality, int page = 1, SortState sortOrder = SortState.SpecialityAsc
             <returns></returns>
         </member>
         <member name="T:MedContactWebApi.Controllers.DoctorDataPanelController">
@@ -634,7 +673,11 @@
             FileDataProfile Mapping
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:MedContactWebApi.MappingProfiles.FileDataProfile.#ctor" -->
+        <member name="M:MedContactWebApi.MappingProfiles.FileDataProfile.#ctor">
+            <summary>
+            FileDataProfile Ctor
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.MappingProfiles.RelativeRegRequestModelProfile">
             <summary>
             RelativeRegRequestModel Mapping to UserDto
@@ -887,7 +930,15 @@
             
         </member>
         <member name="M:MedContactWebApi.Models.DoctDataIndexViewModel.#ctor(System.Collections.Generic.IEnumerable{MedContactCore.DataTransferObjects.DoctorFullDataDto},System.String,System.String,MedContactWebApi.FilterSortPageHelpers.PageViewModel,MedContactWebApi.FilterSortPageHelpers.FilterSpecViewModel,MedContactWebApi.FilterSortPageHelpers.SortViewModel)">
-            
+            <summary>
+            DoctDataIndexViewModel Ctor
+            </summary>
+            <param name="users"></param>
+            <param name="processOptions"></param>
+            <param name="reflink"></param>
+            <param name="pageViewModel"></param>
+            <param name="filterViewModel"></param>
+            <param name="sortViewModel"></param>
         </member>
         <member name="T:MedContactWebApi.Models.DoctorIndexRequestModel">
             <summary>
@@ -907,6 +958,20 @@
             
         </member>
         <member name="P:MedContactWebApi.Models.DoctorIndexRequestModel.SortOrder">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.DoctorSelectSpecModel">
+            <summary>
+            DoctorSelectSpecModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorSelectSpecModel.User">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorSelectSpecModel.DoctorInfos">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.DoctorSelectSpecModel.SystemInfo">
             
         </member>
         <member name="T:MedContactWebApi.Models.EditDoctorDataModel">
@@ -1061,6 +1126,61 @@
             int? Response MatchResult
             to requirements
             </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.TimeTableDoctIndexModel">
+            <summary>
+            TimeTableDoctIndexModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.DoctorInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.TableList">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.PageViewModel">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.SortViewModel">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.Flag">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.ProcessOptions">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.Reflink">
+            
+        </member>
+        <member name="M:MedContactWebApi.Models.TimeTableDoctIndexModel.#ctor(System.Collections.Generic.IEnumerable{MedContactCore.DataTransferObjects.DayTimeTableDto},System.String,MedContactCore.DataTransferObjects.DoctorInfo,System.String,System.Int32,MedContactWebApi.FilterSortPageHelpers.PageViewModel,MedContactWebApi.FilterSortPageHelpers.SortViewModel)">
+            <summary>
+            TimeTableDoctIndexModel Ctor
+            </summary>
+            <param name="tableList"></param>
+            <param name="processOptions"></param>
+            <param name="doctorInfo"></param>
+            <param name="reflink"></param>
+            <param name="flag"></param>
+            <param name="pageViewModel"></param>
+            <param name="sortViewModel"></param>
+        </member>
+        <member name="T:MedContactWebApi.Models.TimeTableDoctIndexRqstModel">
+            <summary>
+            TimeTableDoctIndexRqstModel for TimeTableDoctIndex
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.Dataid">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.RefLink">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.Page">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.SortOrder">
+            
         </member>
         <member name="T:MedContactWebApi.Models.TokenResponse">
             <summary>

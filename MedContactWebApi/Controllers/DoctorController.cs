@@ -62,8 +62,9 @@ namespace MedContactWebApi.Controllers
         /// Doctor Index
         /// </summary>
         /// <param name="model DoctorIndexRequestModel [FromQuery]"></param>
+        /// string name, string surname, string speciality, int page = 1, SortState sortOrder = SortState.SpecialityAsc
         /// <returns></returns>
-        [HttpGet]
+            [HttpGet]
         public async Task<IActionResult> Index([FromQuery]DoctorIndexRequestModel model)
 
         {
