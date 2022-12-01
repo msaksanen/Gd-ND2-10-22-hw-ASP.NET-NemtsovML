@@ -32,6 +32,56 @@
             </summary>
             <returns> UserDataModelResponse</returns>
         </member>
+        <member name="T:MedContactWebApi.Controllers.AppointmentController">
+            <summary>
+            AppointmentController
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,MedContactWebApi.Controllers.DataChecker,Microsoft.Extensions.Configuration.IConfiguration,MedContactWebApi.Helpers.ModelUserBuilder,MedContactWebApi.AdminPanelHelpers.AdminSortFilter,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Appointment Controller Ctor
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.CreateIndex(System.String)">
+            <summary>
+            Appointment CreateIndex
+            </summary>
+            <param name="id [FromQuery][FromQuery]"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.Create(MedContactWebApi.Models.AppointmentRequestModel)">
+            <summary>
+            Create Appointment
+            </summary>
+             string? dttid, string? cdid, string? stime
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.MyAppointments(MedContactWebApi.Models.MyApmsRequestModel)">
+            <summary>
+            
+            </summary>
+            <param name="model MyApmsRequestModelMyApmsRequestModel"></param>
+            string name, string speciality, string date, string sysInfo = "",
+            SortState sortOrder = SortState.DateDesc
+            <returns></returns>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.Delete(MedContactWebApi.Models.AppointmentDeleteRequest)">
+            <summary>
+            Delete Appointment
+            </summary>
+            <param name="model AppointmentDeleteRequestAppointmentDeleteRequest"></param>
+            <returns></returns>
+            string? id, string? reflink = ""
+        </member>
+        <member name="M:MedContactWebApi.Controllers.AppointmentController.ViewIndex(MedContactWebApi.Models.AppointmentIndexRequest)">
+            <summary>
+            Appointment ViewIndex
+            </summary>
+            <param name="model AppointmentIndexRequestAppointmentIndexRequest"></param>
+            <returns></returns>
+            string? id (DTTID), string name, string birhtdate,
+            string sysInfo = "", SortState sortOrder = SortState.DateAsc
+        </member>
         <member name="T:MedContactWebApi.Controllers.DataCheckerController">
             <summary>
             DataChecker Controller
@@ -608,6 +658,26 @@
             <param name="source"></param>
             <returns>List PatchModel</returns>
         </member>
+        <member name="T:MedContactWebApi.MappingProfiles.AppointmentProfile">
+            <summary>
+            AppointmentProfile
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.AppointmentProfile.#ctor">
+            <summary>
+            AppointmentProfile Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.CustomerDataProfile">
+            <summary>
+            CustomerDataProfile Mapping
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.CustomerDataProfile.#ctor">
+            <summary>
+            CustomerDataProfile Ctor
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.MappingProfiles.CustomerRegRequestModelProfile">
             <summary>
             CustomerRegRequestModel Mapping to UserDto
@@ -727,6 +797,88 @@
             <summary>
             User Profile Mapping to UserDto
             </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.AppointmentCreateModel">
+            <summary>
+            AppointmentCreateModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentCreateModel.DayTimeTableId">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentCreateModel.Result">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentCreateModel.Appointment">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentCreateModel.DoctorInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentCreateModel.User">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.AppointmentDeleteRequest">
+            <summary>
+            AppointmentDeleteRequest
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentDeleteRequest.Id">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentDeleteRequest.Reflink">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.AppointmentIndexCreateModel">
+            <summary>
+            AppointmentIndexCreateModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexCreateModel.DayTimeTable">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexCreateModel.Appointments">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexCreateModel.DoctorInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexCreateModel.User">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.AppointmentIndexRequest">
+            <summary>
+            AppointmentIndexRequest
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexRequest.Id">
+            DayTimeTableId
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexRequest.Name">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexRequest.Birthdate">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexRequest.SysInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentIndexRequest.SortOrder">
+            
+        </member>
+        <member name="T:MedContactWebApi.Models.AppointmentRequestModel">
+            <summary>
+            AppointmentRequestModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentRequestModel.Dttid">
+            DayTimeTableId
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentRequestModel.Cdid">
+            CustomerDataId
+        </member>
+        <member name="P:MedContactWebApi.Models.AppointmentRequestModel.Stime">
+            StartTime
         </member>
         <member name="T:MedContactWebApi.Models.BaseUserModel">
             <summary>
@@ -1036,6 +1188,26 @@
             string? Password
             </summary>
         </member>
+        <member name="T:MedContactWebApi.Models.MyApmsRequestModel">
+            <summary>
+            MyApmsRequestModel
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.MyApmsRequestModel.Name">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.MyApmsRequestModel.Speciality">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.MyApmsRequestModel.Date">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.MyApmsRequestModel.SysInfo">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.MyApmsRequestModel.SortOrder">
+            
+        </member>
         <member name="T:MedContactWebApi.Models.RefreshTokenRequestModel">
             <summary>
             RefreshTokenModel
@@ -1251,6 +1423,42 @@
             <summary>
             Main Program method
             </summary>
+        </member>
+        <member name="T:MedContactApp.WebApi.AppointmentIndexViewModel">
+            <summary>
+            AppointmentIndexViewModel
+            </summary>
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.Appointments">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.FilterViewModel">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.SortViewModel">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.DayTimeTableId">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.DoctorDataId">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.SysInfo">
+            
+        </member>
+        <member name="P:MedContactApp.WebApi.AppointmentIndexViewModel.Link">
+            
+        </member>
+        <member name="M:MedContactApp.WebApi.AppointmentIndexViewModel.#ctor(System.Collections.Generic.IEnumerable{MedContactCore.DataTransferObjects.AppointmentInfo},System.String,System.String,MedContactWebApi.FilterSortPageHelpers.FilterAppointViewModel,MedContactWebApi.FilterSortPageHelpers.SortViewModel)">
+            <summary>
+            AppointmentIndexViewModel Ctor
+            </summary>
+            <param name="apms"></param>
+            <param name="sysInfo"></param>
+            <param name="link"></param>
+            <param name="filterViewModel"></param>
+            <param name="sortViewModel"></param>
         </member>
     </members>
 </doc>

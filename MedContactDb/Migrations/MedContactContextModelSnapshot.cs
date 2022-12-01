@@ -71,6 +71,9 @@ namespace MedContactDb.Migrations
                     b.Property<Guid?>("DayTimeTableId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 

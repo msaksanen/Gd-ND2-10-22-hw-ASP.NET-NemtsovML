@@ -67,11 +67,11 @@ namespace MedContactBusiness.ServicesImplementations
         {
             var ent = await _unitOfWork.AppointmentRepository.GetByIdAsync(apmId);   
 
-            if (ent != null)
+            if (ent != null && ent.DayTimeTableId!=null)
             {
-                _unitOfWork.AppointmentRepository.Remove(ent);
-                var dtt = await _unitOfWork.DayTimeTableRepository.GetByIdTrackAsync((Guid)ent?.DayTimeTableId!);
+                var dtt = await _unitOfWork.DayTimeTableRepository.GetByIdTrackAsync((Guid)ent.DayTimeTableId!);
                 if (dtt != null) dtt.FreeTicketQty++;
+                _unitOfWork.AppointmentRepository.Remove(ent);
             }
 
             var res = await _unitOfWork.Commit();

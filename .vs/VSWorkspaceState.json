@@ -1,13 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\MedContactApp",
-    "\\MedContactApp\\wwwroot",
-    "\\MedContactApp\\wwwroot\\css",
-    "\\MedContactDb",
-    "\\MedContactDb\\Diagram",
-    "\\MedContactDb\\Entities"
+    ""
   ],
-  "SelectedNode": "\\MedContactApp\\wwwroot\\css\\site.css",
+  "SelectedNode": "\\MedContact.sln",
   "PreviewInSolutionExplorer": false
 }

@@ -84,6 +84,7 @@ namespace MedContactApp.Controllers
                     AppointmentIndexCreateModel model = new();
                     model.DayTimeTable = dttDto;
                     model.User = usr;
+                    model.User.CustomerDataId = customerData.Id;
                     model.DoctorInfo = doctInfo;
                     var newApms = new List<AppointmentDto>();
 

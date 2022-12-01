@@ -12,6 +12,7 @@ namespace MedContactDb.Entities
         public Guid Id { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public Guid? CustomerDataId { get; set; }
         public CustomerData? CustomerData { get; set; }
         public Guid? DayTimeTableId { get; set; }

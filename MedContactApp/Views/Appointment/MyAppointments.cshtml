@@ -87,8 +87,16 @@
     {
     <tr>
 
-    <td area-label="Appointment Date">
-        @item.StartTime
+    <td area-label="Appointment Date" style="text-align:left">
+        @if(item.StartTime > DateTime.Now)
+        {
+          <i class="bi bi-calendar2"></i>
+        }
+        else
+        {
+           <i class="bi bi-calendar2-x"></i>
+        }
+       @item?.StartTime?.ToShortDateString() (@item?.StartTime?.ToShortTimeString() - @item?.EndTime?.ToShortTimeString())
     </td>
     <td area-label="Names">
         @item?.DayTimeTable?.DoctorData?.User?.Name 
