@@ -33,8 +33,11 @@ namespace MedContactBusiness.ServicesImplementations
         {
            var res = new Result() { IntResult = 0 };
            var ent =new CustomerData() { Id = Guid.NewGuid(), IsBlocked =false, UserId = userId };
+           //var usr = await _unitOfWork.UserRepository.GetByIdTrackAsync(userId); 
            await _unitOfWork.CustomerDataRepository.AddAsync(ent);
-           res.IntResult = await _unitOfWork.Commit();
+            //if (usr != null)
+            //    usr.CustomerData = ent;
+            res.IntResult = await _unitOfWork.Commit();
            if (res.IntResult > 0)
                 res.GuidResult = ent.Id;
            return res;

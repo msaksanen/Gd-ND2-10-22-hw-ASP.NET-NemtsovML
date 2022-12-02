@@ -13,6 +13,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedContactApp.Controllers
 {
@@ -23,16 +24,18 @@ namespace MedContactApp.Controllers
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IRoleService _roleService;
+        private readonly ModelUserBuilder _modelBuilder;
 
         public FamilyAccountController(IUserService userService, IConfiguration configuration,
-            IMapper mapper, IRoleService roleService,
-            IFamilyService familyService)
+            IMapper mapper, IRoleService roleService, ModelUserBuilder modelBuilder,
+        IFamilyService familyService)
         {
             _userService = userService;
             _mapper = mapper;
             _configuration = configuration;
             _roleService = roleService;
             _familyService = familyService;
+            _modelBuilder = modelBuilder;
         }
        
 
@@ -104,7 +107,7 @@ namespace MedContactApp.Controllers
                                 {
                                     if (HttpContext.Session.Keys.Contains("isDependent"))
                                         HttpContext.Session.SetInt32("isDependent", 0);
-                                    return RedirectToAction("Family", "UserPanel");
+                                    return RedirectToAction("Family", "FamilyAccount");
                                 }       
                             }
                             else
@@ -120,7 +123,7 @@ namespace MedContactApp.Controllers
                         {
                             if (HttpContext.Session.Keys.Contains("isDependent"))
                                 HttpContext.Session.SetInt32("isDependent", 0);
-                            return RedirectToAction("Family", "UserPanel");
+                            return RedirectToAction("Family", "FamilyAccount");
                         }   
                     }
                 }
@@ -184,6 +187,105 @@ namespace MedContactApp.Controllers
             }
             
         }
+        [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
+        public async Task<IActionResult> RemoveAccount(string? id)
+        {
+            var model = await _modelBuilder.BuildById(HttpContext, id);
+            if (model != null)
+            {
+                var chModel = _mapper.Map<ChangePasswordModel>(model);
+                chModel.Username = String.Empty;
+                return View(chModel);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
+        public async Task<IActionResult> RemoveAccount(ChangePasswordModel model)
+        {
+            if (User.Identities.Any(identity => identity.IsAuthenticated) &&
+                 model != null && model.Id != null && model.Password != null && model.Username != null)
+            {
+                try
+                {
+                    var sMainUserId = User.FindFirst("MUId");
+                    //var sUserId = User.FindFirst("UId");
+                    if (sMainUserId == null) // || sUserId==null
+                    {
+                        return new BadRequestObjectResult("User is not found. Something went wrong");
+                    }
+                    var mRes = Guid.TryParse(sMainUserId.Value, out Guid MUId);
+                    //var sRes = Guid.TryParse(sMainUserId.Value, out Guid UId);
+                    if (!mRes)
+                    {
+                        return new BadRequestObjectResult("User is not found. Something went wrong");
+                    }
+                    //if (!sRes)
+                    //{
+                    //    return new BadRequestObjectResult("User is not found. Something went wrong");
+                    //}
+                    var res = await _userService.CheckUserByUsernamePassword(MUId, model.Password, model.Username);
+                    if (res == 0)
+                    {
+                        model.SystemInfo = "User is not found. Something went wrong";
+                        return View(model);
+                    }
+                    if (res == 1)
+                    {
+                        model.SystemInfo = "You have entered wrong password or code name";
+                        return View(model);
+                    }
+                    else
+                    {
+                        var relatives = await _familyService.GetRelativesAsync((Guid)model.Id);
+                        if (relatives != null && relatives.Count > 1)
+                        {
+                            model.SystemInfo = "You should delete all accounts of your relatives at first";
+                            return View(model);
+                        }
+                        else
+                        {
+                            var result = await _userService.RemoveUserById((Guid)model.Id);
+                            if (result > 0)
+                            { 
+                                if (MUId.Equals(model.Id))
+                                {
+                                    await HttpContext.SignOutAsync();
+                                    return RedirectToAction("Deleted", "FamilyAccount");
+                                }
+                                else
+                                {
+                                    var usr = await _userService.GetUserByIdAsync(MUId);
+                                    await ChangeClaims(usr);
+                                    return RedirectToAction("Family", "FamilyAccount");
+                                }
+                            }
+                            else
+                            {
+                                model.SystemInfo = "Your account has not been removed<br/>Something went wrong";
+                                return View(model);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                    return BadRequest();
+                }
+            }
+            ChangePasswordModel model1 = new() { SystemInfo = "Something went wrong" };
+            return View(model1);
+        }
+
+        public IActionResult Deleted()
+        {
+            return View();
+        }
+
 
     }
 }

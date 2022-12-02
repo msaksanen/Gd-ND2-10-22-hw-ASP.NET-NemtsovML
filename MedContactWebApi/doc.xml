@@ -228,15 +228,28 @@
             <param name="id [FromQuery][FromQuery]"></param>
             <returns> IActionResult </returns>
         </member>
+        <member name="M:MedContactWebApi.Controllers.FamilyAccountController.RemoveAccount(MedContactWebApi.Models.RemoveAccountRequest)">
+            <summary>
+            RemoveAccount
+            </summary>
+            <param name="model RemoveAccountRequestRemoveAccountRequest"></param>
+            <returns></returns>
+        </member>
         <member name="T:MedContactWebApi.Controllers.TokenController">
             <summary>
             Token Controller
             </summary>
         </member>
-        <member name="M:MedContactWebApi.Controllers.TokenController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator)">
+        <member name="M:MedContactWebApi.Controllers.TokenController.#ctor(AutoMapper.IMapper,MedContactWebApi.Helpers.JWTSha256,MedContactWebApi.Helpers.MD5,MediatR.IMediator,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
             Token Controller Ctor
             </summary>
+        </member>
+        <member name="M:MedContactWebApi.Controllers.TokenController.RemoveOldRefreshTokens">
+            <summary>
+            RemoveOldRefreshTokens
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:MedContactWebApi.Controllers.TokenController.CreateJwtToken(MedContactWebApi.Models.LoginUserRequestModel)">
             <summary>
@@ -624,6 +637,13 @@
             JWTSha256 Ctor
             </summary>
         </member>
+        <member name="M:MedContactWebApi.Helpers.JWTSha256.RemoveOldRefreshToken(System.Int32)">
+            <summary>
+            RemoveOldRefreshToken
+            </summary>
+            <param name="expHours intint "></param>
+            <returns></returns>
+        </member>
         <member name="T:MedContactWebApi.Helpers.MD5">
             <summary>
             MD5 Encoding
@@ -963,6 +983,11 @@
             CustomerRequestModel Register model
             </summary>
         </member>
+        <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Username">
+            <summary>
+            string? Username 
+            </summary>
+        </member>
         <member name="P:MedContactWebApi.Models.CustomerRegRequestModel.Email">
             <summary>
             string? Email 
@@ -1276,6 +1301,23 @@
             <summary>
             string? Address
             </summary>
+        </member>
+        <member name="T:MedContactWebApi.Models.RemoveAccountRequest">
+            <summary>
+            RemoveAccountRequest
+            </summary>
+        </member>
+        <member name="P:MedContactWebApi.Models.RemoveAccountRequest.Id">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.RemoveAccountRequest.Pwd">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.RemoveAccountRequest.Keyword">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.RemoveAccountRequest.SystemInfo">
+            
         </member>
         <member name="T:MedContactWebApi.Models.TextResponse">
             <summary>

@@ -9,6 +9,10 @@ namespace MedContactWebApi.Models
     public class CustomerRegRequestModel
     {
         /// <summary>
+        /// string? Username 
+        /// </summary>
+        public string? Username { get; set; }
+        /// <summary>
         /// string? Email 
         /// </summary>
         public string? Email { get; set; }

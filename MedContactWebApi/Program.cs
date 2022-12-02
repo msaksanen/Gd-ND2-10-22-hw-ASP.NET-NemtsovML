@@ -19,6 +19,8 @@ using MedContactDataCQS.Tokens.Commands;
 using MedContactWebApi.Controllers;
 using MedContactWebApi.AdminPanelHelpers;
 using System.Text.Json.Serialization;
+using Hangfire;
+using Hangfire.SqlServer;
 
 namespace MedContactWebApi
 {
@@ -53,6 +55,23 @@ namespace MedContactWebApi
 
             builder.Services.AddDbContext<MedContactContext>(
                 optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
+
+            builder.Services.AddHangfire(configuration => configuration
+              .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+              .UseSimpleAssemblyNameTypeSerializer()
+              .UseRecommendedSerializerSettings()
+              .UseSqlServerStorage(connectionString,
+                  new SqlServerStorageOptions
+                  {
+                      CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                      SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                      QueuePollInterval = TimeSpan.Zero,
+                      UseRecommendedIsolationLevel = true,
+                      DisableGlobalLocks = true,
+                  }));
+
+            // Add the processing server as IHostedService
+            builder.Services.AddHangfireServer();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -100,6 +119,7 @@ namespace MedContactWebApi
             var app = builder.Build();
 
             app.UseStaticFiles();
+            app.UseHangfireDashboard();
             app.UseRouting();
             app.UseHttpsRedirection();
 
@@ -111,6 +131,7 @@ namespace MedContactWebApi
             //}
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.MapHangfireDashboard();
 
             app.UseAuthentication();
             app.UseAuthorization();

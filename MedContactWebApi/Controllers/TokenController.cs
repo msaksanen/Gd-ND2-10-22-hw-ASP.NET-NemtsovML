@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using MedContactCore.Abstractions;
 using MedContactDataCQS.Roles.Queries;
 using MedContactDataCQS.Tokens.Commands;
@@ -24,17 +25,36 @@ namespace MedContactWebApi.Controllers
         private readonly JWTSha256 _jwtUtil;
         private readonly MD5 _md5;
         private readonly IMediator _mediator;
+        private readonly IConfiguration _configuration;
+        private int _expHours = 6;
 
         /// <summary>
         /// Token Controller Ctor
         /// </summary>
-        public TokenController(IMapper mapper, JWTSha256 jwtUtil, MD5 md5, IMediator mediator)
+        public TokenController(IMapper mapper, JWTSha256 jwtUtil, MD5 md5, IMediator mediator, IConfiguration configuration)
         {
             _mapper = mapper;
             _jwtUtil = jwtUtil;
             _md5 = md5; 
             _mediator = mediator;   
+            _configuration = configuration;
         }
+
+
+        /// <summary>
+        /// RemoveOldRefreshTokens
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult RemoveOldRefreshTokens()
+        {
+            bool result = int.TryParse(_configuration["RefreshToken:ExpiryHours"], out var exp);
+            if (result) _expHours = exp;
+            //var res = await _jwtUtil.RemoveOldRefreshToken(_expHours);
+            RecurringJob.AddOrUpdate( () =>  _jwtUtil.RemoveOldRefreshToken(_expHours), "10,40 0-23 * * *");
+            return Ok();
+        }
+
 
         /// <summary>
         /// Create JwtToken (Login)
@@ -98,12 +118,12 @@ namespace MedContactWebApi.Controllers
 
                 var roleList = await _mediator.Send(new GetRoleListByUserIdQuery() { UserId = user.Id });
 
-                if (roleList == null || roleList.Count() == 0)
+                if (roleList == null || !roleList.Any())
                     return BadRequest(new { request, Message = "User's roles are not found" });
 
                 var response = await _jwtUtil.GenerateTokenAsync(user, roleList);
 
-                await _jwtUtil.RemoveRefreshTokenAsync(request.RefreshToken, user);
+                await _jwtUtil.RemoveRefreshTokenAsync(user.Id, request.RefreshToken);
 
                 return Ok(response);
             }
@@ -135,7 +155,7 @@ namespace MedContactWebApi.Controllers
                 if (user == null)
                     return BadRequest(new { request, Message = "Refresh Token is incorrect" });
 
-                await _jwtUtil.RemoveRefreshTokenAsync(request.RefreshToken, user);
+                await _jwtUtil.RemoveRefreshTokenAsync(user.Id, request.RefreshToken);
 
                 return Ok();
             }

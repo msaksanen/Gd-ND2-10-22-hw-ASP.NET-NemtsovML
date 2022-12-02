@@ -180,7 +180,93 @@ namespace MedContactWebApi.Controllers
             var response = await _jwtUtil.GenerateTokenAsync(dto, roleList, mainUserId.Value);
             return Ok(response);
 
-        }    
+        }
+
+        /// <summary>
+        /// RemoveAccount
+        /// </summary>
+        /// <param name="model RemoveAccountRequest"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize(Policy = "FullBlocked")]
+        public async Task<IActionResult> RemoveAccount(RemoveAccountRequest model)
+        {
+            if (User.Identities.Any(identity => identity.IsAuthenticated) &&
+                 model != null && model.Id != null && model.Pwd != null && model.Keyword != null)
+            {
+                try
+                {
+                    var sMainUserId = User.FindFirst("MUId");
+                    if (sMainUserId == null)
+                    {
+                        return BadRequest ("User is not found. Something went wrong");
+                    }
+                    var mRes = Guid.TryParse(sMainUserId.Value, out Guid MUId);
+                    if (!mRes)
+                    {
+                        return BadRequest("User is not found. Something went wrong");
+                    }
+                    var pwdHash = _md5.CreateMd5(model.Pwd);
+                    var res = await _mediator.Send(new CheckUserByUsernamePasswordQuery() 
+                                     { Id=MUId, PwdHash = pwdHash,  Username = model.Keyword });
+                    if (res == 0)
+                    {
+                        model.SystemInfo = "User is not found. Something went wrong";
+                        return BadRequest(model);
+                    }
+                    if (res == 1)
+                    {
+                        model.SystemInfo = "You have entered wrong password or code name";
+                        return BadRequest(model);
+                    }
+                    else
+                    {
+                        var relatives = await _mediator.Send(new GetRelativesListQuery() { MainUserId = model.Id });
+                        if (relatives != null && relatives.Count > 1)
+                        {
+                            model.SystemInfo = "You should delete all accounts of your relatives at first";
+                            return BadRequest(model);
+                        }
+                        else
+                        {
+                            var token = await _jwtUtil.GetRefreshToken(MUId);
+                            var result = await _mediator.Send(new RemoveUserByIdCommand() { Id = model.Id });
+                            if (result > 0)
+                            {
+                                if (MUId.Equals(model.Id))
+                                {
+                                    await _jwtUtil.RemoveRefreshTokenAsync(MUId, token);
+                                    return Ok("Your account has been deleted");
+                                }
+                                else
+                                {
+                                    var usr = await _mediator.Send(new GetUserByIdQuery() { UserId = MUId });
+                                    if (usr== null)
+                                        return BadRequest("User is not found. Something went wrong");
+                                    var roleList = await _mediator.Send(new GetRoleListByUserIdQuery() { UserId = usr.Id });
+                                    if (roleList == null || roleList.Count() == 0)
+                                        return BadRequest(new ErrorModel() { Message = "User's roles are not found" });
+                                    var response = await _jwtUtil.GenerateTokenAsync(usr, roleList);
+                                    return Ok(new { response, Message = "Account (relative) has been deleted" });
+                                    }
+                            }
+                            else
+                            {
+                                model.SystemInfo = "Your account has not been removed<br/>Something went wrong";
+                                return BadRequest(model);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                    return BadRequest();
+                }
+            }
+            RemoveAccountRequest model1 = new() { SystemInfo = "Something went wrong" };
+            return BadRequest(model1);
+        }
 
     }
 }

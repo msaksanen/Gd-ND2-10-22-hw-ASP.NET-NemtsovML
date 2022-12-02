@@ -72,8 +72,11 @@ namespace MedContactBusiness.ServicesImplementations
 
         public async Task<UserDto> GetUserByIdAsync(Guid id)
         {
-                var entity = await _unitOfWork.UserRepository.GetByIdAsync(id);
-                var dto = _mapper.Map<UserDto>(entity);
+            var entity = await _unitOfWork.UserRepository.GetByIdAsync(id); 
+            var dto = _mapper.Map<UserDto>(entity);
+            var custData = await _unitOfWork.CustomerDataRepository.Get().FirstOrDefaultAsync(c => c.UserId.Equals(id));
+            if (custData != null )
+                dto.CustomerDataId = custData.Id;
                 return dto;
         }
 
@@ -232,6 +235,30 @@ namespace MedContactBusiness.ServicesImplementations
                         && u.Email != null && u.Email.Equals(email)
                         && u.PasswordHash != null && u.PasswordHash.Equals(pwdHash));
             return user1?.Id;
+        }
+        public async Task<int> CheckUserByUsernamePassword(Guid id, string pwd, string username)
+        {
+            var entity = await _unitOfWork.UserRepository.GetByIdAsync(id);
+
+            if (entity == null)
+                return 0;
+            if (entity.PasswordHash == CreateMd5(pwd) && entity.Username == username)
+                return 2;
+
+            return 1;
+        }
+
+        public async Task<int> RemoveUserById (Guid id)
+        {
+            int res = 0;
+            var entity = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            if (entity!=null)
+            {
+                _unitOfWork.UserRepository.Remove(entity);
+                res = await _unitOfWork.Commit();
+            }
+           
+            return res;
         }
     }
 }

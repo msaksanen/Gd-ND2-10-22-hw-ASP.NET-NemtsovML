@@ -10,6 +10,8 @@ using System.Text;
 using MedContactCore.Abstractions;
 using MedContactDataCQS.Users.Commands;
 using MedContactWebApi.Models;
+using MedContactDataCQS.Tokens.Queries;
+using MedContactDb.Entities;
 
 namespace MedContactWebApi.Helpers
 {
@@ -99,16 +101,35 @@ namespace MedContactWebApi.Helpers
             return null;
         }
 
-        internal async Task RemoveRefreshTokenAsync(Guid requestRefreshToken, UserDto dto)
+        internal async Task RemoveRefreshTokenAsync(Guid userId, Guid? requestRefreshToken) 
         {
-             await DeleteRefreshTokenAsync(requestRefreshToken, dto);
+             await DeleteRefreshTokenAsync(userId, requestRefreshToken);
         }
-        private async Task DeleteRefreshTokenAsync(Guid requestRefreshToken, UserDto dto)
+        private async Task DeleteRefreshTokenAsync(Guid userId,Guid? requestRefreshToken)
         {
-            await _mediator.Send(new ChangeUserStatusByIdCommand() { UserId = dto.Id, State = 1 });
+            await _mediator.Send(new ChangeUserStatusByIdCommand() { UserId = userId, State = 1 });
 
-            await _mediator.Send(new RemoveRefreshTokenCommand() {TokenValue = requestRefreshToken });           
+            await _mediator.Send(new RemoveRefreshTokenCommand() {TokenValue = requestRefreshToken });
         }
+
+        internal async Task<Guid?>  GetRefreshToken (Guid id)
+        {
+            var token = await _mediator.Send(new GetRefreshTokenQuery() { Id = id });
+            return token;
+        }
+
+        /// <summary>
+        /// RemoveOldRefreshToken
+        /// </summary>
+        /// <param name="expHours int "></param>
+        /// <returns></returns>
+        public async Task<int> RemoveOldRefreshToken(int expHours)
+        {
+            var res = await  _mediator.Send(new RemoveOldRefreshTokensCommand() { ExpHours = expHours });
+
+            return res;
+        }
+
 
     }
 }

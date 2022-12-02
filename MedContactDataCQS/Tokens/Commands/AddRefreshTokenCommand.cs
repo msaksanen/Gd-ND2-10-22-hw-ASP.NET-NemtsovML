@@ -10,7 +10,7 @@ namespace MedContactDataCQS.Tokens.Commands
 {
     public class AddRefreshTokenCommand : IRequest<int?>
     {
-        public Guid? TokenValue;
-        public Guid? UserId;
+        public Guid? TokenValue { get; set; }
+        public Guid? UserId     { get; set; }
     }
 }

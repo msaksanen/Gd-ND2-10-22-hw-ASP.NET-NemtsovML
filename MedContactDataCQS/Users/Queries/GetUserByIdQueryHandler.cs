@@ -26,7 +26,7 @@ namespace MedContactDataCQS.Users.Queries
     CancellationToken cts)
 
     {
-        if (_context.Users != null && _context.Users.Any())
+        if (_context.Users != null && _context.Users.Any() && _context.CustomerDatas!=null)
         {
                 var entity = await _context.Users.AsNoTracking()
                              .FirstOrDefaultAsync(entity => entity.Id.Equals(request.UserId),cts);
@@ -34,6 +34,10 @@ namespace MedContactDataCQS.Users.Queries
                 if (entity == null) return null;
 
                 var dto = _mapper.Map<UserDto>(entity);
+
+                var custData = await _context.CustomerDatas.FirstOrDefaultAsync(c => c.UserId.Equals(request.UserId), cts);
+                if (custData != null)
+                    dto.CustomerDataId = custData.Id;
                 return dto;
         }
         return null;

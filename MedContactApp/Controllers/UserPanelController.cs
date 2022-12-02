@@ -30,6 +30,7 @@ namespace MedContactApp.Controllers
         private readonly IRoleService _roleService;
         private readonly ModelUserBuilder _modelBuilder;
 
+
         public UserPanelController(IUserService userService,
             IMapper mapper, IRoleService roleService, ModelUserBuilder modelBuilder)
         {
@@ -148,7 +149,6 @@ namespace MedContactApp.Controllers
             ChangePasswordModel model1 = new() { SystemInfo = "Something went wrong (." };
             return View(model1);
         }
-
 
     }
 }

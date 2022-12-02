@@ -30,8 +30,10 @@ namespace MedContactDataCQS.Tokens.Commands
             {
                 Id = Guid.NewGuid(),
                 Token = (Guid)command.TokenValue,
-                UserId = (Guid)command.UserId
+                UserId = (Guid)command.UserId,
+                CreationDate = DateTime.Now
             };
+
             if (_context.RefreshTokens!=null)
                 await _context.RefreshTokens.AddAsync(rt, token);
             var res = await _context.SaveChangesAsync(token);
