@@ -9,6 +9,7 @@ using MedContactDb.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 using System.Data;
 using System.Security.Claims;
@@ -159,12 +160,20 @@ namespace MedContactApp.Controllers
             int addresult = 0;
             int subtract = 0;
             int changeRes = 0;
-
             try
             {
                 var modelFull = await _adminModelBuilder.AdminUserModelBuildAsync(model, String.Empty);
                 if (modelFull == null) //throw new Exception();
                     return new BadRequestObjectResult("User data was not received");
+                if (modelFull.IsPwdReset && modelFull.Id!=null)
+                {
+                   
+                    var res = await _userService.ChangeUserPasswordAsync((Guid)modelFull.Id, "");
+                    if (res>0)
+                        modelFull.SystemInfo = $"<b>User password has been reset</b><br/>";
+                    else
+                        modelFull.SystemInfo = $"<b>User password has not been reset</b><br/>";
+                }
 
                 if (modelFull != null && modelFull.BlockStateIds != null)
                 {
@@ -211,7 +220,7 @@ namespace MedContactApp.Controllers
                             }
                         }
 
-                        modelFull.SystemInfo = $"<b>Roles:<br/>{addresult} was/were added<br/>{subtract} was/were deleted</b>";
+                        modelFull.SystemInfo += $"<b>Roles:<br/>{addresult} was/were added<br/>{subtract} was/were deleted</b>";
                         if (changeRes > 0)
                         {
                             modelFull.SystemInfo += $"<br/><b>Full block status was changed</b>";
@@ -226,12 +235,12 @@ namespace MedContactApp.Controllers
 
                     else
                     {
-                        modelFull!.SystemInfo = $"<b>You have not chosen any role</b>";
+                        modelFull!.SystemInfo += $"<b>You have not chosen any role</b>";
                         return View(modelFull);
                     }
                 }
 
-                modelFull!.SystemInfo = "<b>Something went wrong (</b>";
+                modelFull!.SystemInfo += "<b>Something went wrong (</b>";
 
                 return View(modelFull);
 

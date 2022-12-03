@@ -227,14 +227,35 @@ namespace MedContactBusiness.ServicesImplementations
                 throw new ArgumentException(nameof(password));
             }
         }
-        public async Task<Guid?> GetIdByEmailUserPassword(string email, string password)
+        public async Task<Result> GetIdByEmailUserPassword(string email, string password)
         {
+            Result res = new() { IntResult = 0 };
+
             string pwdHash = CreateMd5(password);
-            var user1 = await _unitOfWork.UserRepository.Get()
+            var user = await _unitOfWork.UserRepository.Get()
                         .FirstOrDefaultAsync(u => u.IsDependent != true
                         && u.Email != null && u.Email.Equals(email)
                         && u.PasswordHash != null && u.PasswordHash.Equals(pwdHash));
-            return user1?.Id;
+            if (user != null)
+            {
+                res.GuidResult = user.Id;
+                res.IntResult = 2; 
+                return res;
+            }
+
+            var emptyHash = CreateMd5("");
+            var userResetPwd = await _unitOfWork.UserRepository.Get()
+                        .FirstOrDefaultAsync(u => u.IsDependent != true
+                        && u.Email != null && u.Email.Equals(email)
+                        && u.PasswordHash != null && u.PasswordHash.Equals(emptyHash));
+            if (userResetPwd != null)
+            {
+                res.GuidResult = userResetPwd.Id;
+                res.IntResult = 1;
+                return res;
+            }
+            else
+                return res;
         }
         public async Task<int> CheckUserByUsernamePassword(Guid id, string pwd, string username)
         {

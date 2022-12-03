@@ -12,7 +12,7 @@ namespace MedContactApp.Models
         //    HttpMethod = WebRequestMethods.Http.Post, ErrorMessage = "Email is already exists")]
         public string? Email { get; set; }
 
-        [Required]
+        [Required( ErrorMessage = "The field is required. Input something anyway")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
         public string? SystemInfo { get; set; }

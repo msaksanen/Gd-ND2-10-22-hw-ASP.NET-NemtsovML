@@ -89,6 +89,12 @@
                 <span asp-validation-for="Reflink" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label><b>Password Reset</b></label><br />
+                 @Html.CheckBoxFor(@Model => @Model.IsPwdReset)
+                 @*<input data-val="true" data-val-required="The IsPwdReset field is required." 
+                            id="IsPwdReset" name="IsPwdReset" type="checkbox" value="true" />*@
+            </div>
+            <div class="form-group">
                 <label for="BlockStateIds"><b>Full User Block</b></label>
                  <br />
                  <select class="list-box tri-state" aria-label="BlockState"
@@ -149,6 +155,7 @@
             </dd>
         </dl>
                 <input type="submit" value="Save" class="btn btn-primary" />
+                @*<input name="IsPwdReset" type="hidden" value="false" /><*@
             </form>
     </div>
 

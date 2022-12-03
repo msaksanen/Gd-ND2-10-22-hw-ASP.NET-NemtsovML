@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Runtime.InteropServices;
 using MedContactApp.Helpers;
 using Microsoft.CodeAnalysis.Differencing;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedContactApp.Controllers
 {
@@ -97,20 +98,78 @@ namespace MedContactApp.Controllers
             if (model.Email != null && model.Password != null)
             {
                 //var isPasswordCorrect = await _userService.CheckUserPassword(model.Email, model.Password);
-                var id = await _userService.GetIdByEmailUserPassword(model.Email, model.Password);
-                if (id != null)             //(isPasswordCorrect)
+                var res = await _userService.GetIdByEmailUserPassword(model.Email, model.Password);
+                if (res.IntResult==1 && res.GuidResult!=null)
                 {
-                    await Authenticate(model.Email, (Guid)id);
+                    //model.SystemInfo = "Your password has been reset";
+                    //return View(model);
+                    return RedirectToAction("PasswordRestore", "Account", new { id = res.GuidResult });
+                }
+                if (res.IntResult == 2 && res.GuidResult != null)             //(isPasswordCorrect)
+                {
+                    await Authenticate(model.Email, (Guid)res.GuidResult);
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    model.SystemInfo = "Incorrect username or password.";
+                    model.SystemInfo = "Incorrect email or password";
                     return View(model);
-
                 }
             }
            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PasswordRestore(string id)
+        {
+            PasswordRestoreModel model = new();
+            if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out Guid userId) && 
+                (await _userService.GetUserByIdAsync(userId)!=null))
+            {
+                model.Id = userId;
+                return View(model);
+            }
+
+            else
+                return new BadRequestObjectResult("Something went wrong...");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PasswordRestore(PasswordRestoreModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.SystemInfo = "Input correct data, please";
+                return View(model);
+            }
+            if (model.Id == null)
+                return new BadRequestObjectResult("User Id is null");
+            var user = await _userService.GetUserByIdAsync((Guid)model.Id);
+            if (user == null)
+                return NotFound("User is not found");
+
+            if (user.Username != null && user.Username.Equals(model.Codeword)==true &&
+                user.BirthDate != null && user.BirthDate.Equals(model.BirthDate) == true &&
+                user.Email != null && user.Email.Equals(model.Email)==true && model.Password != null)
+            {
+                var res = await _userService.ChangeUserPasswordAsync(user.Id, model.Password);
+                if (res>0)
+                {
+                    await Authenticate(user.Email, user.Id);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    model.SystemInfo = "Password has not been changed";
+                    return View(model);
+                }
+            }
+            else
+            {
+                model.SystemInfo = "Input correct data";
+                return View(model);
+            }
         }
 
         [HttpGet]

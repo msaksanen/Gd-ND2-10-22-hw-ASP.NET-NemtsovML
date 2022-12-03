@@ -113,6 +113,7 @@ namespace MedContactApp.AdminPanelHelpers
             if (usr == null && allroles == null) return null;
 
             newModel = _mapper.Map<AdminUserEditModel>(usr);
+            newModel.IsPwdReset = model.IsPwdReset;
             if (newModel == null) return null;
             newModel.AllRoles = allroles;
 
