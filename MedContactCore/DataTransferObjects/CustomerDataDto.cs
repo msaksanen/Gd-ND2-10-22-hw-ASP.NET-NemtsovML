@@ -15,6 +15,6 @@ namespace MedContactDb.Entities
         public UserDto? User { get; set; }
         public bool? IsBlocked { get; set; }
         public List<Appointment>? Appointments { get; set; }
-        public List<MedData>? MedData { get; set; }
+        public List<MedDataDto>? MedData { get; set; }
     }
 }

@@ -13,5 +13,6 @@ namespace MedContactCore.DataTransferObjects
         public string? Category { get; set; }
         public string? Path { get; set; }
         public Guid? UserId { get; set; }
+        public Guid? MedDataId { get; set; }
     }
 }

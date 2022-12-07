@@ -102,7 +102,7 @@ namespace MedContactApp.Controllers
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
 
                 string pageRoute = @"/adminpanel/userindex?page=";
-                string processOptions = $"&grouporder={groupOrder}&email{email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
+                string processOptions = $"&grouporder={groupOrder}&email={email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
 
                 string link= Request.Path.Value + Request.QueryString.Value ;
                 link = link.Replace("&", "*");

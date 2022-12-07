@@ -1,0 +1,104 @@
+﻿@model UserMedDataModel
+
+@{
+    ViewData["Title"] = "MedData Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Medical data details</h4>
+<h4>@Model.Name @Model.Surname (@Model.Email)</h4>
+<hr />
+<div class="container">
+    <div class="row">
+    <dl class="col-6 col-sm-3">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.InputDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.InputDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Department)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Department)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShortSummary)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShortSummary)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TextData)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TextData)
+        </dd>
+    </dl>
+    <div class="col-6 col-sm-3">
+        <div>
+                <label><b>Uploaded medical files:</b></label>
+                <hr />
+                <Table class="delivery">
+                    <tbody>
+                        @if (Model.fileDatas != null && Model.fileDatas.Any())
+                        {
+                            foreach (var item in Model.fileDatas)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@item.Path"><i>@item.Name</i></a>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-x-circle"></i><a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </Table>
+        </div>
+        
+        </div>
+
+    @if (Model.SystemInfo != null)
+    {
+        <div>
+            <p>
+                @Html.Raw(@Model.SystemInfo)
+            </p>
+        </div>
+    }
+</div>
+</div>
+
+@section Footer
+{
+   
+    <div>
+        <a href="~/meddata/addoreditmeddata/?id=@Model.UserId&mdataid=@Model.MedDataId&reflink=@Model.Reflink"><h6>Edit medical details &#5125</h6></a>
+        @if (!string.IsNullOrEmpty(Model.Reflink))
+        {
+            <div>
+                <a href="@Model.Reflink"><h6>&#5130 Back</h6></a>
+            </div>
+        }
+        else
+        {
+            <div>
+                <a href="~/meddata/usermeddata/?id=@Model.UserId"><h6>&#5130 Back</h6></a>
+            </div>
+        }
+    
+    <br />
+    </div>
+}
+
+

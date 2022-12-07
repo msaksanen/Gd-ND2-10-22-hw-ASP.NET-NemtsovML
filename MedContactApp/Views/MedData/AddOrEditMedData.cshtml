@@ -1,0 +1,151 @@
+﻿@model UserMedDataModel
+
+@{
+    @if(Model.Flag == 1 || Model.Flag == 3)
+         ViewData["Title"] = "Create medical data";
+    @if(Model.Flag == 2)
+        ViewData["Title"] = "Modify medical data";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model.Flag == 1 || Model.Flag == 3)
+{
+    <h4>Create medical data</h4>
+}
+@if (Model.Flag == 2)
+{
+    <h4>Modify medical data</h4>
+}
+
+<h4>@Model.Name @Model.Surname (@Model.Email)</h4>
+<hr />
+<div class="container">
+<div class="row">
+    <div class="col-6 col-sm-3">
+        <form asp-action="AddOrEditMedData" asp-controller="MedData" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label for="MedDataTypeIds">Select data type:</label>
+                <br />
+
+                <select aria-label="MedDataType"
+                        id="MedDataTypeIds" name="MedDataTypeIds">
+
+                    @if (Model.MedDataType != null)
+                    {
+                        foreach (var item in Model.MedDataType)
+                        {
+                            @if (item.IsSelected != true)
+                            {
+                                <option label="@item.Name" value="@item.IntId">@item.Name</option>
+                            }
+                            else
+                            {
+                                <option label="@item.Name" selected value="@item.IntId">@item.Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">     
+                <input asp-for="UserId" type="hidden" class="form-control" />
+                <input asp-for="MedDataId" type="hidden" class="form-control" />
+                <input asp-for="Reflink" type="hidden" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Department" class="control-label">Department name</label>
+                <input asp-for="Department" class="form-control" />
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="ShortSummary">Short Summary</label>
+                <textarea class="form-control" type="text" id="ShortSummary" name="ShortSummary" rows="3">@Model.ShortSummary</textarea>
+                <span asp-validation-for="ShortSummary" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="TextData">Text Data</label>
+                <textarea class="form-control" type="text" id="TextData" name="TextData" rows="10">@Model.TextData</textarea>
+                <span asp-validation-for="TextData" class="text-danger"></span>
+            </div>
+
+            <br />
+            <p> Add your MedData files:</p>
+            <br/>
+            <div class="form-group">
+                <input asp-for="Uploads" type="file" name="uploads" />
+                <br /> <br />
+                <input asp-for="Uploads" type="file" name="uploads" />
+                <br /> <br />
+                <input asp-for="Uploads" type="file" name="uploads" />
+            </div>
+            <br />
+                <input type="submit" value="Save" class="btn btn-primary" />
+        </form>
+    </div>
+    <div class="col-6 col-sm-3">
+            <div>
+                 @if (Model.fileDatas != null && Model.fileDatas.Any())
+                 {
+                   <label><b>Uploaded medical files:</b></label>
+                    <hr />
+                    <Table class="delivery">
+                    <tbody>
+                            @foreach (var item in Model.fileDatas)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@item.Path"><i>@item.Name</i></a>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-x-circle"></i><a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+                                    </td>
+                                </tr>
+                            }
+                     </tbody>
+                     </Table>
+                 }
+            </div>
+
+        </div>
+    @if (Model.SystemInfo != null)
+    {
+        <div>
+            <p>
+                @Html.Raw(@Model.SystemInfo)
+            </p>
+        </div>
+    }
+</div>
+</div>
+
+@section Footer
+{
+        @if(Model.Flag==1)
+        {
+             <div>
+             <a href="@Model.Reflink"><h6>&#5130 Back to table</h6></a>
+             </div>
+        }
+        @if(Model.Flag==3)
+        {
+            <div>
+            <a href="~/meddata/usermeddata/?id=@Model.UserId"><h6>&#5130 Back</h6></a>
+            </div>
+        }
+         @if(Model.Flag==2)
+        {
+            <div>
+            <a href="~/meddata/usermeddatadetails/?mdataid=@Model?.MedDataId&id=@Model?.UserId&reflink=@Model?.Reflink"><h6>&#5130 Back to details</h6></a>
+            </div>
+        }
+   
+}
+
+@section Scripts
+{
+    @{
+       await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

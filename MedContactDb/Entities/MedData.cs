@@ -14,8 +14,12 @@ namespace MedContactDb.Entities
         public string? Type { get; set; }
         public string? ShortSummary { get; set; }
         public string? TextData { get; set; }
-        public string? FilePath { get; set; }
+        public List<FileData>? FileDatas { get; set; }
+
+        //public string? FilePath { get; set; }
         public Guid? CustomerDataId { get; set; }
         public CustomerData? CustomerData { get; set; }
+        public Guid? DoctorDataId { get; set; }
+        public DoctorData? DoctorData { get; set; }
     }
 }

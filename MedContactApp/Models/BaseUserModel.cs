@@ -39,10 +39,6 @@ namespace MedContactApp.Models
         public string? Surname { get; set; }
         public string? MidName { get; set; }
 
-        //[Required]
-        //[Range(1, 110)]
-        //public int? Age { get; set; }
-
         [Required]
         [DataType(DataType.Date)]
         [Remote(action: "CheckBirthDate", controller: "Customer", ErrorMessage = "Input correct date of birth")]

@@ -16,6 +16,7 @@ public interface IUnitOfWork
     IRepository<AcsData> AcsDataRepository { get; }
     IRepository<ExtraData> ExtraDataRepository { get; }
     IRepository<FileData> FileDataRepository { get; }
+    IRepository<MedData> MedDataRepository { get; }
     IRepository<Appointment> AppointmentRepository { get; }
 
     Task<int> Commit();

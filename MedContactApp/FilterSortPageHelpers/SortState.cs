@@ -28,7 +28,13 @@
             GenderAsc,
             GenderDesc,
             SpecialityAsc,
-            SpecialityDesc
+            SpecialityDesc,
+            DepartAsc,
+            DepartDesc,
+            TypeAsc,
+            TypeDesc,
+            TextAsc,
+            TextDesc,
 
 
     }

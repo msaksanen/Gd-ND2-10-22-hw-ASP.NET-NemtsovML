@@ -1,0 +1,32 @@
+﻿@model MedDataInfo
+
+<tr>
+     <td area-label="Date">
+        @Html.DisplayFor(modelItem => Model.InputDate)
+    </td>
+    <td area-label="Department">
+        @Html.DisplayFor(modelItem => Model.Department)
+    </td>
+    <td area-label="Speciality">
+       @Html.DisplayFor(modelItem => Model.DoctorSpeciality)
+    
+    </td>
+    <td area-label="Doctor Name">
+        @Html.DisplayFor(modelItem => Model.DoctorName)
+        @Html.DisplayFor(modelItem => Model.DoctorMidname)
+    </td>
+    <td area-label="Doctor Surname">
+        @Html.DisplayFor(modelItem => Model.DoctorSurname)
+    </td>
+    <td area-label="Data type">
+        @Html.DisplayFor(modelItem => Model.Type)
+    </td>
+    <td area-label="Text Data">
+        @Html.DisplayFor(modelItem => Model.ShortSummary)
+    </td>
+   
+    <td>
+        <span> <a class="btn btn-link" href="~/meddata/usermeddatadetails/?mdataid=@Model?.Id&id=@Model?.UserId&reflink=@ViewData["Reflink"]">Details</a></span>
+    </td>
+
+</tr>

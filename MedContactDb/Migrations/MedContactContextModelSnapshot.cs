@@ -235,6 +235,9 @@ namespace MedContactDb.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("MedDataId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -245,6 +248,8 @@ namespace MedContactDb.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MedDataId");
 
                     b.HasIndex("UserId");
 
@@ -263,12 +268,8 @@ namespace MedContactDb.Migrations
                     b.Property<string>("Department")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("DoctorDataId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("InputDate")
                         .HasColumnType("datetime2");
@@ -286,9 +287,9 @@ namespace MedContactDb.Migrations
 
                     b.HasIndex("CustomerDataId");
 
-                    b.ToTable("MedData");
+                    b.HasIndex("DoctorDataId");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("MedData");
+                    b.ToTable("MedData");
                 });
 
             modelBuilder.Entity("MedContactDb.Entities.RefreshToken", b =>
@@ -417,18 +418,6 @@ namespace MedContactDb.Migrations
                     b.ToTable("RoleUser");
                 });
 
-            modelBuilder.Entity("MedContactDb.Entities.Recommendation", b =>
-                {
-                    b.HasBaseType("MedContactDb.Entities.MedData");
-
-                    b.Property<Guid?>("DoctorDataId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("DoctorDataId");
-
-                    b.HasDiscriminator().HasValue("Recommendation");
-                });
-
             modelBuilder.Entity("AcsDataUser", b =>
                 {
                     b.HasOne("MedContactDb.Entities.AcsData", null)
@@ -524,9 +513,15 @@ namespace MedContactDb.Migrations
 
             modelBuilder.Entity("MedContactDb.Entities.FileData", b =>
                 {
+                    b.HasOne("MedContactDb.Entities.MedData", "MedData")
+                        .WithMany("FileDatas")
+                        .HasForeignKey("MedDataId");
+
                     b.HasOne("MedContactDb.Entities.User", "User")
                         .WithMany("FileDatas")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("MedData");
 
                     b.Navigation("User");
                 });
@@ -537,7 +532,13 @@ namespace MedContactDb.Migrations
                         .WithMany("MedData")
                         .HasForeignKey("CustomerDataId");
 
+                    b.HasOne("MedContactDb.Entities.DoctorData", "DoctorData")
+                        .WithMany("MedData")
+                        .HasForeignKey("DoctorDataId");
+
                     b.Navigation("CustomerData");
+
+                    b.Navigation("DoctorData");
                 });
 
             modelBuilder.Entity("MedContactDb.Entities.RefreshToken", b =>
@@ -575,15 +576,6 @@ namespace MedContactDb.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MedContactDb.Entities.Recommendation", b =>
-                {
-                    b.HasOne("MedContactDb.Entities.DoctorData", "DoctorData")
-                        .WithMany()
-                        .HasForeignKey("DoctorDataId");
-
-                    b.Navigation("DoctorData");
-                });
-
             modelBuilder.Entity("MedContactDb.Entities.AcsData", b =>
                 {
                     b.Navigation("ExtraDatas");
@@ -604,6 +596,13 @@ namespace MedContactDb.Migrations
             modelBuilder.Entity("MedContactDb.Entities.DoctorData", b =>
                 {
                     b.Navigation("DayTimeTables");
+
+                    b.Navigation("MedData");
+                });
+
+            modelBuilder.Entity("MedContactDb.Entities.MedData", b =>
+                {
+                    b.Navigation("FileDatas");
                 });
 
             modelBuilder.Entity("MedContactDb.Entities.Role", b =>

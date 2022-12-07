@@ -125,7 +125,7 @@ namespace MedContactApp.Controllers
                 var items = fulList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
                 string pageRoute = @"/adminpaneldoctor/doctordataindex?page=";
-                string processOptions = $"&email{email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
+                string processOptions = $"&email={email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
 
                 string link = Request.Path.Value + Request.QueryString.Value;
                 link = link.Replace("&", "*");

@@ -20,5 +20,6 @@ namespace MedContactCore.DataTransferObjects
         public Guid? SpecialityId { get; set; }
         public SpecialityDto? Speciality { get; set; }
         public List<DayTimeTableDto>? DayTimeTables { get; set; }
+        public List<MedDataDto>? MedData { get; set; }
     }
 }

@@ -1,0 +1,176 @@
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
+
+@model MedDataIndexViewModel
+
+@{
+    ViewData["Title"] = "Medical Data"; 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<a href="~/meddata/addoreditmeddata/?id=@Model.UserId&reflink=@ViewData["Reflink"]">Add medical data</a>
+
+ @if (!string.IsNullOrEmpty(Model.SysInfo))
+         {
+            <div>
+            @Html.Raw(@Model.SysInfo)        
+            </div>
+         }
+
+<Table class="delivery">
+    <form method="get">
+<tbody>
+  <tr>
+         <td style="border:none">
+                <label>Name/Surname: </label>
+        </td>
+        <td style="border:none">
+                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+        </td>
+         <td style="border:none">
+                <label>Department: </label>
+         </td>
+          <td style="border:none">
+                <input name="speciality" value="@Model!.FilterViewModel.SelectedDepart" />
+         </td>
+        <td style="border:none">
+                <label>Speciality: </label>   
+        </td>
+         <td style="border:none">
+                <input name="speciality" value="@Model!.FilterViewModel.SelectedSpec" />
+        </td>
+  </tr>
+  <tr>
+        <td style="border:none">
+                <label>Data type: </label>
+        </td>
+         <td style="border:none">
+                <input name="name" value="@Model!.FilterViewModel.SelectedType" />
+        </td>
+        <td style="border:none">
+                <label>Search text: </label>
+        </td>
+         <td style="border:none">
+                <input name="name" value="@Model!.FilterViewModel.SelectedText" />
+        </td>
+        <td style="border:none">
+                <label>Date: </label>
+        </td>
+        <td style="border:none">
+                <input name="date"  type="date" value="@Model!.FilterViewModel.SelectedDate"></>
+
+                <input type="submit" value="Filter" />
+        </td>
+  </tr>
+</tbody>
+    </form>
+</Table>
+
+<Table class="delivery">  
+    <caption>Doctor Info Table</caption>
+    <thead>
+    <tr>
+        <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
+             current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Date</sort-header>
+ 
+        </th>
+        <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
+             current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DepartSort">Department</sort-header>
+ 
+        </th>
+        <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
+             current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SpecialitySort">Speciality</sort-header>
+ 
+
+        </th>
+        <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Doctor Names</sort-header>
+     
+        </th>
+        <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.SurnameSort">Doctor Surname</sort-header>
+        </th>
+      
+         <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.TypeSort">Data type</sort-header>
+        </th>
+         <th>
+            <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
+             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
+             opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
+             opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
+             current="@Model.SortViewModel.Current"property="@Model.SortViewModel.TextSort">Short Summary</sort-header>
+        </th>
+        <th>
+           Details
+         </th>
+    </tr>
+    <thead>
+    <tbody>
+    
+        
+
+@if (Model.MedDatas!=null && Model.MedDatas.Any())
+{
+    foreach (var item in Model.MedDatas)
+    {
+        await Html.RenderPartialAsync("UserMedDataPartialView", item, ViewData);
+    }
+}
+
+    </tbody>
+</Table>
+
+
+@section Footer
+{
+
+    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+                             @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
+ }
+
+
+@section CssStyles
+{
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}        
+    </style>
+}

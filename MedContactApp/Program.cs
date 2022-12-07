@@ -78,6 +78,7 @@ namespace MedContactApp
             builder.Services.AddScoped<IRepository<AcsData>, Repository<AcsData>>();
             builder.Services.AddScoped<IRepository<ExtraData>, Repository<ExtraData>>();
             builder.Services.AddScoped<IRepository<FileData>, Repository<FileData>>();
+            builder.Services.AddScoped<IRepository<MedData>, Repository<MedData>>();
             builder.Services.AddScoped<IRepository<Appointment>, Repository<Appointment>>();
             builder.Services.AddScoped<IRepository<Speciality>, Repository<Speciality>>();
             builder.Services.AddScoped<IRepository<DayTimeTable>, Repository<DayTimeTable>>();
@@ -93,6 +94,7 @@ namespace MedContactApp
             builder.Services.AddScoped<ICustomerDataService, CustomerDataService>();
             builder.Services.AddScoped<IDoctorDataService, DoctorDataService>();
             builder.Services.AddScoped<IFileDataService, FileDataService>();
+            builder.Services.AddScoped<IMedDataService, MedDataService>();
             builder.Services.AddScoped<ISpecialityService, SpecialityService>();
             builder.Services.AddScoped<IDayTimeTableService, DayTimeTableService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
@@ -100,8 +102,10 @@ namespace MedContactApp
             builder.Services.AddScoped<ModelUserBuilder>();
             builder.Services.AddScoped<AdminModelBuilder>();
             builder.Services.AddScoped<AdminSortFilter>();
+            builder.Services.AddScoped<MedDataSortFilter>();
             builder.Services.AddScoped<EmailChecker>();
             builder.Services.AddScoped<BirthDateChecker>();
+            builder.Services.AddScoped<FileValidation>();
 
 
 

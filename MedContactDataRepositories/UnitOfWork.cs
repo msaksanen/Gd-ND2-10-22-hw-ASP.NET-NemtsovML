@@ -18,6 +18,7 @@ namespace MedContactDataRepositories
         public IRepository<AcsData> AcsDataRepository { get; }
         public IRepository<ExtraData> ExtraDataRepository { get; }
         public IRepository<FileData> FileDataRepository { get; }
+        public IRepository<MedData> MedDataRepository { get; }
         public IRepository<Appointment> AppointmentRepository { get; }
 
 
@@ -28,7 +29,7 @@ namespace MedContactDataRepositories
                IRepository<Family> familyRepository, IRepository<Speciality> specialityRepository,
                IRepository<AcsData> acsDataRepository, IRepository<ExtraData> extraDataRepository,
                IRepository<FileData> fileDataRepository, IRepository<Appointment> appointmentRepository,
-               IRepository<CustomerData> customerDataRepository)
+               IRepository<CustomerData> customerDataRepository, IRepository<MedData> medDataRepository)
         {
             _database = database;
             UserRepository = userRepository;
@@ -42,6 +43,7 @@ namespace MedContactDataRepositories
             FileDataRepository = fileDataRepository;
             AppointmentRepository = appointmentRepository;
             CustomerDataRepository = customerDataRepository;
+            MedDataRepository = medDataRepository;
         }
 
         public async Task<int> Commit()

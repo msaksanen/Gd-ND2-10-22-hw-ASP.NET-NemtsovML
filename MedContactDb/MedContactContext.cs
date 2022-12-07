@@ -16,7 +16,8 @@ namespace MedContactDb
 
         public DbSet<FileData>? FileDatas { get; set; }
         public DbSet<MedData>? MedData { get; set; }
-        public DbSet<Recommendation>? Recommendations { get; set; }
+
+        //public DbSet<Recommendation>? Recommendations { get; set; }
         public DbSet<Speciality>? Specialities { get; set; }
         public DbSet<Appointment>? Appointments { get; set; }
         public DbSet<DayTimeTable>? DayTimeTables { get; set; }

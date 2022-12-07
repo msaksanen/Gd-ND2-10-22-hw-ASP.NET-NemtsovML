@@ -14,5 +14,7 @@ namespace MedContactDb.Entities
         public string? Path { get; set; }
         public Guid? UserId { get; set; }
         public User? User { get; set; }
+        public Guid? MedDataId { get; set; }
+        public MedData? MedData { get; set; }
     }
 }

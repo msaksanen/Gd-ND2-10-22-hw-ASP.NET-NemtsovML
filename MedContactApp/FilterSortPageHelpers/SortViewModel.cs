@@ -9,6 +9,9 @@ namespace MedContactApp.FilterSortPageHelpers
         public SortState SurnameSort { get; }
         public SortState BirthDateSort { get; }    
         public SortState DateSort { get; }
+        public SortState DepartSort { get; }
+        public SortState TypeSort { get; }
+        public SortState TextSort { get; }
         public SortState LastLoginSort { get; }
         public SortState IsFullBlockedSort { get; }
         public SortState IsFamilyDependentSort { get; }
@@ -36,6 +39,9 @@ namespace MedContactApp.FilterSortPageHelpers
             SpecialitySort = SortState.SpecialityAsc;
             IsFamilyDependentSort = SortState.IsFamilyDependentAsc;
             IsOnlineSort = SortState.IsOnlineAsc;
+            DepartSort = SortState.DepartAsc;
+            TypeSort = SortState.TypeAsc;
+            TextSort = SortState.TextAsc;
 
             PrevState = sortOrder;
 
@@ -45,7 +51,8 @@ namespace MedContactApp.FilterSortPageHelpers
                 || sortOrder == SortState.SurnameDesc || sortOrder == SortState.DateDesc || sortOrder==SortState.LastLoginDesc ||
                 sortOrder == SortState.GenderDesc || sortOrder == SortState.IsOnlineDesc || sortOrder == SortState.IsFamilyDependentDesc ||
                 sortOrder == SortState.IsFullBlockedDesc || sortOrder ==SortState.IsBlockedDesc || sortOrder== SortState.IsMarkedDesc
-                || sortOrder==SortState.SpecialityDesc)
+                || sortOrder==SortState.SpecialityDesc || sortOrder==SortState.DepartDesc || sortOrder == SortState.TextDesc || 
+                sortOrder == SortState.TypeDesc)
             {
                 Up = false;
             }
@@ -127,6 +134,24 @@ namespace MedContactApp.FilterSortPageHelpers
                     break;
                 case SortState.SpecialityDesc:
                     Current = SpecialitySort = SortState.SpecialityAsc;
+                    break;
+                case SortState.DepartAsc:
+                    Current = DepartSort = SortState.DepartDesc;
+                    break;
+                case SortState.DepartDesc:
+                    Current = DepartSort = SortState.DepartAsc;
+                    break;
+                case SortState.TextAsc:
+                    Current = TextSort = SortState.TextDesc;
+                    break;
+                case SortState.TextDesc:
+                    Current = TextSort = SortState.TextAsc;
+                    break;
+                case SortState.TypeAsc:
+                    Current = TypeSort = SortState.TypeDesc;
+                    break;
+                case SortState.TypeDesc:
+                    Current = TypeSort = SortState.TypeAsc;
                     break;
                 default:
                     Current = EmailSort = SortState.EmailDesc;

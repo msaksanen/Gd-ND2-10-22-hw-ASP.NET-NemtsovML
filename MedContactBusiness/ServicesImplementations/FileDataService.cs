@@ -79,5 +79,14 @@ namespace MedContactBusiness.ServicesImplementations
         
             return result;
         }
+
+        public async Task<List<FileDataDto>?> GetFileDataListByMedDataIdAsync(Guid medDataId)
+        {
+            var fileDataList = await _unitOfWork.FileDataRepository.Get()
+                                     .Where(f => f.MedDataId.Equals(medDataId))
+                                     .Select(f => _mapper.Map<FileDataDto>(f))
+                                     .ToListAsync();
+            return fileDataList;
+        }
     }
 }

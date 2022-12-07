@@ -15,7 +15,12 @@ namespace MedContactCore.DataTransferObjects
         public string? Type { get; set; }
         public string? ShortSummary { get; set; }
         public string? TextData { get; set; }
-        public string? FilePath { get; set; }
+
+        //public string? FilePath { get; set; }
+        public List<FileDataDto>? FileDatas { get; set; }
         public Guid? CustomerDataId { get; set; }
+        public CustomerDataDto? CustomerData { get; set; }
+        public Guid? DoctorDataId { get; set; }
+        public DoctorDataDto? DoctorData{ get; set; }
     }
 }

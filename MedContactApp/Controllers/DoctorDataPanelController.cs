@@ -35,11 +35,12 @@ namespace MedContactApp.Controllers
         private readonly ISpecialityService _specialityService;
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly IFileDataService _fileDataService;
+        private readonly FileValidation _fileValidation;
 
         public DoctorDataPanelController(IUserService userService,
              IMapper mapper, IRoleService roleService, IDoctorDataService doctorDataService,
              ISpecialityService specialityService, IWebHostEnvironment appEnvironment,
-             IFileDataService fileDataService, ModelUserBuilder modelUserBuilder)
+             IFileDataService fileDataService, ModelUserBuilder modelUserBuilder, FileValidation fileValidation)
         {
             _userService = userService;
             _mapper = mapper;
@@ -48,7 +49,8 @@ namespace MedContactApp.Controllers
             _specialityService = specialityService;
             _appEnvironment = appEnvironment;
             _fileDataService = fileDataService;
-            _modelUserBuilder = modelUserBuilder;   
+            _modelUserBuilder = modelUserBuilder;
+            _fileValidation = fileValidation;
         }
 
 
@@ -203,41 +205,51 @@ namespace MedContactApp.Controllers
                     {
                         result = await _roleService.AddRoleByNameToUser(UId, "Applicant");
 
-                        List<FileDataDto> list = new();
-                        if (result > 0)
-                            model.SystemInfo = "<b>You have been added to applicants<br/>";
-                        else
-                            model.SystemInfo = "<b>You have been added to applicants before<br/>";
-
-                        foreach (var uploadedFile in model.Uploads)
+                        var resSize = _fileValidation.FileSizeValidation(model.Uploads);
+                        var resExt = _fileValidation.FileExtValidation(model.Uploads);
+                        if (resSize.IntResult == 1 && resExt.IntResult == 1)
                         {
-                            string ext = Path.GetExtension(uploadedFile.FileName);
-                            string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
-                            string path = "/files/cv/" + name;
-                            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                            List<FileDataDto> list = new();
+                            if (result > 0)
+                                model.SystemInfo = "<b>You have been added to applicants<br/>";
+                            else
+                                model.SystemInfo = "<b>You have been added to applicants before<br/>";
+
+                            foreach (var uploadedFile in model.Uploads)
                             {
-                                await uploadedFile.CopyToAsync(fileStream);
+                                string ext = Path.GetExtension(uploadedFile.FileName);
+                                string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
+                                string path = "/files/cv/" + name;
+                                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                                {
+                                    await uploadedFile.CopyToAsync(fileStream);
+                                }
+                                FileDataDto file = new FileDataDto
+                                {
+                                    Id = Guid.NewGuid(),
+                                    UserId = UId,
+                                    Name = uploadedFile.FileName,
+                                    Path = path,
+                                    Category = "Applicant"
+                                };
+                                list.Add(file);
                             }
-                            FileDataDto file = new FileDataDto
-                            {
-                                Id = Guid.NewGuid(),
-                                UserId = UId,
-                                Name = uploadedFile.FileName,
-                                Path = path,
-                                Category = "Applicant"
-                            };
-                            list.Add(file);
+                            var fileResult = await _fileDataService.AddListToFileData(list);
+
+                            if (fileResult > 1)
+                                model.SystemInfo = model.SystemInfo + $"{fileResult} files have been uploaded</b>";
+                            else if (fileResult == 1)
+                                model.SystemInfo = model.SystemInfo + $"1 file has been uploaded</b>";
+                            else
+                                model.SystemInfo = model.SystemInfo + $"No files have been uploaded</b>";
+
+                            return View(model);
                         }
-                        var fileResult = await _fileDataService.AddListToFileData(list);
-
-                        if (fileResult > 1)
-                            model.SystemInfo = model.SystemInfo + $"{fileResult} files were uploaded</b>";
-                        else if (fileResult == 1)
-                            model.SystemInfo = model.SystemInfo + $"1 file was uploaded</b>";
                         else
-                            model.SystemInfo = model.SystemInfo + $"No files were uploaded</b>";
-
-                        return View(model);
+                        {
+                            model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
+                            return View(model);
+                        }
                     }
                     model.SystemInfo = "<b>You have entered incorrect password</b>";
                     return View(model);

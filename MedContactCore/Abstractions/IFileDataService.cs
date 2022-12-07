@@ -13,5 +13,6 @@ namespace MedContactCore.Abstractions
         Task<int> AddListToFileData(List<FileDataDto> list);
         Task<List<FileDataDto>?> FileDataTolistByUserId(Guid id);
         Task<int> RemoveFileDataWithFileById(Guid id, string webRootPath);
+        Task<List<FileDataDto>?> GetFileDataListByMedDataIdAsync(Guid medDataId);
     }
 }
