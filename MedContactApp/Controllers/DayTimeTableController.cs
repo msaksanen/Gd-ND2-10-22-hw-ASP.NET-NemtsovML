@@ -37,7 +37,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Doctor", Policy = "FullBlocked")]
-        public async Task<IActionResult> SelelctSpec()
+        public async Task<IActionResult> SelelctSpec(int fl=1)
         {
            try
            {
@@ -74,6 +74,8 @@ namespace MedContactApp.Controllers
                 {
                     model.DoctorInfos = dDataList;
                 }
+                if (fl == 2)
+                    model.Flag = 2;
 
                 return View(model);
             }

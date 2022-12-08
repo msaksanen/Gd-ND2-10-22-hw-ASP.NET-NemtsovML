@@ -13,9 +13,11 @@ namespace MedContactApp.Models
         public SortViewModel SortViewModel { get; }
         public string ProcessOptions { get; } = string.Empty;
         public string SysInfo { get; } = string.Empty;
-        public Guid UserId { get; } = Guid.Empty;
+        public string Reflink { get; } = string.Empty;
+        public string DoctId { get; set; } = string.Empty;
+        public UserDto User { get; }
 
-        public MedDataIndexViewModel(Guid userId, string sysinfo, IEnumerable<MedDataInfo>? medDatas,
+        public MedDataIndexViewModel(UserDto user, string sysinfo, string link, IEnumerable<MedDataInfo>? medDatas,
             string processOptions,PageViewModel pageViewModel,
             FilterMedDataViewModel filterViewModel, SortViewModel sortViewModel)
         {
@@ -24,8 +26,9 @@ namespace MedContactApp.Models
             PageViewModel = pageViewModel;
             FilterViewModel = filterViewModel;
             SortViewModel = sortViewModel;
-            UserId = userId;
+            User = user;
             SysInfo = sysinfo;
+            Reflink = link;
         }
     }
 }

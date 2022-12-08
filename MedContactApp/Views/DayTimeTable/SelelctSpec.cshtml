@@ -6,8 +6,15 @@
 }
 
 <h1>Selelct Specialities</h1>
+@if(Model.Flag==2)
+{
+    <h6>Select speciality in order to view patients' medical data</h6>
+}
+else
+{
+    <h6>Select speciality in order to view/modify corresponding daytimetable</h6>
+}
 
-<h6>Select speciality in order to view/modify corresponding daytimetable</h6>
 
  @if (Model.SystemInfo != null)
     {
@@ -34,7 +41,17 @@
                                     <b>Speciality Id: @item.SpecialityId</b>
                                 </td>          
                                 <td>
-                                    <i class="bi bi-check2-circle"></i><a href="/daytimetable/timetabledoctindex/?dataid=@item.DoctorDataId&reflink=/daytimetable/selelctspec/"><i>@item.Speciality</i></a>
+                                    @if(Model.Flag==2)
+                                    {
+                                        <i class="bi bi-check2-circle"></i>
+                                        <a href="/appointment/patientviewindex/?dataid=@item.DoctorDataId&reflink=/daytimetable/selelctspec/"><i>@item.Speciality</i></a>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check2-circle"></i>
+                                        <a href="/daytimetable/timetabledoctindex/?dataid=@item.DoctorDataId&reflink=/daytimetable/selelctspec/"><i>@item.Speciality</i></a>
+                                    }
+                                    
                                 </td>
                             </tr>
                         }

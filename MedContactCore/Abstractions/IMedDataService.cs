@@ -14,8 +14,7 @@ namespace MedContactCore.Abstractions
         Task<int> AddMedDataInDbAsync(MedDataDto? dto);
         Task<MedDataDto?> GetMedDataByIdAsync(Guid id);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
-        //Task<int> AddListToFileData(List<FileDataDto> list);
-        //Task<List<FileDataDto>?> FileDataTolistByUserId(Guid id);
-        //Task<int> RemoveFileDataWithFileById(Guid id, string webRootPath);
+        Task<int> RemoveMedDataById(Guid id);
+       
     }
 }

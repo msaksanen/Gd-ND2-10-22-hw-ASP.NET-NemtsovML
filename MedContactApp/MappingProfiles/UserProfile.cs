@@ -80,10 +80,14 @@ namespace MedContactApp.MappingProfiles
             CreateMap<(UserDto, MedDataDto, List<FileDataDto>), UserMedDataModel>()
              .ForMember(m => m.UserId,
               opt => opt.MapFrom(s => s.Item1.Id))
+             .ForMember(m => m.FamilyId,
+              opt => opt.MapFrom(s => s.Item1.FamilyId))
              .ForMember(m => m.MedDataId,
               opt => opt.MapFrom(s => s.Item2.Id))
              .ForMember(m => m.CustomerDataId,
               opt => opt.MapFrom(s => s.Item1.CustomerDataId))
+             .ForMember(m => m.DoctorDataId,
+              opt => opt.MapFrom(s => s.Item2.DoctorDataId))
              .ForMember(m => m.Name,
               opt => opt.MapFrom(s => s.Item1.Name))
              .ForMember(m => m.Surname,

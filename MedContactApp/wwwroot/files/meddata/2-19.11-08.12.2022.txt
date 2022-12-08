@@ -1,0 +1,11 @@
+{
+  "email": "will@gmail.com",
+  "password": "12345",
+  "phoneNumber": "3344566",
+  "name": "William",
+  "surname": "Doe",
+  "midName": "Alan",
+  "birthDate": "2000-11-25",
+  "gender": "male",
+  "address": "Wide str 22"
+}

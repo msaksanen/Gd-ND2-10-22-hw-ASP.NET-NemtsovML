@@ -21,6 +21,7 @@ using System.Data;
 using System.Drawing;
 using MedContactApp.FilterSortPageHelpers;
 using System.Collections.Generic;
+using MedContactBusiness.ServicesImplementations;
 
 namespace MedContactApp.Controllers
 {
@@ -37,12 +38,14 @@ namespace MedContactApp.Controllers
         private readonly ICustomerDataService _customerDataService;
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly FileValidation _fileValidation;
+        private readonly IDoctorDataService _doctorDataService;
         private int _pageSize = 7;
 
         public MedDataController(IUserService userService, IConfiguration configuration,
             IMapper mapper, ModelUserBuilder modelBuilder, IMedDataService medDataService,
             IFileDataService fileDataService, IFamilyService familyService, MedDataSortFilter medSortFilter, 
-            ICustomerDataService customerDataService, IWebHostEnvironment appEnvironment, FileValidation fileValidation)
+            ICustomerDataService customerDataService, IWebHostEnvironment appEnvironment, FileValidation fileValidation, 
+            IDoctorDataService doctorDataService)
         {
             _userService = userService;
             _mapper = mapper;
@@ -53,14 +56,15 @@ namespace MedContactApp.Controllers
             _medDataService = medDataService;
             _fileDataService = fileDataService;
             _customerDataService = customerDataService;
-            _appEnvironment = appEnvironment;   
-            _fileValidation = fileValidation;   
-        }
+            _appEnvironment = appEnvironment;
+            _fileValidation = fileValidation;
+            _doctorDataService = doctorDataService;
+            }
 
 
         [HttpGet]
         [Authorize(Policy = "FullBlocked")]
-        public async Task<IActionResult> UserMedData(string id,string type, string speciality, string name, string date, 
+        public async Task<IActionResult> UserMedData(string id, string doctid,string type, string speciality, string name, string date, 
             string depart, string text, string sysinfo, int page = 1, SortState sortOrder = SortState.DateDesc)
         {
             Guid uId = Guid.Empty;
@@ -79,9 +83,11 @@ namespace MedContactApp.Controllers
                     else
                         return new BadRequestObjectResult("User Id is incorrect");
 
+               
+
                 var usr = await _userService.GetUserByIdAsync(uId);
                 if (usr==null)
-                       return NotFound("User is not found");       
+                       return NotFound("User is not found");     
 
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
@@ -106,21 +112,26 @@ namespace MedContactApp.Controllers
                                           ((x, x?.DoctorData, x?.CustomerData ?? new CustomerDataDto(), usr)));
 
                 string pageRoute = @"/meddata/usermeddata?page=";
-                string processOptions = $"&id={id}&type={type}&speciality={speciality}&name={name}&date={date}&depart={depart}&text={text}&sortorder={sortOrder}";
+                string processOptions = $"&id={id}&doctid={doctid}&type={type}&speciality={speciality}&name={name}&date={date}&depart={depart}&text={text}&sortorder={sortOrder}";
 
                 string link = Request.Path.Value + Request.QueryString.Value;
-                if (string.IsNullOrEmpty(Request.QueryString.Value))
-                    link +=@$"/?id={usr.Id}";
-                else
-                    link += @$"&id={usr.Id}";
+                //if (string.IsNullOrEmpty(Request.QueryString.Value))
+                //    link +=@$"/?id={usr.Id}&doctid={doctid}";
+                //else
+                //    link += @$"&id={usr.Id}&doctid={doctid}";
                 link = link.Replace("&", "*");
                 ViewData["Reflink"] = link;
                 MedDataIndexViewModel viewModel = new(
-                    uId, sysinfo, datainfo, processOptions,
+                    usr, sysinfo, link, datainfo, processOptions,
                     new PageViewModel(count, page, pageSize, pageRoute),
                     new FilterMedDataViewModel(name, type, speciality, depart, text, date),
                     new SortViewModel(sortOrder)
                 );
+                if (!string.IsNullOrEmpty(doctid) && Guid.TryParse(doctid, out Guid dId))
+                {
+                    viewModel.DoctId = doctid;         
+                }
+                  
                 return View(viewModel);
 
             }
@@ -134,31 +145,43 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Policy = "FullBlocked")]
-        public async Task<IActionResult> AddOrEditMedData(string id, string mdataid, string? reflink = "")
+        public async Task<IActionResult> AddOrEditMedData(string id, string mdataid, string doctid, string? reflink = "")
         {
             Guid uId = Guid.Empty;
             int flag = 0;
             if (!string.IsNullOrEmpty(reflink))
                 reflink = reflink.Replace("*", "&");
             try
-            {  if (!string.IsNullOrEmpty(mdataid) && !string.IsNullOrEmpty(id))
-               {
-                    flag = 2;
+            {
+                //if (!string.IsNullOrEmpty(doctid) && Guid.TryParse(doctid, out Guid dId))
+                //    ViewData["DoctId"] = doctid;
+
+                if (!string.IsNullOrEmpty(mdataid) && !string.IsNullOrEmpty(id)) //model for edit
+                {
+                   
                     var model = await CreateUserMedDataModel(mdataid, id);
+                    
                     if (model.ErrorObject != null)
                         return (IActionResult)model.ErrorObject;
+                    model.Reflink = reflink;
+                    model.Flag = 2;
+
                     if (model.MedDataType.Any())
                     {
                         var item = model.MedDataType.FirstOrDefault(i => i.Name != null && i.Name.Equals(model.Type, StringComparison.OrdinalIgnoreCase));
                         if (item != null)
                             item.IsSelected = true;
                     }
-                    model.Reflink = reflink;
-                    model.Flag = flag;
-                    return View(model);
+               
+                    if (await UserAccessCheck(model)>0)
+                             return View(model);
+                    else 
+                        return RedirectToAction("UserMedData", "MedData",
+                               new { id, doctid, sysinfo = "<b>You have no access to modify foreign data.</b>" });
+
                 }
 
-                if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out Guid gId))
+                if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out Guid gId)) //meddata create
                     uId = gId;
                 else
                     return new BadRequestObjectResult("User Id is incorrect");
@@ -167,16 +190,10 @@ namespace MedContactApp.Controllers
                 if (usr == null)
                     return NotFound("User is not found");
 
-                if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"meddata/usermeddata", StringComparison.OrdinalIgnoreCase) == true))
+                if (!string.IsNullOrEmpty(reflink))
                     flag = 1;
                 if (string.IsNullOrEmpty(reflink))
                     flag = 3;
-                //if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"meddata/doctormeddata", StringComparison.OrdinalIgnoreCase) == true) &&
-                //    User.IsInRole("Doctor"))
-                //    flag = 2;
-                if (flag == 0)
-                    return new BadRequestObjectResult("Incorrect route");
-                
 
                 if (flag == 1 || flag==3)
                 {
@@ -185,14 +202,19 @@ namespace MedContactApp.Controllers
                         return NotFound("Customer data is not found/ not created");
 
                     var model = _mapper.Map<UserMedDataModel>(usr);
+                    if (!string.IsNullOrEmpty(doctid) && Guid.TryParse(doctid, out Guid doctId))
+                    {
+                       if(await _doctorDataService.IsCorrectDoctorId(doctId))
+                          model.DoctorDataId = doctId;
+                    }
+
                     model.CustomerDataId = custData.Id;
                     model.Reflink = reflink;
                     model.Flag = flag;
                     return View(model); 
                 }
-              
-                    return new BadRequestObjectResult("Not Implemented");
-                
+
+                return new BadRequestObjectResult("Incorrect route");
             }
              catch (Exception e)
             {
@@ -223,6 +245,7 @@ namespace MedContactApp.Controllers
                 {
                     Id = Guid.NewGuid(),
                     CustomerDataId = custData.Id,
+                    DoctorDataId = model.DoctorDataId,
                     Department = model.Department,
                     InputDate = DateTime.Now,
                     TextData = model.TextData,
@@ -239,7 +262,7 @@ namespace MedContactApp.Controllers
                         medData.Type = item.Name;
                 }
 
-                if(model.MedDataId!=null)
+                if(model.MedDataId!=null) //data modification
                 {
                     var sourceDto = await _medDataService.GetMedDataByIdAsync((Guid)model.MedDataId);
                     if (sourceDto == null)
@@ -250,21 +273,21 @@ namespace MedContactApp.Controllers
                     var patchList = patchMaker.Make(medData, sourceDto);
                     var resPatch = await _medDataService.PatchAsync(sourceDto.Id, patchList);
                     if (resPatch > 0)
-                        model.SystemInfo += "<b>MedData has been modified.</b>";
+                        model.SystemInfo += "<b>MedData has been modified. </b>";
                     else
-                        model.SystemInfo += "<b>MedData has not been modified.</b>";
+                        model.SystemInfo += "<b>MedData has not been modified. </b>";
                 }
                 else
                 {
                     var res = await _medDataService.AddMedDataInDbAsync(medData);
                     if (res > 0)
-                        model.SystemInfo += "<b>MedData has been saved.</b>";
+                        model.SystemInfo += "<b>MedData has been saved. </b>";
                     else
-                        model.SystemInfo += "<b>MedData has not been saved.</b>";
+                        model.SystemInfo += "<b>MedData has not been saved. </b>";
                 }
 
                 if (model.Uploads == null || model.Uploads.Count == 0)
-                    model.SystemInfo += "<br/><b>You have not uploaded files</b>";
+                    model.SystemInfo += "<b> You have not uploaded files</b>";
                 else
                 {
                     var resSize = _fileValidation.FileSizeValidation(model.Uploads);
@@ -305,7 +328,7 @@ namespace MedContactApp.Controllers
                         model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
                 }
 
-                return RedirectToAction("UserMedData", "MedData", new { sysinfo = model.SystemInfo });
+                return RedirectToAction("UserMedData", "MedData", new { id = usr.Id, doctid = model.DoctorDataId, sysinfo = model.SystemInfo });
             }
             catch (Exception e)
             {
@@ -317,7 +340,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Policy = "FullBlocked")]
-        public async Task<IActionResult> UserMedDataDetails(string mdataid, string id, string filedata, string reflink="")
+        public async Task<IActionResult> UserMedDataDetails(string mdataid, string id, string doctid, string filedata, string reflink="")
         {
 
             string sysInfo = string.Empty;  
@@ -328,6 +351,8 @@ namespace MedContactApp.Controllers
 
                     return (IActionResult)model.ErrorObject;
 
+                if (!string.IsNullOrEmpty(doctid) && Guid.TryParse(doctid, out Guid dId))
+                    ViewData["DoctId"] = doctid;
 
                 if (!string.IsNullOrEmpty(filedata) && Guid.TryParse(filedata, out Guid fileId) &&
                     model.fileDatas != null && model.fileDatas.Any(f => f.Id.Equals(fileId)))
@@ -358,7 +383,21 @@ namespace MedContactApp.Controllers
                     reflink = reflink.Replace("*", "&");
                 model.Reflink = reflink;
                 model.SystemInfo = sysInfo;
-                return View(model);
+
+                var res = await UserAccessCheck(model);
+
+                if(res==2)   // access for modification
+                    return View(model);
+                
+                if (res==1)
+                {
+                    model.Flag = 25; // access for removal and modification
+                    return View(model);
+                }
+
+
+                model.Flag = 20;
+                    return View(model);
             }
            
              catch (Exception e)
@@ -368,6 +407,72 @@ namespace MedContactApp.Controllers
             }
         }
 
+
+        
+        [HttpGet]
+        [Authorize(Policy = "FullBlocked")]
+        public async Task<IActionResult> DeleteMedData(string mdataid, string id, string doctid, string filedata, string reflink = "")
+        {
+            try
+            {
+                string sysInfo = string.Empty;
+                var model = await CreateUserMedDataModel(mdataid, id);
+                if (model.ErrorObject != null)
+                    return (IActionResult)model.ErrorObject;
+                var res = await UserAccessCheck(model);
+                if (res != 1)
+                {
+                    return RedirectToAction("UserMedData", "MedData",
+                               new { id, doctid, sysinfo = "<b>You have no access to delete foreign data.</b>" });
+                }
+
+                int delRes = 0;
+                if (model.fileDatas != null && model.fileDatas.Any())
+                {
+                    foreach (var fileData in model.fileDatas)
+                    {
+                        var tempres = await _fileDataService.RemoveFileDataWithFileById(fileData.Id, _appEnvironment.WebRootPath);
+                        if (tempres > 0) delRes++;
+                    }
+                    sysInfo = $"<b>{delRes} files have been deleted. </b>";
+                }
+                var delMed = await _medDataService.RemoveMedDataById((Guid)model.MedDataId!);
+                if (delMed > 0)
+                    sysInfo += $"<b>MedData has been deleted. </b>";
+                else
+                    sysInfo += $"<b>MedData has not been deleted.</b>";
+              
+                return RedirectToAction("UserMedData", "MedData", new { id, doctid, sysinfo=sysInfo});
+
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
+        }
+
+        private async Task<int> UserAccessCheck(UserMedDataModel model)
+        {
+            if (model.DoctorDataId == null && User.FindFirst("MUId")?.Value != null && Guid.TryParse(User.FindFirst("MUId")?.Value, out Guid uId))
+            {
+                var mainUsr = await _userService.GetUserByIdAsync(uId);
+                if ((mainUsr != null && mainUsr.Id.Equals(model.UserId)) ||
+                    (mainUsr != null && mainUsr.FamilyId != null && model.FamilyId != null && mainUsr.FamilyId.Equals(model.FamilyId)))
+                {
+                    return 1;
+                }
+            }
+
+            if (model.DoctorDataId != null && User.IsInRole("Doctor") && User.FindFirst("MUId")?.Value != null &&
+                                    Guid.TryParse(User.FindFirst("MUId")?.Value, out Guid dId))
+            {
+                var doclist = await _doctorDataService.GetDoctorInfoByUserId(dId);
+                if (doclist != null && doclist.Any(d => d.DoctorDataId.Equals(model.DoctorDataId))) // meddata of current doctor
+                    return 2;
+            }
+            return 0;
+        }
         private async Task<UserMedDataModel> CreateUserMedDataModel (string mdataid, string id)
         {
             UserMedDataModel model = new();

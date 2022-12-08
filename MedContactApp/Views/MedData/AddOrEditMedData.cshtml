@@ -51,6 +51,7 @@
             <div class="form-group">     
                 <input asp-for="UserId" type="hidden" class="form-control" />
                 <input asp-for="MedDataId" type="hidden" class="form-control" />
+                <input asp-for="DoctorDataId" type="hidden" class="form-control" />
                 <input asp-for="Reflink" type="hidden" class="form-control" />
             </div>
             <div class="form-group">
@@ -98,7 +99,10 @@
                                         <a href="@item.Path"><i>@item.Name</i></a>
                                     </td>
                                     <td>
-                                        <i class="bi bi-x-circle"></i><a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+                                        
+                                            <i class="bi bi-x-circle"></i>
+                                            <a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@Model.DoctorDataId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+
                                     </td>
                                 </tr>
                             }
@@ -130,13 +134,13 @@
         @if(Model.Flag==3)
         {
             <div>
-            <a href="~/meddata/usermeddata/?id=@Model.UserId"><h6>&#5130 Back</h6></a>
+            <a href="~/meddata/usermeddata/?id=@Model.UserId&doctid=@Model.DoctorDataId"><h6>&#5130 Back</h6></a>
             </div>
         }
          @if(Model.Flag==2)
         {
             <div>
-            <a href="~/meddata/usermeddatadetails/?mdataid=@Model?.MedDataId&id=@Model?.UserId&reflink=@Model?.Reflink"><h6>&#5130 Back to details</h6></a>
+            <a href="~/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@Model.DoctorDataId&reflink=@Model?.Reflink"><h6>&#5130 Back to details</h6></a>
             </div>
         }
    

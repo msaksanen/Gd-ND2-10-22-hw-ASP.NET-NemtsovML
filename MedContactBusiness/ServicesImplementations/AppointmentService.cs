@@ -8,6 +8,7 @@ using MedContactDb.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq.Expressions;
 using System.Security.Principal;
 
 namespace MedContactBusiness.ServicesImplementations
@@ -36,6 +37,25 @@ namespace MedContactBusiness.ServicesImplementations
                                         .Where(a => a.DayTimeTableId != null && a.DayTimeTableId.Equals(dttId))
                                         .Select(a => _mapper.Map<AppointmentDto>(a))
                                         .ToListAsync();
+            return list;
+        }
+
+        public async Task<List<AppointmentDto>?> GetPatientsByDoctorDataId(Guid dataId)
+        {
+            var flist = await  _unitOfWork.AppointmentRepository.Get()
+                                              .Where(d => d.DayTimeTable != null &&
+                                                     d.DayTimeTable.DoctorDataId != null &&
+                                                     d.DayTimeTable.DoctorDataId.Equals(dataId))
+                                              .Include(a => a.CustomerData)
+                                              .ThenInclude(c => c!.User)
+                                              .ToListAsync();
+
+            List<AppointmentDto>? list = flist.Select(a => _mapper.Map<AppointmentDto>(a))
+                                              .OrderBy(a => a.CustomerData!.UserId)
+                                              .ThenByDescending(a=>a.StartTime)
+                                              .ToList();
+                                         
+         
             return list;
         }
 

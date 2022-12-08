@@ -42,6 +42,14 @@ namespace MedContactBusiness.ServicesImplementations
             return null;
         }
 
+        public async Task<bool> IsCorrectDoctorId (Guid doctorDataId)
+        {
+            var dData = await _unitOfWork.DoctorDataRepository.GetByIdAsync(doctorDataId);
+            if (dData != null)  
+                return true;
+            return false;
+        }
+
         public async Task<List<DoctorInfo>?> GetDoctorInfoByUserId(Guid? userId)
         {
             var dDataList = await _unitOfWork.DoctorDataRepository

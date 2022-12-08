@@ -1,0 +1,129 @@
+﻿@using MedContactApp.FilterSortHelpers;
+@addTagHelper *, MedContactApp.FilterSortPageHelpers
+@using MedContactApp.Helpers;
+@addTagHelper *, MedContactApp
+
+
+@model PatientIndexViewModel
+
+@{
+    ViewData["Title"] = "My patients";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname (@Model.DoctorInfo.Speciality)</h4>
+<hr />
+
+<Table class="delivery">
+<tbody>
+  <tr>
+     <form action="~/appointment/patientviewindex" method="get">
+                
+     <td style="border:none">
+                <label>Customer Name/Surname: </label>
+                <input type="hidden" name="dataid" value=".@Model.DoctorInfo.DoctorDataId" />
+                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
+     </td>
+    <td style="border:none">
+                <label>Customer BirthDate: </label>
+                <input name="date" type="date" value="@Model!.FilterViewModel.SelectedBirthDate"></>
+                <input type="submit" value="Filter" />
+    </td>
+    </form>
+ </tr>
+</tbody>
+</Table>
+
+<h6>@Model.SysInfo</h6>
+
+<Table class="delivery">  
+    <caption>Patients Table </caption>
+    <thead>
+    <tr>
+        <th>
+             <sort-header action="PatientViewIndex" up="@Model.SortViewModel.Up"
+              opt-url-dataid="@Model.DoctorInfo.DoctorDataId!"
+              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
+              current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Last Appointment Date</sort-header>
+ 
+        </th>
+        <th>
+              <sort-header action="PatientViewIndex" up="@Model.SortViewModel.Up"
+               opt-url-dataid="@Model.DoctorInfo.DoctorDataId!"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
+               current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
+     
+        </th>
+        <th>
+              <sort-header action="PatientViewIndex" up="@Model.SortViewModel.Up" 
+               opt-url-dataid="@Model.DoctorInfo.DoctorDataId!"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
+
+        </th>
+        <th>
+              <sort-header action="PatientViewIndex" up="@Model.SortViewModel.Up"
+               opt-url-dataid="@Model.DoctorInfo.DoctorDataId!"
+               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
+               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth date</sort-header>
+     
+        </th>
+        <th>
+           Details
+         </th>
+    </tr>
+    <thead>
+    <tbody>
+    
+        
+
+@if (Model.Appointments!= null && Model.Appointments.Any())
+{
+    foreach (var item in Model.Appointments)
+    {
+    <tr>
+
+    <td area-label="Appointment Date">
+        @item?.StartTime!.Value.ToShortDateString()
+    </td>
+    <td area-label="Names">
+        @item?.CustomerData?.User?.Name 
+        @item?.CustomerData?.User?.MidName
+    </td>
+    <td area-label="Surname">
+        @item?.CustomerData?.User?.Surname
+    </td>
+    <td area-label="Birth date">
+        @item?.CustomerData?.User?.BirthDate!.Value.ToShortDateString()
+    </td>
+    <td>
+            <span>
+                <a class="confirmation" style=" text-decoration: none"
+                 href="~/meddata/usermeddata/?id=@item?.CustomerData?.UserId&doctid=@Model.DoctorInfo.DoctorDataId">MedData</a>
+            </span>
+    </td>
+
+    </tr>
+    }
+}
+
+    </tbody>
+</Table>
+
+
+@section Footer
+{
+    <a href="~/DayTimeTable/SelelctSpec"><h6>&#5130 Back to speciality index</h6></a>
+   
+}
+
+@section CssStyles
+{
+    <style>
+       caption {
+          caption-side: top;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;}        
+    </style>
+}

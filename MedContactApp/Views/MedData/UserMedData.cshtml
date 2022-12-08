@@ -8,18 +8,34 @@
 
 @{
     ViewData["Title"] = "Medical Data"; 
+    ViewData["DoctId"] = @Model.DoctId;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<a href="~/meddata/addoreditmeddata/?id=@Model.UserId&reflink=@ViewData["Reflink"]">Add medical data</a>
 
- @if (!string.IsNullOrEmpty(Model.SysInfo))
-         {
-            <div>
-            @Html.Raw(@Model.SysInfo)        
-            </div>
-         }
 
+<div class="container">
+ <div class="row">
+  <div class="col-sm-9">
+            <h4>@Model.User.Name @Model.User.Surname (@Model.User.Email)</h4>
+     
+  </div>
+   <div class="col-sm-3 ">
+            <h4> <a class="justify-content-end" style=" text-decoration: none" href="~/meddata/addoreditmeddata/?id=@Model.User.Id&doctid=@Model.DoctId&reflink=@ViewData["Reflink"]">Add medical data <i class="bi bi-window-plus"></i></a></h4>
+   </div>
+</div>
+</div>
+<hr />
+@if (!string.IsNullOrEmpty(Model.SysInfo))
+{
+    <div>
+        @Html.Raw(@Model.SysInfo)
+    </div>
+}
+ 
+
+           
+   
 <Table class="delivery">
     <form method="get">
 <tbody>
@@ -28,6 +44,8 @@
                 <label>Name/Surname: </label>
         </td>
         <td style="border:none">
+                <input type="hidden" name="id" value="@Model.User.Id" />
+                <input type="hidden" name="doctid" value="@Model.DoctId" />
                 <input name="name" value="@Model!.FilterViewModel.SelectedName" />
         </td>
          <td style="border:none">
@@ -75,7 +93,8 @@
     <tr>
         <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
@@ -84,7 +103,8 @@
         </th>
         <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
@@ -93,7 +113,8 @@
         </th>
         <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)"
@@ -103,7 +124,8 @@
         </th>
         <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
@@ -112,7 +134,8 @@
         </th>
         <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
@@ -121,7 +144,8 @@
       
          <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
@@ -129,7 +153,8 @@
         </th>
          <th>
             <sort-header action="UserMedData" up="@Model.SortViewModel.Up"
-             opt-url-email="@(Model.FilterViewModel.SelectedDate)"
+             opt-url-id="@(Model.User.Id)" opt-url-doctid="(@Model.DoctId)"
+             opt-url-date="@(Model.FilterViewModel.SelectedDate)"
              opt-url-depart="@(Model.FilterViewModel.SelectedDepart)"
              opt-url-speciality="@(Model.FilterViewModel.SelectedSpec)" opt-url-type="@(Model.FilterViewModel.SelectedType)"
              opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-text="@(Model.FilterViewModel.SelectedText)" 
@@ -158,10 +183,15 @@
 
 @section Footer
 {
+    
+        <div>
+            <a asp-controller="Home" asp-action="Index"><h6>&#5130 Home</h6></a>
+        </div>
 
+    
     @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
- }
+}
 
 
 @section CssStyles

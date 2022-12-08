@@ -1,0 +1,26 @@
+System.InvalidOperationException
+  HResult=0x80131509
+  Message=The instance of entity type 'MedData' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+  Source=Microsoft.EntityFrameworkCore
+  StackTrace:
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.ThrowIdentityConflict(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry, Boolean updateDuplicate)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.StartTracking(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState oldState, EntityState newState, Boolean acceptChanges, Boolean modifyProperties)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.<SetEntityStateAsync>d__27.MoveNext()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityGraphAttacher.<PaintActionAsync>d__5.MoveNext()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityEntryGraphIterator.<TraverseGraphAsync>d__1`1.MoveNext()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityGraphAttacher.<AttachGraphAsync>d__3.MoveNext()
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.<AddAsync>d__19.MoveNext()
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at System.Runtime.CompilerServices.ValueTaskAwaiter`1.GetResult()
+   at MedContactDataRepositories.Repository`1.<AddAsync>d__8.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactDataRepositories\Repository.cs:line 61
+   at MedContactBusiness.ServicesImplementations.MedDataService.<AddMedDataInDbAsync>d__5.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactBusiness\ServicesImplementations\MedDataService.cs:line 38
+   at MedContactApp.Controllers.MedDataController.<AddMedData>d__15.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactApp\Controllers\MedDataController.cs:line 278
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+    MedContactDataRepositories.Repository<T>.AddAsync(T) in Repository.cs
+    MedContactBusiness.ServicesImplementations.MedDataService.AddMedDataInDbAsync(MedContactCore.DataTransferObjects.MedDataDto) in MedDataService.cs
+    MedContactApp.Controllers.MedDataController.AddMedData(MedContactApp.Models.UserMedDataModel) in MedDataController.cs

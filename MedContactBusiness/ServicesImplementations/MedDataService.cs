@@ -55,57 +55,18 @@ namespace MedContactBusiness.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        //public async Task<int> AddListToFileData(List<FileDataDto> list)
-        //{
-        //    List <FileData> entityList = new();
-        //    foreach (var item in list)
-        //        entityList.Add(_mapper.Map<FileData>(item));
+        public async Task<int> RemoveMedDataById(Guid id)
+        {
+            var result = 0;
+            var meddata = await _unitOfWork.MedDataRepository.GetByIdTrackAsync(id);
 
-        //    await _unitOfWork.FileDataRepository.AddRangeAsync(entityList);
-        //    var addingResult = await _unitOfWork.Commit();
-        //    return addingResult;
-        //}
+            if (meddata == null)
+                return result;
+            
+            _unitOfWork.MedDataRepository.Remove(meddata);
+            result = await _unitOfWork.Commit();
 
-        //public async Task<List<FileDataDto>?> FileDataTolistByUserId(Guid id)
-        //{
-        //  var list =await  _unitOfWork.FileDataRepository.Get()
-        //                   .Where(x => x.UserId.Equals(id))
-        //                   .Select(x => _mapper.Map<FileDataDto>(x))
-        //                   .ToListAsync();
-
-        //  return list;
-        //}
-
-        //public async Task<int> RemoveFileDataWithFileById(Guid id, string webRootPath)
-        //{
-        //    var result = -2;
-        //    var filedata = await _unitOfWork.FileDataRepository.GetByIdTrackAsync(id);
-
-        //    if (filedata == null)
-        //        return result;
-
-        //    if (filedata.Path == null)
-        //    {
-        //         _unitOfWork.FileDataRepository.Remove(filedata);
-        //        result += await _unitOfWork.Commit();
-        //        return result;
-        //    }
-
-        //    string path = Path.Combine(webRootPath, filedata.Path!);
-
-        //    if (File.Exists(path))
-        //    {
-        //        File.Delete(path);
-        //        _unitOfWork.FileDataRepository.Remove(filedata);
-        //        result = 1 + await _unitOfWork.Commit();
-        //    }
-        //    else 
-        //    {
-        //        _unitOfWork.FileDataRepository.Remove(filedata);
-        //        result = await _unitOfWork.Commit();
-        //    }
-
-        //    return result;
-        //}
+            return result;
+        }
     }
 }

@@ -1,0 +1,21 @@
+System.InvalidCastException
+  HResult=0x80004002
+  Message=Unable to cast object of type 'System.Linq.OrderedEnumerable`2[MedContactCore.DataTransferObjects.AppointmentDto,System.Nullable`1[System.DateTime]]' to type 'System.Collections.Generic.List`1[MedContactCore.DataTransferObjects.AppointmentDto]'.
+  Source=MedContactApp
+  StackTrace:
+   at MedContactApp.Controllers.AppointmentController.<PatientViewIndex>d__14.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactApp\Controllers\AppointmentController.cs:line 376
+
+  This exception was originally thrown at this call stack:
+    MedContactApp.Controllers.AppointmentController.PatientViewIndex(string, string, string, string, MedContactApp.FilterSortHelpers.SortState) in AppointmentController.cs
+
+System.InvalidCastException
+  HResult=0x80004002
+  Message=Unable to cast object of type 'System.Linq.OrderedEnumerable`2[MedContactCore.DataTransferObjects.AppointmentDto,System.Nullable`1[System.DateTime]]' to type 'System.Collections.Generic.List`1[MedContactCore.DataTransferObjects.AppointmentDto]'.
+  Source=MedContactApp
+  StackTrace:
+   at MedContactApp.AdminPanelHelpers.AdminSortFilter.AppointmentCustomerSort(List`1 apms, SortState sortOrder) in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactApp\AdminPanelHelpers\AdminSortFilter.cs:line 210
+   at MedContactApp.Controllers.AppointmentController.<ViewIndex>d__13.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactApp\Controllers\AppointmentController.cs:line 313
+
+  This exception was originally thrown at this call stack:
+    MedContactApp.AdminPanelHelpers.AdminSortFilter.AppointmentCustomerSort(System.Collections.Generic.List<MedContactCore.DataTransferObjects.AppointmentDto>, MedContactApp.FilterSortHelpers.SortState) in AdminSortFilter.cs
+    MedContactApp.Controllers.AppointmentController.ViewIndex(string, string, string, string, MedContactApp.FilterSortHelpers.SortState) in AppointmentController.cs

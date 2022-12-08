@@ -326,5 +326,68 @@ namespace MedContactApp.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Doctor", Policy = "FullBlocked")]
+        public async Task<IActionResult> PatientViewIndex(string? dataid, string name, string birhtdate,
+           string sysInfo = "", SortState sortOrder = SortState.DateAsc)
+        {
+            try
+            {
+              if (dataid == null)
+                //return BadRequest();
+                return new BadRequestObjectResult("DoctorData Id is null");
+              var resId = Guid.TryParse(dataid, out Guid doctId);
+              if (!resId)
+                //return BadRequest();
+                return new BadRequestObjectResult("DoctorData Id is incorrect");
+              var doctorInfo = await _doctorDataService.GetDoctorInfoById(doctId);
+              if (doctorInfo == null)
+                //return NotFound();
+                return NotFound("Doctor info is not found");
+
+              var patList = await _appointmentService.GetPatientsByDoctorDataId(doctId);
+              if (patList == null || !patList.Any())
+                //return NotFound();
+                return NotFound("Patient list is not found");
+
+           
+                var id = patList[0]!.CustomerData!.UserId;
+                List<AppointmentDto> distinctLst = new();
+                foreach (var item in patList)
+                {
+                    if (item.CustomerData!=null && item.CustomerData.UserId == id)
+                        continue;
+                    else if(item.CustomerData != null)
+                    {
+                       distinctLst.Add(item);
+                      id = item.CustomerData.UserId;
+                    }  
+                }
+
+                var lst= distinctLst.AsEnumerable();
+
+                string link = Request.Path.Value + Request.QueryString.Value;
+                link = link.Replace("&", "*");
+                ViewData["Reflink"] = link;
+         
+           
+                if (patList != null && patList.Any())
+                {
+                    lst = _adminSortFilter.AppointmentCustomerFilter(lst, name, birhtdate);
+                    lst = _adminSortFilter.AppointmentCustomerSort(lst, sortOrder);
+                }
+
+                PatientIndexViewModel viewModel = new(lst, sysInfo, doctorInfo,
+                   new FilterAppointViewModel("", name, "", birhtdate),
+                   new SortViewModel(sortOrder));
+                return View(viewModel);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+                return BadRequest();
+            }
+        }
     }
 }
