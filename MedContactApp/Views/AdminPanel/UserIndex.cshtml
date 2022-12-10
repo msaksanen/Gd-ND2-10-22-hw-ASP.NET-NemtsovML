@@ -13,11 +13,22 @@
 
 
 
-<Table class="delivery">
-<tbody>
-  <tr>
-    <form method="get">
-                <td style="border:none">
+ <form method="get">
+    <div class="form-group">
+        <label for="adminmessage">@Model.FilterViewModel.MessageCaption</label>
+        <textarea class="form-control" name="msg" id="adminmessage" type="text" rows="1" maxlength="512">@Model.FilterViewModel.Message</textarea>
+    </div>
+    @if (!string.IsNullOrEmpty(@Model.FilterViewModel.SysInfo))
+    {
+        <div class="form-group">
+            <label for="sysinfo"><b>@Model.FilterViewModel.SysInfo</b></label>
+        </div>
+    }
+    <Table class="delivery">
+    <tbody>
+    <tr>
+
+            <td style="border:none">
                     @if (@Model.GrpCurrent == GroupState.FamilyGroupOn)
                     {
                         @Html.Raw(@Model.GroupIcon)
@@ -32,25 +43,27 @@
                     Group by families </a>
                   </td>     
                   
-     <td style="border:none">
+            <td style="border:none">
                 <label>Email: </label>
                 <input name="email" value="@Model!.FilterViewModel.SelectedEmail" />
-     </td>
-     <td style="border:none">
+            </td>
+            <td style="border:none">
                 <label>Name/Surname: </label>
                 <input name="name" value="@Model!.FilterViewModel.SelectedName" />
-     </td>
-     <td style="border:none">
+            </td>
+            <td style="border:none">
                 <label>Role: </label>
                 <select name="role" asp-items="Model.FilterViewModel.Roles"></select>
+            </td>
+            <td style="border:none">
+                 <button type="submit" class="btn btn-primary" value="Filter">Submit</button>
+                @*<input type="submit" value="Filter"/>*@
+            </td>
+    </tr>
+    </tbody>
+    </Table>
+ </form>
 
-                <input type="submit" value="Filter" />
-
-    </td>
-    </form>
- </tr>
-</tbody>
-</Table>
 
 <Table class="delivery">  
     <caption>Customers Info Table</caption>

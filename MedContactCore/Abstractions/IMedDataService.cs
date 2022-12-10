@@ -15,6 +15,8 @@ namespace MedContactCore.Abstractions
         Task<MedDataDto?> GetMedDataByIdAsync(Guid id);
         Task<int> PatchAsync(Guid id, List<PatchModel> patchList);
         Task<int> RemoveMedDataById(Guid id);
-       
+        Task<int> AddRangeAsync(IEnumerable<MedDataDto> medDatas);
+
+
     }
 }

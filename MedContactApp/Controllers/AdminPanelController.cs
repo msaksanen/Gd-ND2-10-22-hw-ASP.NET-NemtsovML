@@ -8,11 +8,13 @@ using MedContactCore.DataTransferObjects;
 using MedContactDb.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 using System.Data;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MedContactApp.Controllers
 {
@@ -24,12 +26,14 @@ namespace MedContactApp.Controllers
         private readonly IConfiguration _configuration;
         private readonly AdminModelBuilder _adminModelBuilder;
         private readonly AdminSortFilter _adminSortFilter;
+        private readonly ICustomerDataService _customerDataService;
+        private readonly IMedDataService _medDataService;
         private int _pageSize = 7;
 
         public AdminPanelController(IUserService userService,
             IMapper mapper, IRoleService roleService, IConfiguration configuration,
-            AdminModelBuilder adminModelBuilder,
-            AdminSortFilter adminSortFilter)
+            AdminModelBuilder adminModelBuilder, ICustomerDataService customerDataService,
+            AdminSortFilter adminSortFilter, IMedDataService medDataService)
           
         {
             _userService = userService;
@@ -38,6 +42,8 @@ namespace MedContactApp.Controllers
             _configuration = configuration;
             _adminModelBuilder = adminModelBuilder;
             _adminSortFilter = adminSortFilter;
+            _customerDataService = customerDataService;
+            _medDataService = medDataService;
         }
 
         [HttpGet]
@@ -55,11 +61,12 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin", Policy = "FullBlocked")]
-        public async Task<IActionResult> UserIndex(string email, string name, string surname, string role, int page = 1,
+        public async Task<IActionResult> UserIndex(string email, string name, string surname, string role, string msg, int page = 1,
                SortState sortOrder = SortState.EmailAsc, GroupState groupOrder = GroupState.FamilyGroupOff)
 
         {
             string icon = string.Empty;
+            string sysInfo = string.Empty;    
             var res = Guid.TryParse(role, out Guid roleId);
             if (!res)
                 roleId = default;
@@ -68,6 +75,9 @@ namespace MedContactApp.Controllers
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
                 IQueryable<User> users = _userService.GetUsers().Include(u => u.Roles);
+
+                if (users == null)
+                    return NotFound("Users are not found");
 
                 if (groupOrder.Equals(GroupState.FamilyGroupOn))
                 {
@@ -101,6 +111,20 @@ namespace MedContactApp.Controllers
                 var items = await users.Skip((page - 1) * pageSize).Take(pageSize)
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
 
+             
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    var userIdArray = await users.Select(u => u.Id).ToArrayAsync();
+                    if (userIdArray!=null && userIdArray.Length>0)
+                    {
+                        var sendRes = await AdminMessageSend(userIdArray, msg);
+                        if (sendRes > 0)
+                            sysInfo = $"Admin message has been sent to {sendRes} user(s)";
+                        else
+                            sysInfo = "Something went wrong. Admin message has not been sent";
+                    }                    
+                }
+
                 string pageRoute = @"/adminpanel/userindex?page=";
                 string processOptions = $"&grouporder={groupOrder}&email={email}&name={name}&roleid={roleId}&sortorder={sortOrder}";
 
@@ -111,7 +135,7 @@ namespace MedContactApp.Controllers
                 UserIndexViewModel viewModel = new(
                     items, processOptions, groupOrder, icon,
                     new PageViewModel(count, page, pageSize, pageRoute),
-                    new FilterViewModel(roles, roleId, name, email),
+                    new FilterViewModel(roles, roleId, name, email, msg, count, sysInfo),
                     new SortViewModel(sortOrder)
                 );
                 return View(viewModel);
@@ -250,6 +274,28 @@ namespace MedContactApp.Controllers
                 Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
                 return BadRequest();
             }
+        }
+
+        private async Task<int> AdminMessageSend(Guid[] users, string msg)
+        {
+            int res = 0;
+            List<MedDataDto> medList = new();
+            foreach (var user in users)
+            {
+                var customer = await _customerDataService.GetOrCreateByUserIdAsync(user);
+                MedDataDto medData = new()
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerDataId = customer?.Id,
+                    Department = "Administrator",
+                    InputDate = DateTime.Now,
+                    TextData = msg,
+                    Type = "Message",
+                };
+                medList.Add(medData);
+            }
+            res = await _medDataService.AddRangeAsync(medList);
+            return res;    
         }
 
 

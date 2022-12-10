@@ -68,5 +68,12 @@ namespace MedContactBusiness.ServicesImplementations
 
             return result;
         }
+
+        public async Task<int> AddRangeAsync(IEnumerable<MedDataDto> medDatas)
+        {
+            await _unitOfWork.MedDataRepository.AddRangeAsync(medDatas.Select(med =>_mapper.Map<MedData>(med)));
+            var result = await _unitOfWork.Commit();
+            return result;
+        }
     }
 }
