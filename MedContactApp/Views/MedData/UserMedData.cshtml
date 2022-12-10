@@ -32,61 +32,52 @@
         @Html.Raw(@Model.SysInfo)
     </div>
 }
- 
 
-           
-   
-<Table class="delivery">
+
+<Table class="delivery" style="border: 0px">
     <form method="get">
 <tbody>
   <tr>
-         <td style="border:none">
-                <label>Name/Surname: </label>
+      
+         <td class="cap" area-label="Name/Surname" style="border:none"></td>
+         <td class="cap">
+              <input type="hidden" name="id" value="@Model.User.Id" />
+              <input type="hidden" name="doctid" value="@Model.DoctId" />
+              <input  name="name" value="@Model!.FilterViewModel.SelectedName" />
         </td>
-        <td style="border:none">
-                <input type="hidden" name="id" value="@Model.User.Id" />
-                <input type="hidden" name="doctid" value="@Model.DoctId" />
-                <input name="name" value="@Model!.FilterViewModel.SelectedName" />
-        </td>
-         <td style="border:none">
-                <label>Department: </label>
+
+       
+         <td class="cap" area-label="Department" style="border:none"></td>
+         <td class="cap">
+                <input  name="speciality" value="@Model!.FilterViewModel.SelectedDepart" />
          </td>
-          <td style="border:none">
-                <input name="speciality" value="@Model!.FilterViewModel.SelectedDepart" />
-         </td>
-        <td style="border:none">
-                <label>Speciality: </label>   
-        </td>
-         <td style="border:none">
+    
+         <td class="cap" area-label="Speciality" style="border:none"></td>
+         <td class="cap">
                 <input name="speciality" value="@Model!.FilterViewModel.SelectedSpec" />
         </td>
   </tr>
   <tr>
-        <td style="border:none">
-                <label>Data type: </label>
+       
+         <td class="cap" area-label="Data type" style="border:none"></td>
+         <td class="cap">
+                <input  name="name" value="@Model!.FilterViewModel.SelectedType" />
         </td>
-         <td style="border:none">
-                <input name="name" value="@Model!.FilterViewModel.SelectedType" />
-        </td>
-        <td style="border:none">
-                <label>Search text: </label>
-        </td>
-         <td style="border:none">
+      
+        <td class="cap" area-label="Search text" style="border:none"></td>
+        <td class="cap">
                 <input name="name" value="@Model!.FilterViewModel.SelectedText" />
         </td>
-        <td style="border:none">
-                <label>Date: </label>
-        </td>
-        <td style="border:none">
+       
+        <td class="cap" area-label="Date" style="border:none"></td>
+        <td class="cap">
                 <input name="date"  type="date" value="@Model!.FilterViewModel.SelectedDate"></>
-
                 <input type="submit" value="Filter" />
         </td>
   </tr>
 </tbody>
     </form>
 </Table>
-
 <Table class="delivery">  
     <caption>Doctor Info Table</caption>
     <thead>
@@ -201,6 +192,18 @@
           caption-side: top;
           text-align: center;
           padding: 10px 0;
-          font-size: 14px;}        
+          font-size: 14px;}
+
+        table.delivery td.cap:before {
+            content: attr(area-label);
+            float: left;
+            font-weight: bold;
+            height: fit-content;}
+
+       table.delivery td.cap {
+             border-right:0px;
+            border-bottom:0px;}
+          
     </style>
+
 }

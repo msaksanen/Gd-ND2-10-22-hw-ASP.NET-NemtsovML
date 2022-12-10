@@ -56,6 +56,9 @@ table.delivery {
     table.delivery thead {
         display: none;
     }
+  /*  table.delivery td label {
+        display: none;
+    }*/
 
     table.delivery tr {
         display: block;

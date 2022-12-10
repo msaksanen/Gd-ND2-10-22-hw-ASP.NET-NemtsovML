@@ -34,6 +34,7 @@ namespace MedContactApp.Models
         [Required]
         public Guid? DoctorDataId { get; set; }
         public Guid? UserId { get; set; }
+        public Guid? CustomerUserId { get; set; }
         public string? SystemInfo  { get; set; }
     }
 }

@@ -10,19 +10,36 @@
     ViewData["Title"] = "Doctor Speciality TimeTable";
   
 }
-<h4>@Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
-<h6>Speciality @Model.DoctorInfo.Speciality</h6>
-@if ((int?)ViewData["Flag"] >= 1)
-{
-    <h6>User Id: @Model.DoctorInfo.UserId</h6>
-    <p>
-        <a href="~/daytimetable/create/?dataid=@Model.DoctorInfo.DoctorDataId">Create New DayTimeTable</a>
-    </p>
-}
+
+
+<div class="container">
+ <div class="row">
+  <div class="col-sm-6">
+            <h4>Doctor: @Model.DoctorInfo.Name @Model.DoctorInfo.Surname</h4>
+            <h6>Speciality @Model.DoctorInfo.Speciality</h6>
+            <h6>Doctor Id: @Model.DoctorInfo.UserId</h6>
+            @if ((int?)ViewData["Flag"] >= 1)
+            {
+                <p> <a href="~/daytimetable/create/?dataid=@Model.DoctorInfo.DoctorDataId&uid=@Model?.User?.Id">Create New DayTimeTable</a> </p>
+            }
+     
+  </div>
+ <div class="col-sm-6 ">
+  @if ((int?)ViewData["Flag"] >= 20 && @Model?.User!=null)
+ {  
+                <h4 class="justify-content-end">Customer: @Model.User.Name @Model.User.Surname</h4>
+                <h6 class ="justify-content-end">Appointment creation </h6>
+                <h6>User Id: @Model.User.Id</h6>
+ }
+</div>
+  
+</div>
+</div>
+
 <hr />
 
 
-@if (Model.TableList!= null && Model.TableList.Any() && Model.DoctorInfo.DoctorDataId!=null)
+@if (Model?.TableList!= null && Model.TableList.Any() && Model.DoctorInfo.DoctorDataId!=null)
 {
     <Table class="delivery">  
         <caption>TimeTable</caption>
@@ -31,6 +48,7 @@
                 <th>
                     <sort-header action="TimeTableDoctIndex" up="@Model.SortViewModel.Up"
                      opt-url-dataid="@(Model.DoctorInfo.DoctorDataId)"
+                     opt-url-uid="@(Model!.User!.Id)"
                      opt-url-reflink=@Model.Reflink
                      current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Date</sort-header>
                 </th>
@@ -60,7 +78,45 @@
                 <tbody>
                     @foreach (var item in Model.TableList)
                     {
-                    await Html.RenderPartialAsync("TableListPartialView", item, ViewData);
+                    @*await Html.RenderPartialAsync("TableListPartialView", item, ViewData);*@
+                    <tr>
+                        <td area-label="Date">
+                                @Html.DisplayFor(modelItem => item.Date)
+                       </td>
+                        <td area-label="StartWorkTime">
+                                @Html.DisplayFor(modelItem => item.StartWorkTime)
+                        </td>
+                        <td area-label="FinishWorkTime">
+                                @Html.DisplayFor(modelItem => item.FinishWorkTime)
+                       </td>
+                       <td area-label="ConsultDuration">
+                                @Html.DisplayFor(modelItem => item.ConsultDuration)
+                       </td>
+                        <td area-label="Total Ticket Quantity">
+                                @Html.DisplayFor(modelItem => item.TotalTicketQty)
+                        </td>
+                        <td area-label="Free Ticket Quantity">
+                                @Html.DisplayFor(modelItem => item.FreeTicketQty)
+                        </td>
+                         <td area-label="Creation Date">
+                                @Html.DisplayFor(modelItem => item.CreationDate)
+                        </td>
+                         <td>
+                                @if ((int?)ViewData["Flag"] >= 20 && @Model.User!=null)
+                                {
+                                  <span> <a class="btn btn-link" href="~/appointment/createindex/?id=@item.Id&uid=@Model.User.Id">Add an appointment</a></span>
+                                }  
+                                else if ((int?)ViewData["Flag"] >= 1)
+                                {
+                                   <span> <a class="btn btn-link" href="~//?id=@item.Id">View appointments</a></span>
+                                }
+                                else 
+                                {
+                                  <span> <a class="btn btn-link" href="~/appointment/createindex/?id=@item.Id">Add an appointment</a></span>
+                                }
+                         </td>
+
+                    </tr>
                     }
 
                 </tbody>
@@ -75,11 +131,16 @@ else
 @section Footer
 {
     <div>
-        @if (!string.IsNullOrEmpty(Model.Reflink))
+        @if (!string.IsNullOrEmpty(Model?.Reflink))
         {
            if ((int?)ViewData["Flag"] == 11)
            {
              <a href="~/AdminPanelDoctor/DoctorDataIndex"><h6>&#5130 Back to doctor data index</h6></a>
+   
+           }
+           else if ((int?)ViewData["Flag"] >=20)
+           {
+                <a href="~/appointment/patientviewindex/?dataid=@Model.DoctorInfo.DoctorDataId"><h6>&#5130 Back to "My Patients" table</h6></a>
    
            }
            else if ((int?)ViewData["Flag"] >=12)
@@ -96,7 +157,7 @@ else
         }
     </div>
 
-    @Html.GeneratePaginator( @Model.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
+    @Html.GeneratePaginator( @Model!.PageViewModel.TotalPages,@Model.PageViewModel.PageNumber,
                              @Model.PageViewModel.PageRoute, @Model.ProcessOptions)
  }
 

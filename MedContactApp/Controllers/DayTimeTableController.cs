@@ -20,18 +20,20 @@ namespace MedContactApp.Controllers
         private readonly IDayTimeTableService _dayTimeTableService;
         private readonly IMapper _mapper;
         private readonly IDoctorDataService _doctorDataService;
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ModelUserBuilder _modelBuilder;
         private int _pageSize = 7;
 
         public DayTimeTableController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
-            IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder)
+            IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder, IUserService userService)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
             _configuration = configuration;
             _doctorDataService = doctorDataService;
             _modelBuilder = modelBuilder;
+            _userService = userService; 
         }
 
 
@@ -88,7 +90,7 @@ namespace MedContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TimeTableDoctIndex(string? dataid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1 )
+        public async Task<IActionResult> TimeTableDoctIndex(string? dataid, string? uid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1 )
         {
             if (string.IsNullOrEmpty(dataid))
                 //return BadRequest();
@@ -99,6 +101,7 @@ namespace MedContactApp.Controllers
                  return new BadRequestObjectResult("DoctorData Id is incorrect");
             try
             {
+                UserDto customer = new();
                 var dInfo = await _doctorDataService.GetDoctorInfoById(dataId);
                 if (dInfo == null || dInfo.DoctorDataId == null)
                     //return NotFound();
@@ -112,7 +115,9 @@ namespace MedContactApp.Controllers
                 if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
                         || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
                         || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true
-                        || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true)
+                        || reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true
+                        || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true
+                        || reflink?.Contains(@"appointment/createindex", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     if (User.Identities.Any(identity => identity.IsAuthenticated))
                     {
@@ -123,6 +128,14 @@ namespace MedContactApp.Controllers
                             flag += 2;
                         if (reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
                             flag += 10;
+                        if ((reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true
+                            || reflink?.Contains(@"appointment/createindex", StringComparison.OrdinalIgnoreCase) == true
+                            || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true) &&
+                            !string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid guid))
+                        {
+                            flag += 20;
+                            customer = await _userService.GetUserByIdAsync(guid);
+                        }
                     }
                 }
                 else
@@ -155,12 +168,15 @@ namespace MedContactApp.Controllers
 
 
                 string pageRoute = @"/daytimetable/timetabledoctindex?page=";
-                string processOptions = $"&dataid={dataid}&sortorder={sortOrder}&reflink={reflink}";
+                string processOptions = $"&dataid={dataid}&uid={uid}&sortorder={sortOrder}&reflink={reflink}";
 
                 TimeTableDoctIndexModel model = new(
                        items, processOptions, dInfo, reflink,
                        new PageViewModel(count, page, pageSize, pageRoute),
                        new SortViewModel(sortOrder));
+
+                if (customer != null)
+                    model.User = customer;
 
                 return View(model);
             }
@@ -213,7 +229,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
-        public  async Task<IActionResult> Create (string? dataid)
+        public  async Task<IActionResult> Create (string? dataid, string? uid)
         {
             if (string.IsNullOrEmpty(dataid))
                 //return BadRequest();
@@ -230,6 +246,9 @@ namespace MedContactApp.Controllers
                     return NotFound("Doctor info is not found");
 
                 var model = _mapper.Map<DayTimeTableModel>(dData);
+
+                if(!string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid dataUid))
+                    model.CustomerUserId = dataUid;
                 return View(model);
             }
             catch (Exception e)

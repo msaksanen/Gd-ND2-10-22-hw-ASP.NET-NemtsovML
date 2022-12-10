@@ -39,6 +39,7 @@
             </div>
             <div class="form-group">
                 <input type ="hidden" asp-for="DoctorDataId" class="form-control" />
+                <input type="hidden" asp-for="CustomerUserId" class="form-control" />
             </div>
             <br/>
                 <div class="row">
@@ -61,7 +62,7 @@
 
 @section Footer
 {
-    <a href="/daytimetable/timetabledoctindex/?dataid=@Model?.DoctorDataId&reflink=/daytimetable/create"><h6>&#5130 Back to List</h6></a>
+    <a href="/daytimetable/timetabledoctindex/?dataid=@Model?.DoctorDataId&uid=@Model?.CustomerUserId&reflink=/daytimetable/create/"><h6>&#5130 Back to List</h6></a>
     <br />
 
 }

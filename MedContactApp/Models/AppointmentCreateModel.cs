@@ -10,5 +10,6 @@ namespace MedContactApp.Models
         public AppointmentDto? Appointment { get; set; }
         public DoctorInfo? DoctorInfo { get; set; }
         public UserDto? User { get; set; }
+        public int Flag { get; set; } = 0;
     }
 }

@@ -68,8 +68,11 @@
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth date</sort-header>
      
         </th>
-        <th>
+         <th>
            Details
+         </th>
+          <th>
+           Appointments
          </th>
     </tr>
     <thead>
@@ -83,7 +86,7 @@
     {
     <tr>
 
-    <td area-label="Appointment Date">
+    <td area-label="Last Appointment Date">
         @item?.StartTime!.Value.ToShortDateString()
     </td>
     <td area-label="Names">
@@ -98,8 +101,14 @@
     </td>
     <td>
             <span>
-                <a class="confirmation" style=" text-decoration: none"
+                <a style=" text-decoration: none"
                  href="~/meddata/usermeddata/?id=@item?.CustomerData?.UserId&doctid=@Model.DoctorInfo.DoctorDataId">MedData</a>
+            </span>
+    </td>
+     <td>
+             <span>
+               <a style=" text-decoration: none"
+               href="~/daytimetable/timetabledoctindex/?dataid=@Model.DoctorInfo.DoctorDataId&uid=@item?.CustomerData?.UserId&reflink=@ViewData["Reflink"]">Re-appoint</a>
             </span>
     </td>
 
@@ -113,7 +122,7 @@
 
 @section Footer
 {
-    <a href="~/DayTimeTable/SelelctSpec"><h6>&#5130 Back to speciality index</h6></a>
+    <a href="~/DayTimeTable/SelelctSpec/?fl=2"><h6>&#5130 Back to speciality index</h6></a>
    
 }
 

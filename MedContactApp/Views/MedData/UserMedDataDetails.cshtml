@@ -60,7 +60,7 @@
                                         @if (Model.Flag != 20)
                                         {
                                             <i class="bi bi-x-circle"></i>
-                                            <a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@ViewData["DoctId"]&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+                                            <a class="confirmation2" href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@ViewData["DoctId"]&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
                                         }                                
                                     </td>
                                 </tr>
@@ -75,7 +75,7 @@
             @if (Model.Flag == 25)
             {
 
-            <a style=" text-decoration: none" href="~/meddata/deletemeddata/?id=@Model.UserId&mdataid=@Model.MedDataId&doctid=@ViewData["DoctId"]&reflink=@Model.Reflink"><h6>Remove Meddata with files &#5125</h6></a>
+            <a class="confirmation2" style=" text-decoration: none" href="~/meddata/deletemeddata/?id=@Model.UserId&mdataid=@Model.MedDataId&doctid=@ViewData["DoctId"]&reflink=@Model.Reflink"><h6>Remove Meddata with files &#5125</h6></a>
                
             }
             @if (Model.SystemInfo != null)
@@ -117,5 +117,11 @@
     <br />
     </div>
 }
+    @section Scripts
+    {
+
+    <script src="~/js/confirmation2.js"></script>
+}
+
 
 

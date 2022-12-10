@@ -8,6 +8,7 @@ namespace MedContactApp.Models
     public class TimeTableDoctIndexModel
     {
         public DoctorInfo DoctorInfo { get; set; }
+        public UserDto? User { get; set; }
         public IEnumerable <DayTimeTableDto>? TableList { get; }
         public PageViewModel PageViewModel { get; }
         public SortViewModel SortViewModel { get; }

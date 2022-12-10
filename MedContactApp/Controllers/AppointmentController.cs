@@ -32,11 +32,12 @@ namespace MedContactApp.Controllers
         private readonly IConfiguration _configuration;
         private readonly ModelUserBuilder _modelBuilder;
         private readonly AdminSortFilter _adminSortFilter;
+        private readonly IUserService _userService;
 
 
         public AppointmentController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
             IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder,
-            IAppointmentService appointmentService, ICustomerDataService customerDataService, AdminSortFilter adminSortFilter)
+            IAppointmentService appointmentService, ICustomerDataService customerDataService, AdminSortFilter adminSortFilter, IUserService userService)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
@@ -46,11 +47,12 @@ namespace MedContactApp.Controllers
             _appointmentService = appointmentService;
             _customerDataService = customerDataService;
             _adminSortFilter = adminSortFilter;
+            _userService = userService; 
         }
 
         [HttpGet]
         [Authorize (Policy = "FullBlocked")]
-        public async Task<IActionResult> CreateIndex(string? id)
+        public async Task<IActionResult> CreateIndex(string? id, string? uid)
         {
             if (string.IsNullOrEmpty(id))
                 //return BadRequest();
@@ -59,6 +61,7 @@ namespace MedContactApp.Controllers
             if (!res)
                 //return BadRequest();
                 return new BadRequestObjectResult("DayTimeTable Id is incorrect");
+            UserDto? usr = new();
             try
             {
                 var dttDto = await _dayTimeTableService.GetDayTimeTableByIdAsync(dttId);
@@ -69,7 +72,14 @@ namespace MedContactApp.Controllers
                 if (doctInfo == null)
                     //return NotFound();
                       return NotFound("Doctor info is not found");
-                var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                if (!string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid userId))
+                {
+                  usr = await _userService.GetUserByIdAsync(userId);
+                }
+                else
+                {
+                    usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                }
                 if (usr == null)
                     //return NotFound();
                      return NotFound("User is not found");
@@ -127,6 +137,7 @@ namespace MedContactApp.Controllers
         [Authorize(Policy = "FullBlocked")]
         public async Task<IActionResult> Create(string? dttid, string? cdid, string? stime)
         {
+            int flag = 0;
             if (string.IsNullOrEmpty(dttid) && string.IsNullOrEmpty(cdid) && string.IsNullOrEmpty(stime))
                 //return BadRequest();
                 return new BadRequestObjectResult("DayTimeTable/CustomerData Id or time is null");
@@ -149,10 +160,16 @@ namespace MedContactApp.Controllers
                 if (doctInfo == null)
                     //return NotFound();
                       return NotFound("Doctor info is not found");
-                var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                //var usr = await _modelBuilder.BuildUserById(HttpContext, flag: 2);
+                var usr = await _userService.GetUserByIdAsync((Guid)customerData.UserId!);
                 if (usr == null)
                     //return NotFound();
                      return NotFound("User is not found"); 
+
+                if (User.IsInRole("Doctor"))
+                {
+                    flag = 1;
+                }
 
                 AppointmentDto apmDto = new()
                 {
@@ -172,7 +189,8 @@ namespace MedContactApp.Controllers
                     Result = res,
                     Appointment = apmDto,
                     DoctorInfo = doctInfo,
-                    User = usr
+                    User = usr,
+                    Flag = flag
                 };
 
                 return View(model);

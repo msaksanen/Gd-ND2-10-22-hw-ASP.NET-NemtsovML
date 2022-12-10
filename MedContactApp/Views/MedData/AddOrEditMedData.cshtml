@@ -101,7 +101,7 @@
                                     <td>
                                         
                                             <i class="bi bi-x-circle"></i>
-                                            <a href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@Model.DoctorDataId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
+                                            <a class="confirmation2" href="/meddata/usermeddatadetails/?mdataid=@Model.MedDataId&id=@Model.UserId&doctid=@Model.DoctorDataId&filedata=@item.Id&reflink=@Model.Reflink"><i>Delete</i></a>
 
                                     </td>
                                 </tr>
@@ -151,5 +151,6 @@
     @{
        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/confirmation2.js"></script>
 }
-
+ 
