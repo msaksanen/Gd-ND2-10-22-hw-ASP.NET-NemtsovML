@@ -16,6 +16,7 @@ namespace MedContactCore.Abstractions
        Task<IEnumerable<AppointmentDto>?> GetAppointmentsByUserId(Guid usrId);
        Task<int?> RemoveById(Guid apmId);
        Task<List<AppointmentDto>?> GetPatientsByDoctorDataId(Guid dataId);
+       Task<IEnumerable<AppointmentInfo>?> GetAppointmentMailListAsync(int daysTerm);
 
 
 

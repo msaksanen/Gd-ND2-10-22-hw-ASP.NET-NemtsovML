@@ -106,6 +106,7 @@ namespace MedContactApp
             builder.Services.AddScoped<EmailChecker>();
             builder.Services.AddScoped<BirthDateChecker>();
             builder.Services.AddScoped<FileValidation>();
+            builder.Services.AddScoped<EmailSender>();
 
 
 

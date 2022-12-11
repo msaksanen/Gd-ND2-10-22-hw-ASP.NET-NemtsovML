@@ -15,11 +15,13 @@ namespace MedContactCore.DataTransferObjects
         public DateTime? EndTime { get; set; }
         public Guid? DayTimeTableId { get; set; }
         public Guid? DoctorDataId { get; set; }
+        public string? DoctorEmail { get; set; }
         public string? DoctorName { get; set; }
         public string? DoctorMidname { get; set; }
         public string? DoctorSurname { get; set; }
         public string? DoctorSpeciality { get; set; }
         public Guid? CustomerDataId { get; set; }
+        public string? CustomerEmail { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerMidname { get; set; }
         public string? CustomerSurname { get; set; }

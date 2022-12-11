@@ -19,6 +19,7 @@ using System.Drawing;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace MedContactApp.Controllers
 {
@@ -30,14 +31,17 @@ namespace MedContactApp.Controllers
         private readonly IDoctorDataService _doctorDataService;
         private readonly ICustomerDataService _customerDataService;
         private readonly IConfiguration _configuration;
+        private int _termDays = 1;
         private readonly ModelUserBuilder _modelBuilder;
         private readonly AdminSortFilter _adminSortFilter;
+        private readonly EmailSender _emailSender;
         private readonly IUserService _userService;
 
 
         public AppointmentController(IDayTimeTableService dayTimeTableService, IConfiguration configuration,
             IMapper mapper, IDoctorDataService doctorDataService, ModelUserBuilder modelBuilder,
-            IAppointmentService appointmentService, ICustomerDataService customerDataService, AdminSortFilter adminSortFilter, IUserService userService)
+            IAppointmentService appointmentService, ICustomerDataService customerDataService, 
+            AdminSortFilter adminSortFilter, IUserService userService, EmailSender emailSender)
         {
             _dayTimeTableService = dayTimeTableService;
             _mapper = mapper;
@@ -48,6 +52,7 @@ namespace MedContactApp.Controllers
             _customerDataService = customerDataService;
             _adminSortFilter = adminSortFilter;
             _userService = userService; 
+            _emailSender = emailSender;
         }
 
         [HttpGet]
@@ -407,5 +412,57 @@ namespace MedContactApp.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
+
+        public async Task<IActionResult> SendAppointmentReminders()
+        {
+            bool result = int.TryParse(_configuration["EmailSendMode:DaysTerm"], out var term);
+            if (result) _termDays = term;
+            StringBuilder sb = new StringBuilder();
+            var mailList = await _appointmentService.GetAppointmentMailListAsync(_termDays);
+            if (mailList!=null && mailList.Any())
+            {
+                foreach (var item in mailList)
+                {
+                    string mailbody = GenerateMailBody(item);
+                    string subj= $"MedContact: Doctor Appointment - {DateTime.Now.AddDays(term).ToShortDateString()}";
+                    var res = await _emailSender.SendEmailAsync(item?.CustomerEmail, subj, mailbody);
+                    sb.AppendLine("============================");
+                    sb.AppendLine($"Appointment Id ({item?.Id})");
+                    sb.AppendLine($"Result: {res.Name}");
+                    sb.AppendLine("============================");
+
+                    if (res.IntResult==0)
+                        Log.Error($"EmailSender: {res.Name}");
+                   else
+                        Log.Information($"EmailSender: {res.Name}");
+                }
+            }
+
+            return new ObjectResult(sb.ToString());
+        }
+
+        private string GenerateMailBody(AppointmentInfo item)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Appointment № {item.Id}");
+            string temp = string.Join(" ", "TIME:", item?.StartTime?.ToShortDateString(),
+                          "(", item?.StartTime?.ToShortTimeString(),"-", item?.EndTime?.ToShortTimeString(),")");
+            sb.AppendLine(temp);
+            sb.AppendLine("============================");
+            sb.AppendLine($"Customer: {item?.CustomerName} {item?.CustomerMidname} {item?.CustomerSurname}");
+            sb.AppendLine($"Customer email: {item?.CustomerEmail}");
+            sb.AppendLine("============================");
+            sb.AppendLine($"Doctor: {item?.DoctorName} {item?.DoctorMidname} {item?.DoctorSurname}");
+            sb.AppendLine($"Doctor speciality: {item?.DoctorSpeciality}");
+            sb.AppendLine("============================");
+            sb.AppendLine($"Creation Time: {item?.CreationDate}");
+            sb.AppendLine("============================");
+
+            return sb.ToString();   
+        }
+
     }
 }
