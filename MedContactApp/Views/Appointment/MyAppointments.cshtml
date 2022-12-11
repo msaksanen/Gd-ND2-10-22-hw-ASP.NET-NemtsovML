@@ -10,8 +10,11 @@
     ViewData["Title"] = "My Appointments";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
+@if(Model.User!=null)
+{
+    <h4>@Model.User.Name @Model.User.Surname (@Model.User.Email)</h4>
+    <hr />
+}
 
 <Table class="delivery">
 <tbody>

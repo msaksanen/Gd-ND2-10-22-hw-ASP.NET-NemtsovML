@@ -16,6 +16,7 @@ namespace MedContactApp.Models
         public Guid[]? RoleIds { get; set; }
         public string? SystemInfo { get; set; } =String.Empty;
         public string? Reflink { get; set; }
+        public string? Message { get; set; } = String.Empty;
         public bool IsPwdReset { get; set; } = false;
     }
 }

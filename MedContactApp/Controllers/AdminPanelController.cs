@@ -198,6 +198,14 @@ namespace MedContactApp.Controllers
                     else
                         modelFull.SystemInfo = $"<b>User password has not been reset</b><br/>";
                 }
+                if (!string.IsNullOrEmpty(modelFull.Message) && modelFull.Id!=null)
+                {
+                    var sendRes = await AdminMessageSend(new Guid[]{(Guid)modelFull.Id}, modelFull.Message);
+                    if (sendRes > 0)
+                        modelFull.SystemInfo += $"<b>Admin message has been sent<b><br/>";
+                    else
+                        modelFull.SystemInfo += $"<b>Something went wrong. Admin message has not been sent<b><br/>";
+                }
 
                 if (modelFull != null && modelFull.BlockStateIds != null)
                 {
@@ -213,7 +221,7 @@ namespace MedContactApp.Controllers
                         if (item == 2)
                         {
                             modelFull!.IsFullBlocked = true;
-                            var sitem = modelFull?.BlockState?.First(x => x.IntId == 1);
+                            var sitem = modelFull?.BlockState?.First(x => x.IntId == 2);
                             sitem!.IsSelected = true;
                         }
 

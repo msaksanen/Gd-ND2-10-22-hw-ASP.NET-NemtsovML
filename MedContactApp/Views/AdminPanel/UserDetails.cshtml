@@ -13,9 +13,11 @@
 <p>Customer Data Id: @Model.CustomerDataId</p>
 <p>Family Id: @Model.FamilyId</p>
 <hr />
+<form asp-action="UserDetails" asp-controller="AdminPanel" method="post">
 <div class="container">
 <div class="row">
-    <dl class="col-6 col-sm-3">
+   
+      <dl class=  "col-sm">
                 <dt>
                         @Html.DisplayNameFor(model => model.Email)
                         
@@ -75,29 +77,26 @@
                
 
     </dl>
-
-
-    <div class= "col-6 col-sm-3">
-        <form asp-action="UserDetails" asp-controller="AdminPanel" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+      <div class= "col-sm">   
+          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+          <div class="form-group">
                 <input asp-for="Id" class="form-control" type="hidden"/>
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
-            <div class="form-group">
+          <div class="form-group">
                 <input class="form-control" type="hidden" id="Reflink" name="Reflink" value="@Model.Reflink" />
                 <span asp-validation-for="Reflink" class="text-danger"></span>
             </div>
-            <div class="form-group">
+          <div class="form-group">
                 <label><b>Password Reset</b></label><br />
                  @Html.CheckBoxFor(@Model => @Model.IsPwdReset)
                  @*<input data-val="true" data-val-required="The IsPwdReset field is required." 
                             id="IsPwdReset" name="IsPwdReset" type="checkbox" value="true" />*@
             </div>
-            <div class="form-group">
+          <div class="form-group">
                 <label for="BlockStateIds"><b>Full User Block</b></label>
-                 <br />
-                 <select class="list-box tri-state" aria-label="BlockState"
+                <br />
+                <select class="list-box tri-state" aria-label="BlockState"
                             id="BlockStateIds" name="BlockStateIds">
                         @if (Model.BlockState != null)
                         {
@@ -122,9 +121,8 @@
                     }
                 </select>
             </div>
-            <br />
-         
-        <dl>
+          <br />       
+          <dl>
             <dt>
                 @Html.DisplayNameFor(model => model.IsDependent)
               
@@ -153,23 +151,33 @@
             <dd>
                 @Html.DisplayFor(model => model.LastLogin)
             </dd>
-        </dl>
-                <input type="submit" value="Save" class="btn btn-primary" />
-                @*<input name="IsPwdReset" type="hidden" value="false" /><*@
-            </form>
-    </div>
-
-        @if (Model.SystemInfo != null)
-        {
+        </dl>   
+      </div>
+      <div class= "col-sm">
+         <div>
+         <label for="adminmessage"><b>Message for user:</b></label>
+         <br/> 
+         <textarea class="form-control" name="Message" id="adminmessage" type="text" rows="3" maxlength="512" placeholder="Input admin message"></textarea>
+         <br/> 
+         </div>
+          @if (Model.SystemInfo != null)
+          {
             <div>
                 <p>
                     @Html.Raw(@Model.SystemInfo)
                 </p>
             </div>
-        }
+          }
 
+         <div>
+                <button type="submit" class="btn btn-primary" value="Save">Submit</button>
+                @*<input name="IsPwdReset" type="hidden" value="false" /><*@
+         </div>
+      </div>
+     
 </div>
 </div>
+</form>
 
 
 @section Footer

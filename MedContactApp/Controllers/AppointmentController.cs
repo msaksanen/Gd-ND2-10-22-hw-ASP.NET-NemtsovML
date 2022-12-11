@@ -237,7 +237,7 @@ namespace MedContactApp.Controllers
                 AppointmentIndexViewModel viewModel = new(list, sysInfo,
                     new FilterAppointViewModel(speciality, name, date,""),
                     new SortViewModel(sortOrder));
-
+                viewModel.User = usr;
                 return View(viewModel);
             }
 

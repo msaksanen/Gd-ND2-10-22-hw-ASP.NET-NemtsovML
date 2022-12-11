@@ -114,6 +114,7 @@ namespace MedContactApp.AdminPanelHelpers
 
             newModel = _mapper.Map<AdminUserEditModel>(usr);
             newModel.IsPwdReset = model.IsPwdReset;
+            newModel.Message = model.Message;
             if (newModel == null) return null;
             newModel.AllRoles = allroles;
 
