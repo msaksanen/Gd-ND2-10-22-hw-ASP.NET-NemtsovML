@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using MedContactApp.AdminPanelHelpers;
 using MedContactApp.Filters;
+using Hangfire;
+using Hangfire.SqlServer;
 
 namespace MedContactApp
 {
@@ -63,9 +65,27 @@ namespace MedContactApp
             builder.Services.AddSession();
 
             var connectionString = builder.Configuration.GetConnectionString("Default");
+            var connectionHagfireString = builder.Configuration.GetConnectionString("Hangfire");
 
             builder.Services.AddDbContext<MedContactContext>(
                 optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
+
+            builder.Services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(connectionHagfireString,
+                new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true,
+                }));
+
+            // Add the processing server as IHostedService
+            builder.Services.AddHangfireServer();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -123,11 +143,23 @@ namespace MedContactApp
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            //app.UseHangfireDashboard();
 
+           
             app.UseRouting();
+           
+
 
             app.UseAuthentication(); // Set HttpContext.User
             app.UseAuthorization();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireDashBoardFilter() }
+            });
+
+
+            app.MapHangfireDashboard();
 
             //app.MapControllerRoute(
             //    name: "default",

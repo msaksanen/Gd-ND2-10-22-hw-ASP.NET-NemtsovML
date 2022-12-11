@@ -20,6 +20,7 @@ using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using Hangfire;
 
 namespace MedContactApp.Controllers
 {
@@ -415,8 +416,15 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin", Policy = "FullBlocked")]
+        public IActionResult SendAppointmentsJob()
+        {
+            RecurringJob.AddOrUpdate(() => SendAppointmentsReminders(), "15 6 * * *");
+            return Ok("Hangfire job has been set");
+        }
 
-        public async Task<IActionResult> SendAppointmentReminders()
+        [HttpGet]
+        [Authorize(Roles = "Admin", Policy = "FullBlocked")]
+        public async Task<IActionResult> SendAppointmentsReminders()
         {
             bool result = int.TryParse(_configuration["EmailSendMode:DaysTerm"], out var term);
             if (result) _termDays = term;
