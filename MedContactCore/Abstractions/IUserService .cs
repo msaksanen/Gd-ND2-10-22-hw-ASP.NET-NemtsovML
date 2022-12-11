@@ -31,5 +31,8 @@ namespace MedContactCore.Abstractions
         Task<int> ChangeUserFullBlockById(Guid id, bool? IsFullBlocked);
         Task<int> CheckUserByUsernamePassword(Guid id, string pwd, string username);
         Task<int> RemoveUserById(Guid id);
+        IQueryable<User> GetDoctorsWithFullData();
+        IQueryable<User> GetNewDoctors();
+        IQueryable<User> GetApplicants();
     }
 }

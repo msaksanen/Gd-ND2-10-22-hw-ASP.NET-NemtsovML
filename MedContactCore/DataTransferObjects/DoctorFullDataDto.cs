@@ -11,7 +11,7 @@ namespace MedContactCore.DataTransferObjects
 {
     public class DoctorFullDataDto 
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public Guid? RoleId { get; set; }   
         public Guid? UserId { get; set; }
         public string? Username { get; set; }

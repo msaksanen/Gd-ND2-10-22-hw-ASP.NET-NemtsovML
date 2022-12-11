@@ -143,21 +143,16 @@ namespace MedContactApp
             app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            //app.UseHangfireDashboard();
-
-           
+                     
             app.UseRouting();
-           
-
-
             app.UseAuthentication(); // Set HttpContext.User
             app.UseAuthorization();
 
+            //app.UseHangfireDashboard();
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new HangfireDashBoardFilter() }
             });
-
 
             app.MapHangfireDashboard();
 

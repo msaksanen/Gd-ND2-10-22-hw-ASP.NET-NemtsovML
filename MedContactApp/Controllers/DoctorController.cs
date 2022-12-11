@@ -68,13 +68,8 @@ namespace MedContactApp.Controllers
             {
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
-                IQueryable<DoctorData> dDatas = _doctorDataService
-                                             .GetDoctorData()
-                                             .Include(d => d.Speciality)
-                                             //.Include(d => d.DayTimeTables)
-                                             .Include(d => d.User)
-                                             .ThenInclude(u => u!.Roles);
 
+                var dDatas = _doctorDataService.GetFullDoctorData();
                 dDatas = dDatas.Where(d => d.SpecialityId != null && d.IsBlocked != true && d.ForDeletion != true);
                 dDatas = _adminSortFilter.DoctorDataFilter(dDatas, "", name, surname, speciality);
                 dDatas = _adminSortFilter.DoctorDataSort(dDatas, sortOrder);
@@ -107,125 +102,125 @@ namespace MedContactApp.Controllers
 
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult Create()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Create (DoctorModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try 
-                {
-                    //var doctorRole = await _roleService.GetRoleByNameAsync("Doctor"); 
-                    var doctorDto = _mapper.Map<UserDto>(model);
-                    if (doctorDto != null) // && doctorRole != null)
-                    {
-                        var result = await _userService.CreateUserWithRoleAsync(doctorDto, "Doctor");
-                        if (result > 0)
-                        {
-                            //await Authenticate(model.Email);
-                            return RedirectToAction("Index", "Home");
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                    return BadRequest();
-                }               
-            }
-            return View(model);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create (DoctorModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try 
+        //        {
+        //            //var doctorRole = await _roleService.GetRoleByNameAsync("Doctor"); 
+        //            var doctorDto = _mapper.Map<UserDto>(model);
+        //            if (doctorDto != null) // && doctorRole != null)
+        //            {
+        //                var result = await _userService.CreateUserWithRoleAsync(doctorDto, "Doctor");
+        //                if (result > 0)
+        //                {
+        //                    //await Authenticate(model.Email);
+        //                    return RedirectToAction("Index", "Home");
+        //                }
+        //            }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+        //            return BadRequest();
+        //        }               
+        //    }
+        //    return View(model);
+        //}
         
-        [HttpGet]
-        public async Task<IActionResult> Details(string? id)
-        {
-           var doctorDto = await GetDoctorDtoByIdAsync(id);
-           if (doctorDto!=null) 
-               return View(doctorDto);
+        //[HttpGet]
+        //public async Task<IActionResult> Details(string? id)
+        //{
+        //   var doctorDto = await GetDoctorDtoByIdAsync(id);
+        //   if (doctorDto!=null) 
+        //       return View(doctorDto);
      
-           ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
-               return RedirectToAction("Index", "Home");
-        }
+        //   ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+        //       return RedirectToAction("Index", "Home");
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(string? id)
-        {
-            var doctorDto = await GetDoctorDtoByIdAsync(id);
-            if (doctorDto != null)
-                return View(doctorDto);
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(string? id)
+        //{
+        //    var doctorDto = await GetDoctorDtoByIdAsync(id);
+        //    if (doctorDto != null)
+        //        return View(doctorDto);
 
-            ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
-            return RedirectToAction("Index", "Home");
-        }
+        //    ModelState.AddModelError("CustomError", $"Doctor with id {id} is not found.");
+        //    return RedirectToAction("Index", "Home");
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Edit (DoctorModel model)
-        {
-            try
-            {
-                if (model != null)
-                {
-                    var dto = _mapper.Map<UserDto>(model);
+        //[HttpPost]
+        //public async Task<IActionResult> Edit (DoctorModel model)
+        //{
+        //    try
+        //    {
+        //        if (model != null)
+        //        {
+        //            var dto = _mapper.Map<UserDto>(model);
 
-                    var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
+        //            var sourceDto = await _userService.GetUserByIdAsync(dto.Id);
 
-                    //should be sure that dto property naming is the same with entity property naming
-                    //var patchList = new List<PatchModel>();
-                    //Type myType = typeof(UserDto);
-                    //var propList = myType?.GetProperties();
-                    //if (propList!=null)
-                    //{
-                    //    foreach (var prop in propList)
-                    //    {
-                    //        var propName = myType?.GetProperty($"{prop.Name}");
-                    //        var propValueModel = propName?.GetValue(dto);
-                    //        var propValueSource = propName?.GetValue(sourceDto);
-                    //        if (propValueSource != propValueModel && propValueModel != null)
-                    //        {
-                    //            PatchModel patchModel = new() { PropertyName = prop.Name, PropertyValue = propValueModel };
-                    //            patchList.Add(patchModel);
-                    //        }
-                    //    }
-                    //}
-                    PatchMaker<UserDto> patchMaker = new PatchMaker<UserDto>();
-                    var patchList = patchMaker.Make(dto, sourceDto);
-                    await _userService.PatchAsync(dto.Id, patchList);
-                    return RedirectToAction("Index","Doctor");
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, ex.Message);
-                return StatusCode(500);
-            }
-        }
+        //            //should be sure that dto property naming is the same with entity property naming
+        //            //var patchList = new List<PatchModel>();
+        //            //Type myType = typeof(UserDto);
+        //            //var propList = myType?.GetProperties();
+        //            //if (propList!=null)
+        //            //{
+        //            //    foreach (var prop in propList)
+        //            //    {
+        //            //        var propName = myType?.GetProperty($"{prop.Name}");
+        //            //        var propValueModel = propName?.GetValue(dto);
+        //            //        var propValueSource = propName?.GetValue(sourceDto);
+        //            //        if (propValueSource != propValueModel && propValueModel != null)
+        //            //        {
+        //            //            PatchModel patchModel = new() { PropertyName = prop.Name, PropertyValue = propValueModel };
+        //            //            patchList.Add(patchModel);
+        //            //        }
+        //            //    }
+        //            //}
+        //            PatchMaker<UserDto> patchMaker = new PatchMaker<UserDto>();
+        //            var patchList = patchMaker.Make(dto, sourceDto);
+        //            await _userService.PatchAsync(dto.Id, patchList);
+        //            return RedirectToAction("Index","Doctor");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Error(ex, ex.Message);
+        //        return StatusCode(500);
+        //    }
+        //}
 
-        [AcceptVerbs("Get", "Post")]
-        public   async Task<IActionResult> CheckEmail(string email)
-        {
-            return Json(await _emailChecker.CheckEmail(email.ToLower(),HttpContext));
-        }
-        private async Task<UserDto?> GetDoctorDtoByIdAsync(string? id)
-        {
-            var result = Guid.TryParse(id, out Guid guid_id);
+        //[AcceptVerbs("Get", "Post")]
+        //public   async Task<IActionResult> CheckEmail(string email)
+        //{
+        //    return Json(await _emailChecker.CheckEmail(email.ToLower(),HttpContext));
+        //}
+        //private async Task<UserDto?> GetDoctorDtoByIdAsync(string? id)
+        //{
+        //    var result = Guid.TryParse(id, out Guid guid_id);
 
-            if (result)
-            {
-                var doctor = await _userService.GetUserByIdAsync(guid_id);
-                var doctorDto = _mapper.Map<UserDto>(doctor);
-                return doctorDto;
-            }
-            return null;
-        }
+        //    if (result)
+        //    {
+        //        var doctor = await _userService.GetUserByIdAsync(guid_id);
+        //        var doctorDto = _mapper.Map<UserDto>(doctor);
+        //        return doctorDto;
+        //    }
+        //    return null;
+        //}
 
     }
 }

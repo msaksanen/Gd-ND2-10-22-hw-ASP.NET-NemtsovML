@@ -20,5 +20,6 @@ namespace MedContactCore.Abstractions
       Task<int> UpdateDoctorDataAsync(DoctorDataDto dto);
       Task<int> RemoveByIdAsync(Guid id);
       Task<bool> IsCorrectDoctorId(Guid doctorDataId);
+      IQueryable<DoctorData> GetFullDoctorData();
     }
 }

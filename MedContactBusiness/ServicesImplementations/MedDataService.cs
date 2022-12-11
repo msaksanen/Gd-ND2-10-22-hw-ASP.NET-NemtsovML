@@ -8,6 +8,7 @@ using MedContactDb.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Security.Cryptography;
 using System.Security.Principal;
 
 namespace MedContactBusiness.ServicesImplementations
@@ -74,6 +75,17 @@ namespace MedContactBusiness.ServicesImplementations
             await _unitOfWork.MedDataRepository.AddRangeAsync(medDatas.Select(med =>_mapper.Map<MedData>(med)));
             var result = await _unitOfWork.Commit();
             return result;
+        }
+
+        public IQueryable<MedData> GetUserMedData(Guid uId)
+        {
+            IQueryable<MedData> medDatas = _unitOfWork.MedDataRepository.Get()
+                                              .Where(m => m.CustomerData != null && m.CustomerData.UserId.Equals(uId))
+                                              .Include(m => m.DoctorData)
+                                              .ThenInclude(d => d!.Speciality)
+                                              .Include(m => m.DoctorData)
+                                              .ThenInclude(d => d!.User);
+            return medDatas;
         }
     }
 }

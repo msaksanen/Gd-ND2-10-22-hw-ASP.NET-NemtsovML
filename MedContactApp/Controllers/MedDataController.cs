@@ -91,12 +91,8 @@ namespace MedContactApp.Controllers
 
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
-                IQueryable<MedData> medDatas = _medDataService.GetMedData()
-                                               .Where(m => m.CustomerData != null && m.CustomerData.UserId.Equals(uId))
-                                               .Include(m => m.DoctorData)
-                                               .ThenInclude(d => d!.Speciality)
-                                               .Include(m => m.DoctorData)
-                                               .ThenInclude(d => d!.User);
+            
+                var medDatas = _medDataService.GetUserMedData(uId);
 
                 medDatas = _medSortFilter.MedFilter(medDatas, type, speciality, name,
                                                     date, depart, text);

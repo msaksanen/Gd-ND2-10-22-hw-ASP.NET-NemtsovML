@@ -147,6 +147,17 @@ namespace MedContactBusiness.ServicesImplementations
             }
             var res = await _unitOfWork.Commit();
             return res;
-        }                 
+        }
+
+        public IQueryable<DoctorData> GetFullDoctorData()
+        {
+            IQueryable<DoctorData> dDatas = _unitOfWork.DoctorDataRepository.Get()
+                                                    .Include(d => d.Speciality)
+                                                    .Include(d => d.DayTimeTables)
+                                                    .Include(d => d.User)
+                                                    .ThenInclude(u => u!.Roles);
+
+            return dDatas;
+        }
     }
 }

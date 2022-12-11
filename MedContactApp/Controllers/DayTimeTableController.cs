@@ -189,43 +189,43 @@ namespace MedContactApp.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize(Policy = "FullBlocked")]
-        public async Task<IActionResult> Index(int page)
-        {
-            try
-            {
-                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-                if (result) _pageSize = pageSize;
+        //[HttpGet]
+        //[Authorize(Policy = "FullBlocked")]
+        //public async Task<IActionResult> Index(int page)
+        //{
+        //    try
+        //    {
+        //        bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+        //        if (result) _pageSize = pageSize;
 
-                var DttDtoList = await _dayTimeTableService
-                     .GetDayTimeTableByPageNumberAndPageSizeAsync(page, _pageSize);
+        //        var DttDtoList = await _dayTimeTableService
+        //             .GetDayTimeTableByPageNumberAndPageSizeAsync(page, _pageSize);
 
-                if (DttDtoList.Any())
-                {
-                    var count = await _dayTimeTableService.GetDayTimeTableEntitiesCountAsync();
-                    int pageCount = (int)Math.Ceiling((double)(count / _pageSize)) + 1; 
-                    ViewBag.pageCount = pageCount;
-                    List <DayTimeTableModel> modelList = new();
-                    for (int i = 0; i < DttDtoList.Count; i++) 
-                    {
-                        var doctDto = await _doctorDataService.GetDoctorInfoById(DttDtoList[i].DoctorDataId);
-                        var combiModel = _mapper.Map<DayTimeTableModel>((DttDtoList[i], doctDto));
-                        modelList.Add(combiModel);
-                    }
-                    return View(modelList);
-                }
-                else
-                {
-                    throw new ArgumentException(nameof(page));
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
-                return BadRequest();
-            }
-        }
+        //        if (DttDtoList.Any())
+        //        {
+        //            var count = await _dayTimeTableService.GetDayTimeTableEntitiesCountAsync();
+        //            int pageCount = (int)Math.Ceiling((double)(count / _pageSize)) + 1; 
+        //            ViewBag.pageCount = pageCount;
+        //            List <DayTimeTableModel> modelList = new();
+        //            for (int i = 0; i < DttDtoList.Count; i++) 
+        //            {
+        //                var doctDto = await _doctorDataService.GetDoctorInfoById(DttDtoList[i].DoctorDataId);
+        //                var combiModel = _mapper.Map<DayTimeTableModel>((DttDtoList[i], doctDto));
+        //                modelList.Add(combiModel);
+        //            }
+        //            return View(modelList);
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException(nameof(page));
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Error($"{e.Message}. {Environment.NewLine} {e.StackTrace}");
+        //        return BadRequest();
+        //    }
+        //}
 
         [HttpGet]
         [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]

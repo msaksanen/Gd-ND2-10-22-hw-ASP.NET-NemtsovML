@@ -63,32 +63,16 @@ namespace MedContactApp.Controllers
             {
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
-                IQueryable<DoctorData> dDatas = _doctorDataService
-                                                    .GetDoctorData()
-                                                    .Include(d => d.Speciality)
-                                                    .Include(d => d.DayTimeTables)
-                                                    .Include(d => d.User)
-                                                    .ThenInclude(u => u!.Roles);
-
-                IQueryable<User> doctors = _userService.GetUsers()
-                                           .Include(u => u.Roles)
-                                           .Include(u => u.DoctorDatas);
-
-                var newdoctors = from d in doctors
-                                 from r in d.Roles!
-                                 where d.DoctorDatas == null || d.DoctorDatas.Count == 0
-                                 where r.Name!.Equals("Doctor")
-                                 select d;
+              
+                var dDatas = _doctorDataService.GetFullDoctorData();
+                var newdoctors =  _userService.GetNewDoctors();
 
                 newdoctors = _adminSortFilter.UserSort(newdoctors, sortOrder);
                 var nList = await newdoctors
                                   .Select(d => _mapper.Map<DoctorFullDataDto>(d))
                                   .ToListAsync();
 
-                //IQueryable<DoctorData> datas = _doctorDataService
-                //                                 .GetDoctorData()
-                //                                 .Include(d => d.Speciality)
-                //                                 .Include(d => d.DayTimeTables);
+                var docUsers = _userService.GetNewDoctors();
 
                 //var doctorfulldata = from doct in doctors
                 //                     from d in doct.DoctorDatas!
@@ -101,7 +85,6 @@ namespace MedContactApp.Controllers
                 //                        IsFullBlocked =doct.IsFullBlocked,
                 //                        DoctorDatas=d, 
                 //                     };
-
 
 
                 var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
@@ -158,11 +141,8 @@ namespace MedContactApp.Controllers
             {
                 bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
                 if (result) _pageSize = pageSize;
-                IQueryable<User> users = _userService.GetUsers().Include(u => u.Roles);
-                IQueryable<User> applicants = from u in users
-                                              from r in u.Roles!
-                                              where r.Name!.Equals("Applicant")
-                                              select u;
+
+                var applicants = _userService.GetApplicants();
 
                 applicants = _adminSortFilter.UserFilter(applicants, email, name, surname);
                 applicants = _adminSortFilter.UserSort(applicants, sortOrder);

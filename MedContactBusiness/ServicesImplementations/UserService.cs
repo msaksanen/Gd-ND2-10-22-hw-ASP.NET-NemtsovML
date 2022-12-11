@@ -121,6 +121,48 @@ namespace MedContactBusiness.ServicesImplementations
             return _unitOfWork.UserRepository.Get();    
         }
 
+        public IQueryable<User> GetDoctorsWithFullData()
+        {
+            var users = _unitOfWork.UserRepository.Get()
+                                          .Include(u => u.Roles)
+                                          .Include(u => u.DoctorDatas);
+
+            _unitOfWork.DoctorDataRepository.Get()
+                                          .Include(d => d.Speciality)
+                                          //.Include(d => d.DayTimeTables)
+                                          .Load();
+            var docUsers= from u in users
+                        from r in u.Roles!
+                        where r.Name!.Equals("Doctor")
+                        select u;
+            return docUsers;
+
+        }
+
+        public IQueryable<User> GetNewDoctors()
+        {
+            IQueryable<User> doctors = _unitOfWork.UserRepository.Get()
+                                          .Include(u => u.Roles)
+                                          .Include(u => u.DoctorDatas);
+
+            var newdoctors = from d in doctors
+                             from r in d.Roles!
+                             where d.DoctorDatas == null || d.DoctorDatas.Count == 0
+                             where r.Name!.Equals("Doctor")
+                             select d;
+            return newdoctors;
+        }
+
+        public IQueryable<User> GetApplicants()
+        {
+            IQueryable<User> users = _unitOfWork.UserRepository.Get().Include(u => u.Roles);
+            IQueryable<User> applicants = from u in users
+                                          from r in u.Roles!
+                                          where r.Name!.Equals("Applicant")
+                                          select u;
+            return applicants;
+        }
+
 
         public List<UserDto> GetNewUsersFromExternalSources()
         {
