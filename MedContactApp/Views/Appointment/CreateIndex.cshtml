@@ -29,7 +29,7 @@
                             </td>
                             <td>
                                 <i class="bi bi-calendar2-event"></i><a style="text-decoration: none" 
-                                href="/appointment/create/?dttid=@item?.DayTimeTableId&cdid=@item?.CustomerDataId&stime=@item?.StartTime"><i> &nbsp Add an appointment</i></a>
+                                href="/appointment/create/?dttid=@item?.DayTimeTableId&cdid=@item?.CustomerDataId&stime=@item?.StartTime&reflink=@Model.Reflink"><i> &nbsp Add an appointment</i></a>
                             </td>
                         </tr>
                     }
@@ -41,7 +41,7 @@
 </div>
 
 <div>
-    <a href="/daytimetable/timetabledoctindex/?dataid=@Model?.DoctorInfo?.DoctorDataId&uid=@Model?.User?.Id&reflink=/appointment/createindex/">&#5130 Back to List</a>
+    <a href="/daytimetable/timetabledoctindex/?dataid=@Model?.DoctorInfo?.DoctorDataId&uid=@Model?.User?.Id&reflink=@Model?.Reflink">&#5130 Back to List</a>
 </div>
 
 @section Scripts {

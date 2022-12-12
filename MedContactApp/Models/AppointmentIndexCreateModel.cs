@@ -9,5 +9,6 @@ namespace MedContactApp.Models
         public IEnumerable<AppointmentDto>? Appointments { get; set; }
         public DoctorInfo? DoctorInfo { get; set; } 
         public  UserDto? User { get; set; }  
+        public string Reflink { get; set; } = string.Empty; 
     }
 }

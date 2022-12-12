@@ -36,5 +36,6 @@ namespace MedContactApp.Models
         public Guid? UserId { get; set; }
         public Guid? CustomerUserId { get; set; }
         public string? SystemInfo  { get; set; }
+        public string Reflink { get; set; }  = string.Empty; 
     }
 }

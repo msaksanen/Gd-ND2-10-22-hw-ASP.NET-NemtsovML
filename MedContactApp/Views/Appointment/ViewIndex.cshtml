@@ -42,6 +42,7 @@
         <th>
              <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
               opt-url-id="@Model.DayTimeTableId"
+              opt-url-reflink="@Model.ReturnLink"
               opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
               current="@Model.SortViewModel.Current" property="@Model.SortViewModel.DateSort">Appointment Date</sort-header>
  
@@ -49,6 +50,7 @@
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
                opt-url-id="@Model.DayTimeTableId"
+               opt-url-reflink="@Model.ReturnLink"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current"property="@Model.SortViewModel.NameSort">Names</sort-header>
      
@@ -56,6 +58,7 @@
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up" 
                opt-url-id="@Model.DayTimeTableId"
+               opt-url-reflink="@Model.ReturnLink"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.SurnameSort">Surname</sort-header>
 
@@ -63,6 +66,7 @@
         <th>
               <sort-header action="ViewIndex" up="@Model.SortViewModel.Up"
                opt-url-id="@Model.DayTimeTableId"
+               opt-url-reflink="@Model.ReturnLink"
                opt-url-name="@(Model.FilterViewModel.SelectedName)" opt-url-birthdate="@(Model.FilterViewModel.SelectedBirthDate)"
                current="@Model.SortViewModel.Current" property="@Model.SortViewModel.BirthDateSort">Birth date</sort-header>
      
@@ -113,7 +117,7 @@
 
 @section Footer
 {
-    <a href="~/daytimetable/timetabledoctindex/?dataid=@Model.DoctorDataId&reflink=@ViewData["Reflink"]">
+    <a href="~/daytimetable/timetabledoctindex/?dataid=@Model.DoctorDataId&reflink=@Model.ReturnLink">
         <h6>&#5130 Back to daytimetable index</h6></a>
    
 }

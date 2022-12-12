@@ -14,6 +14,7 @@ namespace MedContactApp.Models
         public Guid DoctorDataId { get; set; } = Guid.Empty;
         public UserDto? User { get; set; }  
         public string SysInfo { get; } = string.Empty;
+        public string ReturnLink { get; set; } = string.Empty;
         public AppointmentIndexViewModel(IEnumerable<AppointmentDto>? apms, string sysInfo,
          FilterAppointViewModel filterViewModel, SortViewModel sortViewModel)
         {

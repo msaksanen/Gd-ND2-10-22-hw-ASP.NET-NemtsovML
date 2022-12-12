@@ -58,7 +58,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize (Policy = "FullBlocked")]
-        public async Task<IActionResult> CreateIndex(string? id, string? uid)
+        public async Task<IActionResult> CreateIndex(string? id, string? uid, string? reflink)
         {
             if (string.IsNullOrEmpty(id))
                 //return BadRequest();
@@ -125,6 +125,8 @@ namespace MedContactApp.Controllers
                     }
 
                     model.Appointments = newApms;
+                    if(!string.IsNullOrEmpty(reflink))
+                        model.Reflink= reflink; 
                     return View(model);
                 }
                 else
@@ -141,7 +143,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Policy = "FullBlocked")]
-        public async Task<IActionResult> Create(string? dttid, string? cdid, string? stime)
+        public async Task<IActionResult> Create(string? dttid, string? cdid, string? stime, string? reflink)
         {
             int flag = 0;
             if (string.IsNullOrEmpty(dttid) && string.IsNullOrEmpty(cdid) && string.IsNullOrEmpty(stime))
@@ -172,10 +174,18 @@ namespace MedContactApp.Controllers
                     //return NotFound();
                      return NotFound("User is not found"); 
 
-                if (User.IsInRole("Doctor"))
+                //if (User.IsInRole("Doctor"))
+                //{
+                //    flag = 1;
+                //}
+
+                if (!string.IsNullOrEmpty(reflink) && User.IsInRole("Doctor") &&
+                    (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true ||
+                     reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true))
                 {
                     flag = 1;
                 }
+          
 
                 AppointmentDto apmDto = new()
                 {
@@ -199,6 +209,8 @@ namespace MedContactApp.Controllers
                     Flag = flag
                 };
 
+                if (!string.IsNullOrEmpty(reflink))
+                    model.Reflink = reflink;
                 return View(model);
             }
             catch (Exception e)
@@ -296,7 +308,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
-        public async Task<IActionResult> ViewIndex(string? id, string name, string birhtdate,
+        public async Task<IActionResult> ViewIndex(string? id, string name, string birhtdate, string reflink="",
             string sysInfo = "", SortState sortOrder = SortState.DateAsc)
         {
             if (id == null)
@@ -342,6 +354,8 @@ namespace MedContactApp.Controllers
                    new SortViewModel(sortOrder));
                 viewModel.DayTimeTableId = dttId;
                 viewModel.DoctorDataId = (Guid)dttDto.DoctorDataId;
+                if (!string.IsNullOrEmpty(reflink))
+                    viewModel.ReturnLink = reflink;
                 return View(viewModel);
             }
             catch (Exception e)
@@ -378,6 +392,7 @@ namespace MedContactApp.Controllers
            
                 var id = patList[0]!.CustomerData!.UserId;
                 List<AppointmentDto> distinctLst = new();
+                distinctLst.Add(patList[0]);
                 foreach (var item in patList)
                 {
                     if (item.CustomerData!=null && item.CustomerData.UserId == id)

@@ -112,37 +112,30 @@ namespace MedContactApp.Controllers
                 if (result) _pageSize = pageSize;
                 int flag = 0;
 
-                if (!string.IsNullOrEmpty(reflink) && (reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
-                        || reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
-                        || reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true
-                        || reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true
-                        || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true
-                        || reflink?.Contains(@"appointment/createindex", StringComparison.OrdinalIgnoreCase) == true)
+
+                if(!string.IsNullOrEmpty(reflink) && (User.IsInRole("Doctor") || User.IsInRole("Admin")))
                 {
-                    if (User.Identities.Any(identity => identity.IsAuthenticated))
+                    if (User.IsInRole("Doctor") && reflink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-                        if (roles != null && roles.Any(r => r.Equals("Admin")))
-                            flag = 1;
-                        if (roles != null && roles.Any(r => r.Equals("Doctor")))
-                            flag += 2;
-                        if (reflink?.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
-                            flag += 10;
-                        if ((reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true
-                            || reflink?.Contains(@"appointment/createindex", StringComparison.OrdinalIgnoreCase) == true
-                            || reflink?.Contains(@"daytimetable/create", StringComparison.OrdinalIgnoreCase) == true) &&
-                            !string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid guid))
-                        {
-                            flag += 20;
-                            customer = await _userService.GetUserByIdAsync(guid);
-                        }
+                        flag = 1;  //doctor's daytimetable menu
                     }
+                    if (User.IsInRole("Doctor") && reflink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true&&
+                         !string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid guid))
+                    {
+                        flag = 2; //doctor's meddata menu && re-appointment of patients
+                        customer = await _userService.GetUserByIdAsync(guid);
+                    }
+                    if (User.IsInRole("Admin") && reflink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        flag = 3; //admin menu doctordataindex
+                    }       
                 }
-                else
+                else 
                 {
                     if (timeTableList != null)
                         timeTableList = timeTableList.Where
                                       (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+                        flag = 0; //customer menu
                 }
 
                 ViewData["Flag"] = flag;
@@ -229,7 +222,7 @@ namespace MedContactApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, Doctor", Policy = "FullBlocked")]
-        public  async Task<IActionResult> Create (string? dataid, string? uid)
+        public  async Task<IActionResult> Create (string? dataid, string? uid, string reflink)
         {
             if (string.IsNullOrEmpty(dataid))
                 //return BadRequest();
@@ -247,8 +240,10 @@ namespace MedContactApp.Controllers
 
                 var model = _mapper.Map<DayTimeTableModel>(dData);
 
-                if(!string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid dataUid))
+                if(!string.IsNullOrEmpty(uid) && Guid.TryParse(uid, out Guid dataUid) && dataUid!=Guid.Empty)
                     model.CustomerUserId = dataUid;
+                if(!string.IsNullOrEmpty(reflink))
+                    model.Reflink = reflink;    
                 return View(model);
             }
             catch (Exception e)

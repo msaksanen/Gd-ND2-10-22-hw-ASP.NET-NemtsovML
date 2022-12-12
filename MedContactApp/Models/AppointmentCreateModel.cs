@@ -11,5 +11,6 @@ namespace MedContactApp.Models
         public DoctorInfo? DoctorInfo { get; set; }
         public UserDto? User { get; set; }
         public int Flag { get; set; } = 0;
+        public string Reflink { get; set; } = string.Empty; 
     }
 }

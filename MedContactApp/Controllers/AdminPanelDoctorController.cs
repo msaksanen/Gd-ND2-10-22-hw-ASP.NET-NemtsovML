@@ -78,13 +78,11 @@ namespace MedContactApp.Controllers
                 //                     from d in doct.DoctorDatas!
                 //                     join s in datas on d.UserId equals s.UserId
                 //                     select new 
-                //                     { 
-                //                        Id =doct.Id, Email=doct.Email,
+                //                     {  Id =doct.Id, Email=doct.Email,
                 //                        Username=doct.Name, Surname=doct.Surname, MidName=doct.MidName,
                 //                        BirthDate = doct.BirthDate, Gender= doct.Gender,
                 //                        IsFullBlocked =doct.IsFullBlocked,
-                //                        DoctorDatas=d, 
-                //                     };
+                //                        DoctorDatas=d };
 
 
                 var roles = _roleService.GetRoles().Select(role => _mapper.Map<RoleDto>(role)).ToList();
