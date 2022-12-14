@@ -90,7 +90,7 @@ namespace MedContactApp.Controllers
                     //return NotFound();
                      return NotFound("User is not found");
 
-                var customerData = await _customerDataService.GetOrCreateByUserIdAsync(usr.Id);
+                var customerData = await _customerDataService.CreateByUserIdAsync(usr.Id);
 
                 var apmList = await _appointmentService.GetAppointmentsByDTTableIdAsync(dttId);
 

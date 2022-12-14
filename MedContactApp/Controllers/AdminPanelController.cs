@@ -290,7 +290,7 @@ namespace MedContactApp.Controllers
             List<MedDataDto> medList = new();
             foreach (var user in users)
             {
-                var customer = await _customerDataService.GetOrCreateByUserIdAsync(user);
+                var customer = await _customerDataService.CreateByUserIdAsync(user);
                 MedDataDto medData = new()
                 {
                     Id = Guid.NewGuid(),

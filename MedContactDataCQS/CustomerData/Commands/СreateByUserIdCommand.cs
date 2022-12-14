@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MedContactDataCQS.CustomerData.Commands
 {
-    public class GetOrCreateByUserIdCommand : IRequest<CustomerDataDto?>
+    public class CreateByUserIdCommand : IRequest<CustomerDataDto?>
     {
         public Guid UserId { get; set; }
     }

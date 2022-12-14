@@ -12,18 +12,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedContactDataCQS.CustomerData.Commands
 {
-    public class GetOrCreateByUserIdCommandHandler : IRequestHandler<GetOrCreateByUserIdCommand, CustomerDataDto?>
+    public class CreateByUserIdCommandHandler : IRequestHandler<CreateByUserIdCommand, CustomerDataDto?>
     {
         private readonly MedContactContext _context;
         private readonly IMapper _mapper;
 
-        public GetOrCreateByUserIdCommandHandler(MedContactContext context, IMapper mapper)
+        public CreateByUserIdCommandHandler(MedContactContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        public async Task<CustomerDataDto?> Handle(GetOrCreateByUserIdCommand command, CancellationToken token)
+        public async Task<CustomerDataDto?> Handle(CreateByUserIdCommand command, CancellationToken token)
         {
             if (_context.CustomerDatas != null)
             {

@@ -97,7 +97,7 @@ namespace MedContactWebApi.Controllers
                 if (usr == null)
                     return NotFound("User is not found");
 
-                var customerData = await _mediator.Send(new GetOrCreateByUserIdCommand(){UserId =usr.Id });
+                var customerData = await _mediator.Send(new CreateByUserIdCommand(){UserId =usr.Id });
 
                 var apmList = await _mediator.Send(new GetAppointmentsByDTTableIdQuery() { DayttId = dttId });
 

@@ -193,7 +193,7 @@ namespace MedContactApp.Controllers
 
                 if (flag == 1 || flag==3)
                 {
-                    var custData = await _customerDataService.GetOrCreateByUserIdAsync(uId);
+                    var custData = await _customerDataService.CreateByUserIdAsync(uId);
                     if (custData == null)
                         return NotFound("Customer data is not found/ not created");
 
@@ -233,7 +233,7 @@ namespace MedContactApp.Controllers
                 if (usr == null)
                     return NotFound("User is not found");
 
-                var custData = await _customerDataService.GetOrCreateByUserIdAsync(usr.Id);
+                var custData = await _customerDataService.CreateByUserIdAsync(usr.Id);
                 if (custData == null)
                     return NotFound("Customer data is not found/ not created");
 

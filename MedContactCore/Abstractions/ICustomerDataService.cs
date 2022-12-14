@@ -10,8 +10,9 @@ namespace MedContactCore.Abstractions
 {
     public interface ICustomerDataService
     {
-        Task<Result> CreateByUserIdAsync(Guid userId);
-        Task<CustomerDataDto?> GetOrCreateByUserIdAsync(Guid userId);
+        //Task<Result> CreateByUserIdAsync(Guid userId);
+        Task<CustomerDataDto?> CreateByUserIdAsync(Guid userId);
+        //Task<CustomerDataDto?> GetOrCreateByUserIdAsync(Guid userId);
         Task<CustomerDataDto?> GetByIdAsync(Guid customerDataId);
     }
 }
