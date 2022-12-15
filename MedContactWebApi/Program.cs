@@ -35,7 +35,7 @@ namespace MedContactWebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            //var myCorsPolicy = "myCors";
             builder.Host.UseSerilog((ctx, lc) =>
              lc.WriteTo.File(
                  @"D:\Logs\medcontact\webapi_data.log",
@@ -46,7 +46,24 @@ namespace MedContactWebApi
                   fileSizeLimitBytes: 4_194_304)
                  .WriteTo.Console(LogEventLevel.Verbose));
 
-            // Add services to the container.
+            // Add services to the container
+            builder.Services.AddCors(options => options.AddPolicy("AllowLocalhost4200", 
+                builder => builder
+                    .WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod())
+               );
+            //builder.Services.AddCors(options =>
+            //{
+            //   options.AddPolicy(myCorsPolicy, policyBuilder =>
+            //   {
+            //       policyBuilder
+            //         .AllowAnyHeader()
+            //         .AllowAnyMethod()
+            //         .AllowAnyOrigin();
+            //       //.WithOrigins("http://localhost:4200/");
+            //   });
+            //});
 
             builder.Services.AddControllers()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -132,7 +149,8 @@ namespace MedContactWebApi
             app.UseSwagger();
             app.UseSwaggerUI();
             app.MapHangfireDashboard();
-
+           // app.UseCors(myCorsPolicy);
+            app.UseCors("AllowLocalhost4200");
             app.UseAuthentication();
             app.UseAuthorization();
 

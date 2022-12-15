@@ -1,0 +1,4 @@
+
+      <app-doctorpreview   *ngIf="doctors" [doctors] ="doctors" (DoctorFromPreview)="viewDoctorParent($event)"></app-doctorpreview>
+      <hr/>
+      <app-doctordetails *ngIf="selectedDoctor" [DetailDoctor] = "selectedDoctor"></app-doctordetails>

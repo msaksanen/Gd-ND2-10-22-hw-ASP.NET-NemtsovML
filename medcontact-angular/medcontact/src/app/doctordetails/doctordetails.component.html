@@ -1,0 +1,20 @@
+<h6>Doctor Details</h6>
+<ul *ngIf="DetailDoctor">
+  <li>
+    Name: {{DetailDoctor.username}} {{DetailDoctor.midName}}
+  </li>
+  <li>
+   Id: {{DetailDoctor.id}}
+ </li>
+  <li>
+   SpecialityId: {{DetailDoctor.specialityId}}
+  </li>
+  <li>
+   UserId: {{DetailDoctor.userId}}
+   </li>
+   <li *ngFor="let role of DetailDoctor.roles">
+    Role: {{role.name}}
+    Id: {{role.guidId}}
+   </li>
+</ul>
+

@@ -98,6 +98,8 @@ namespace MedContactWebApi.Controllers
                     new SortViewModel(model.SortOrder)
                 );
                 return Ok(viewModel);
+               // return Ok(items);
+
 
             }
             catch (Exception e)
