@@ -1,0 +1,47 @@
+<Table class="delivery"  *ngIf="doctors">
+
+  <caption>Doctor Info Table</caption>
+  <thead>
+  <tr>
+      <th>
+       Speciality
+      </th>
+      <th>
+        Names
+      </th>
+      <th>
+        Surname
+      </th>
+      <th>
+      Birth Date
+      </th>
+      <th>
+      Details
+      </th>
+      <th>
+      Daytimetables
+      </th>
+  </tr>
+  </thead>
+<tbody>
+<tr *ngFor="let doctor of doctors.users">
+   <td area-label="Speciality">
+    {{doctor.specialityName}}
+  </td>
+  <td area-label="Names">
+    {{doctor.username}} {{doctor.midName}}
+  </td>
+  <td area-label="Surname">
+    {{doctor.surname}}
+  </td>
+  <td area-label="Birth Date">
+    {{doctor.birthDate | date: 'dd/MM/yyyy'  }}
+  <td>
+    <a class="button-detail" type="button" (click)="onSelect(doctor)"> Details</a>
+  </td>
+   <td>
+    <a class="button-detail" routerLink="/timetabledoctindex/{{doctor.id}}">Daytimetables</a>
+  </td>
+</tr>
+</tbody>
+</Table>

@@ -678,6 +678,16 @@
             <param name="source"></param>
             <returns>List PatchModel</returns>
         </member>
+        <member name="T:MedContactWebApi.MappingProfiles.AcsDataProfile">
+            <summary>
+            AcsDataProfile Mapping
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.AcsDataProfile.#ctor">
+            <summary>
+            AcsDataProfile Ctor
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.MappingProfiles.AppointmentProfile">
             <summary>
             AppointmentProfile
@@ -748,6 +758,16 @@
             DoctorInfoProfile Ctor
             </summary>
         </member>
+        <member name="T:MedContactWebApi.MappingProfiles.ExtraDataProfile">
+            <summary>
+            ExtraDataProfile Mapping
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.ExtraDataProfile.#ctor">
+            <summary>
+            ExtraDataProfile Ctor
+            </summary>
+        </member>
         <member name="T:MedContactWebApi.MappingProfiles.FamilyProfile">
             <summary>
             Family Mapping to FamilyDto
@@ -766,6 +786,16 @@
         <member name="M:MedContactWebApi.MappingProfiles.FileDataProfile.#ctor">
             <summary>
             FileDataProfile Ctor
+            </summary>
+        </member>
+        <member name="T:MedContactWebApi.MappingProfiles.MedDataProfile">
+            <summary>
+            MedDataProfile Mapping
+            </summary>
+        </member>
+        <member name="M:MedContactWebApi.MappingProfiles.MedDataProfile.#ctor">
+            <summary>
+            MedDataProfile Ctor
             </summary>
         </member>
         <member name="T:MedContactWebApi.MappingProfiles.RelativeRegRequestModelProfile">
@@ -1361,6 +1391,9 @@
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.Flag">
             
         </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.User">
+            
+        </member>
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexModel.ProcessOptions">
             
         </member>
@@ -1385,6 +1418,9 @@
             </summary>
         </member>
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.Dataid">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.Uid">
             
         </member>
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.RefLink">

@@ -47,9 +47,10 @@ namespace MedContactWebApi
                  .WriteTo.Console(LogEventLevel.Verbose));
 
             // Add services to the container
-            builder.Services.AddCors(options => options.AddPolicy("AllowLocalhost4200", 
+            var localhost = builder.Configuration.GetConnectionString("FrontendServer");
+            builder.Services.AddCors(options => options.AddPolicy("AllowLocalhost", 
                 builder => builder
-                    .WithOrigins("http://localhost:4200")
+                    .WithOrigins(localhost) //http://localhost:4200
                     .AllowAnyHeader()
                     .AllowAnyMethod())
                );
@@ -150,7 +151,7 @@ namespace MedContactWebApi
             app.UseSwaggerUI();
             app.MapHangfireDashboard();
            // app.UseCors(myCorsPolicy);
-            app.UseCors("AllowLocalhost4200");
+            app.UseCors("AllowLocalhost");
             app.UseAuthentication();
             app.UseAuthorization();
 

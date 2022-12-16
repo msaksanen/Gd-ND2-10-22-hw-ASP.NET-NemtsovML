@@ -19,6 +19,8 @@ namespace MedContactWebApi.Models
         public SortViewModel SortViewModel { get; }
         ///
         public int Flag { get; set; } = 0;
+        ///
+        public UserDto? User { get; set; }
         /// 
         public string ProcessOptions { get; } = string.Empty;
         /// 

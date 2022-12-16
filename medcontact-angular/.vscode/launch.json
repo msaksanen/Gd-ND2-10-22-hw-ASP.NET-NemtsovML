@@ -2,10 +2,89 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+      {
+        "name": "Launch Chrome2",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:4200",
+        "webRoot": "${workspaceFolder}/src/app",
+        "sourceMaps": true,
+        "sourceMapPathOverrides": {
+          "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+          "webpack:///./src/*": "${workspaceFolder}/src/*"
+        },
+        "userDataDir": "${workspaceFolder}/.vscode/chrome",
+        "runtimeArgs": [
+          "--disable-session-crashed-bubble"
+        ]
+      },
+      {
+        "name": "Attach Chrome2",
+        "type": "chrome",
+        "request": "attach",
+        "url": "http://localhost:4200",
+        //"port": 9222,
+        "webRoot": "${workspaceFolder}/src/app",
+        "sourceMaps": true,
+        "sourceMapPathOverrides": {
+          "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+          "webpack:///./src/*": "${workspaceFolder}/src/*"
+        }
+      },
+      {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Launch Chrome1",
+        "url": "http://localhost:4200",
+        "webRoot": "${workspaceFolder}",
+        "sourceMaps": true,
+        "userDataDir": "${workspaceFolder}/.vscode/chrome",
+        "runtimeArgs": [
+          "--disable-session-crashed-bubble"
+        ]
+      },
+      {
+        "name": "Attach Chrome1",
+        "type": "chrome",
+        "request": "attach",
+        "url": "http://localhost:4200",
+        //"port": 9222,
+        "webRoot": "${workspaceFolder}",
+        "sourceMaps": true
+      },
+      {
+        "name": "Launch Chrome",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:4200/#",
+        "webRoot": "${workspaceFolder}"
+      },
+      {
+        "name": "Attach Chrome",
+        "type": "chrome",
+        "request": "attach",
+        "url": "http://localhost:4200/#",
+        "webRoot": "${workspaceFolder}"
+      },
+      {
+        "name": "Launch Chrome (Test)",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:9876/debug.html",
+        "webRoot": "${workspaceFolder}"
+      },
+      {
+        "name": "Launch Chrome (E2E)",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/protractor/bin/protractor",
+        //"protocol": "inspector",
+        "args": ["${workspaceFolder}/protractor.conf.js"]
+      },
   
       {
   
-        "name": "Edge",
+        "name": "My Edge",
         "type": "msedge",
         "request": "launch",
         "resolveSourceMapLocations": [
@@ -15,7 +94,7 @@
       },
   
       {
-       "name": "Chrome",
+       "name": "My Chrome",
        "type": "chrome",
        "request": "launch",
        "resolveSourceMapLocations": [
@@ -24,12 +103,12 @@
        "url": "http://localhost:4200/"
     },
       {
-        "name": "Firefox",
+        "name": "My Firefox",
         "type": "firefox",
         "request": "launch",
         "reAttach": true,
         "webRoot": "${workspaceFolder}",
-        "pathMappings": [{"url": "webpack:///src/", "path": "${webRoot}/src/"}],
+        //"pathMappings": [{"url": "webpack:///src/", "path": "${webRoot}/src/"}],
         "url": "http://localhost:4200/",
     },
       {

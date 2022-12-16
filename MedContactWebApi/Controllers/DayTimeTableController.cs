@@ -135,6 +135,7 @@ namespace MedContactWebApi.Controllers
                 return BadRequest("DoctorData Id is incorrect");
             try
             {
+                UserDto? customer = new();
                 var dInfo = await _mediator.Send(new GetDoctorInfoByDocDataIdQuery() { DoctorDataId = dataId });
                 if (dInfo == null || dInfo.DoctorDataId == null)
                     return NotFound("Doctor Data/Info is not found");
@@ -145,19 +146,22 @@ namespace MedContactWebApi.Controllers
                 if (result) _pageSize = pageSize;
                 int flag = 0;
 
-                if (!string.IsNullOrEmpty(model.RefLink) && (model.RefLink.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
-                        || model.RefLink.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
-                        || model.RefLink.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+
+                if (!string.IsNullOrEmpty(model.RefLink) && (User.IsInRole("Doctor") || User.IsInRole("Admin")))
                 {
-                    if (User.Identities.Any(identity => identity.IsAuthenticated))
+                    if (User.IsInRole("Doctor") && model.RefLink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
-                        if (roles != null && roles.Any(r => r.Equals("Admin")))
-                            flag = 1;
-                        if (roles != null && roles.Any(r => r.Equals("Doctor")))
-                            flag += 2;
-                        if (model.RefLink.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
-                            flag += 10;
+                        flag = 1;  //doctor's daytimetable menu
+                    }
+                    if (User.IsInRole("Doctor") && model.RefLink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true &&
+                         !string.IsNullOrEmpty(model.Uid) && Guid.TryParse(model.Uid, out Guid guid))
+                    {
+                        flag = 2; //doctor's meddata menu && re-appointment of patients
+                        customer = await _mediator.Send(new GetUserByIdQuery() { UserId = guid });
+                    }
+                    if (User.IsInRole("Admin") && model.RefLink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        flag = 3; //admin menu doctordataindex
                     }
                 }
                 else
@@ -165,7 +169,30 @@ namespace MedContactWebApi.Controllers
                     if (timeTableList != null)
                         timeTableList = timeTableList.Where
                                       (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+                    flag = 0; //customer menu
                 }
+
+                //if (!string.IsNullOrEmpty(model.RefLink) && (model.RefLink.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true
+                //        || model.RefLink.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true)
+                //        || model.RefLink.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+                //{
+                //    if (User.Identities.Any(identity => identity.IsAuthenticated))
+                //    {
+                //        var roles = User.FindAll(ClaimsIdentity.DefaultRoleClaimType).Select(c => c.Value).ToList();
+                //        if (roles != null && roles.Any(r => r.Equals("Admin")))
+                //            flag = 1;
+                //        if (roles != null && roles.Any(r => r.Equals("Doctor")))
+                //            flag += 2;
+                //        if (model.RefLink.Contains(@"appointment/viewindex", StringComparison.OrdinalIgnoreCase) == true)
+                //            flag += 10;
+                //    }
+                //}
+                //else
+                //{
+                //    if (timeTableList != null)
+                //        timeTableList = timeTableList.Where
+                //                      (ttd => ttd?.Date!.Value != null && ttd?.Date!.Value! >= DateTime.Now.Date);
+                //}
 
                 //ViewData["Flag"] = flag;
 
@@ -190,14 +217,17 @@ namespace MedContactWebApi.Controllers
 
 
                 string pageRoute = @"/daytimetable/timetabledoctindex?page=";
-                string processOptions = $"&dataid={model.Dataid}&sortorder={model.SortOrder}&reflink={model.RefLink}";
+                string processOptions = $"&dataid={model.Dataid}&uid={model.Uid}&sortorder={model.SortOrder}&reflink={model.RefLink}";
 
                 TimeTableDoctIndexModel viewmodel = new(
                        items, processOptions, dInfo, model.RefLink, flag,
                        new PageViewModel(count, model.Page, pageSize, pageRoute),
                        new SortViewModel(model.SortOrder));
 
+                if (customer != null)
+                    viewmodel.User = customer;
                 return Ok(viewmodel);
+
             }
             catch (Exception e)
             {

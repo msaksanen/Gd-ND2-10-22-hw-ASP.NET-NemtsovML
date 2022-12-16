@@ -13,7 +13,7 @@ namespace MedContactDb.Entities
         public Guid? UserId { get; set; }
         public List<User>? Users { get; set; }
         public bool? IsBlocked { get; set; }
-        public List<ExtraData>? ExtraDatas { get; set; }
+        public List<ExtraDataDto>? ExtraDatas { get; set; }
 
     }
 }

@@ -11,6 +11,6 @@ namespace MedContactCore.DataTransferObjects
     {
         public Guid Id { get; set; }
         public Guid? MainUserId { get; set; }
-        List<User>? Users { get; set; }
+        List<UserDto>? Users { get; set; }
     }
 }
