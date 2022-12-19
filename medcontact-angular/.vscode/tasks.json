@@ -39,6 +39,7 @@
           }
         }
       },
+     
       {
         "type": "npm",
         "script": "test",

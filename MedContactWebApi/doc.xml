@@ -456,8 +456,20 @@
         <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.HasNextPage">
             
         </member>
-        <member name="M:MedContactWebApi.FilterSortPageHelpers.PageViewModel.#ctor(System.Int32,System.Int32,System.Int32,System.String)">
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.Count">
             
+        </member>
+        <member name="P:MedContactWebApi.FilterSortPageHelpers.PageViewModel.PageSize">
+            
+        </member>
+        <member name="M:MedContactWebApi.FilterSortPageHelpers.PageViewModel.#ctor(System.Int32,System.Int32,System.Int32,System.String)">
+            <summary>
+            PageViewModel Ctor
+            </summary>
+            <param name="count"></param>
+            <param name="pageNumber"></param>
+            <param name="pageSize"></param>
+            <param name="pageRoute"></param>
         </member>
         <member name="T:MedContactWebApi.FilterSortPageHelpers.SortHeaderTagHelper">
             <summary>
@@ -1427,6 +1439,9 @@
             
         </member>
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.Page">
+            
+        </member>
+        <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.PageSize">
             
         </member>
         <member name="P:MedContactWebApi.Models.TimeTableDoctIndexRqstModel.SortOrder">

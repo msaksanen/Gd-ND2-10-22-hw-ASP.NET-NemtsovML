@@ -103,7 +103,7 @@ namespace MedContactApp.Controllers
                 var fulList = nList.Concat(list);
 
                 var count = fulList.Count();
-                var items = fulList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                var items = fulList.Skip((page - 1) * _pageSize).Take(_pageSize).ToList();
 
                 string pageRoute = @"/adminpaneldoctor/doctordataindex?page=";
                 string processOptions = $"&email={email}&name={name}&speciality={speciality}&roleid={roleId}&sortorder={sortOrder}";
@@ -114,7 +114,7 @@ namespace MedContactApp.Controllers
 
                 DoctDataIndexViewModel viewModel = new(
                     items, processOptions,link,
-                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new PageViewModel(count, page, _pageSize, pageRoute),
                     new FilterSpecViewModel(roles, roleId, name, email, speciality),
                     new SortViewModel(sortOrder)
                 );
@@ -146,7 +146,7 @@ namespace MedContactApp.Controllers
                 applicants = _adminSortFilter.UserSort(applicants, sortOrder);
 
                 var count = await applicants.CountAsync();
-                var items = await applicants.Skip((page - 1) * pageSize).Take(pageSize)
+                var items = await applicants.Skip((page - 1) * _pageSize).Take(_pageSize)
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
 
                 string pageRoute = @"/adminpaneldoctor/applicationindex?page=";
@@ -158,7 +158,7 @@ namespace MedContactApp.Controllers
 
                 UserIndexApplViewModel viewModel = new(
                     items, processOptions,
-                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new PageViewModel(count, page, _pageSize, pageRoute),
                     new FilterNameViewModel(name, email),
                     new SortViewModel(sortOrder)
                 );

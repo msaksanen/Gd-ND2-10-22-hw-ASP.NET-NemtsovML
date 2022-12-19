@@ -26,4 +26,8 @@ export class Userdto {
   roles?: Array<Roledto>;
   registrationDate?: Date;
   lastLogin?: Date;
+
+  accessToken?: string;
+  refreshToken?: string;
+  tokenExpiration?: Date;
 }

@@ -108,7 +108,7 @@ namespace MedContactApp.Controllers
                 }
 
                 var count = await users.CountAsync();
-                var items = await users.Skip((page - 1) * pageSize).Take(pageSize)
+                var items = await users.Skip((page - 1) * _pageSize).Take(_pageSize)
                            .Select(user => _mapper.Map<UserDto>(user)).ToListAsync();
 
              
@@ -134,7 +134,7 @@ namespace MedContactApp.Controllers
 
                 UserIndexViewModel viewModel = new(
                     items, processOptions, groupOrder, icon,
-                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new PageViewModel(count, page, _pageSize, pageRoute),
                     new FilterViewModel(roles, roleId, name, email, msg, count, sysInfo),
                     new SortViewModel(sortOrder)
                 );

@@ -4,4 +4,6 @@ export class Pageviewmodel {
   pageRoute?: string;
   hasPreviousPage?: boolean;
   hasNextPage?: boolean;
+  count?: number;
+  pageSize?: number;
 }

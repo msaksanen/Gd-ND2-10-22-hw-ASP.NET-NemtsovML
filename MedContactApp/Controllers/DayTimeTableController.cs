@@ -153,7 +153,8 @@ namespace MedContactApp.Controllers
                 if (timeTableList != null)
                 {
                     count = timeTableList.Count();
-                    items = timeTableList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                    items = timeTableList.Skip((page - 1) * _pageSize).Take(_pageSize).ToList();
+                    items.ToList().ForEach(d => d.DoctorData = null);
                 }
 
                 if (!string.IsNullOrEmpty(reflink))
@@ -165,7 +166,7 @@ namespace MedContactApp.Controllers
 
                 TimeTableDoctIndexModel model = new(
                        items, processOptions, dInfo, reflink,
-                       new PageViewModel(count, page, pageSize, pageRoute),
+                       new PageViewModel(count, page, _pageSize, pageRoute),
                        new SortViewModel(sortOrder));
 
                 if (customer != null)

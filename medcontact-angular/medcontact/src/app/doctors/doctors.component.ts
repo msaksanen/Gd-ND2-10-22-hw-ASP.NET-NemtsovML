@@ -13,6 +13,7 @@ export class DoctorsComponent implements OnInit {
   // doctors: Doctorfulldata[] = [];
   doctors?: Doctdataindexviewmodel
   selectedDoctor? : Doctorfulldata;
+  showSpinner: boolean=false;
 
  constructor (private doctorsService: DoctorsService ){
 
@@ -20,8 +21,10 @@ export class DoctorsComponent implements OnInit {
   ngOnInit(): void {
    /*  this.doctorsService.getDoctors()
     .subscribe(data => this.doctors = data); */
+    this.showSpinner = true;
     this.doctorsService.getAllDoctorsFromApi()
-    .subscribe(data => this.doctors = data);
+    .subscribe(data => this.doctors = data).add(()=>{ this.showSpinner = false});
+
   }
 
   viewDoctorParent(doctor: Doctorfulldata) {

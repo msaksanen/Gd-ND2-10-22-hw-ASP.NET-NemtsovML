@@ -1,0 +1,101 @@
+import { Sortstate } from './../models/sortstate';
+import { Timetabledoctindexmodel } from 'src/app/models/timetabledoctindexmodel';
+import { DaytimetableService } from './../services/daytimetable/daytimetable.service';
+import { Component, OnInit } from '@angular/core';
+import { Daytimetabledto } from '../models/daytimetabledto';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { map, Observable } from 'rxjs';
+import { Location } from '@angular/common';
+import { PageEvent } from '@angular/material/paginator';
+
+
+
+@Component({
+  selector: 'app-timetabledoctindex',
+  templateUrl: './timetabledoctindex.component.html',
+  styleUrls: ['./timetabledoctindex.component.scss']
+})
+export class TimetabledoctindexComponent implements OnInit  {
+
+  model?: Timetabledoctindexmodel;
+  dataid?:string;
+  uid?:string;
+  reflink?:string;
+  page?:number;
+  sortorder?:number;
+  item?: Daytimetabledto;
+  pageSize?:number;
+  pageEvent?: PageEvent;
+  // filter?: Observable<string>;
+
+    constructor(private daytimetableService: DaytimetableService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private location:Location) { }
+
+    private querySubscription?: Subscription;
+    private routeSubscription?: Subscription;
+
+
+
+  ngOnInit() : void{
+    /*  this.doctorsService.getDoctors()
+     .subscribe(data => this.doctors = data); */
+    //  this.dataid = this.route.snapshot.paramMap.get('dataid') || '';
+    this.routeSubscription = this.route.params.subscribe(params=>this.dataid=params['dataid']);
+    // this.actualPage = Number(this.route.snapshot.paramMap.get('page')) || 0;
+    this.querySubscription = this.route.queryParams.subscribe(
+      (queryParam: any) => {
+          // this.dataid = queryParam['dataid'];
+          this.uid = queryParam['uid'];
+          this.reflink = queryParam['reflink'];
+          this.page = queryParam['page'];
+          this.pageSize = queryParam['pagesize'];
+          this.sortorder = queryParam['sortorder'];
+      }
+  );
+
+    //  this.filter = this.route.queryParamMap.pipe(
+    //   map((params: ParamMap) => params.get('filter')));
+
+
+
+     this.daytimetableService.getTimeTableDoctIndexFromApi(this.dataid, this.uid, this.reflink, this.page?.toString(),
+                     this.pageSize?.toString(),this.sortorder?.toString())
+                    .subscribe(data => this.model = data);
+   }
+
+  //   dateSort() {
+  //   this.router.navigate(['/timetabledoctindex'], {
+  //     queryParams: {dataid: this?.model?.doctorInfo?.doctorDataId, uid:this?.model?.user?.id,
+  //       reflink:this?.model?.reflink, sortorder:this?.model?.sortViewModel?.dateSort}
+  //   });
+  //  }
+  //  dateSort() {
+  //   this.dataid = this?.model?.doctorInfo?.doctorDataId;
+  //   this.uid = this?.model?.user?.id;
+  //   this.reflink = this?.model?.reflink;
+  //   this.sortorder = this?.model?.sortViewModel?.dateSort;
+  //  }
+   dateSort() {
+    this.dataid = this?.model?.doctorInfo?.doctorDataId;
+    this.uid = this?.model?.user?.id;
+    this.reflink = this?.model?.reflink;
+    this.sortorder = this?.model?.sortViewModel?.dateSort;
+    this.daytimetableService.getTimeTableDoctIndexFromApi(this.dataid, this.uid, this.reflink, this.page?.toString(),
+                     this.pageSize?.toString(),this.sortorder?.toString())
+                    .subscribe(data => this.model = data);
+   }
+
+   getServerData(event: PageEvent):PageEvent {
+    this.daytimetableService.getTimeTableDoctIndexFromApi(this.dataid, this.uid, this.reflink, event.pageIndex.toString(),
+                     event.pageSize.toString(),this.sortorder?.toString())
+                    .subscribe(data => this.model = data);
+    return event;
+  }
+
+    goBack() {
+    this.location.back();
+   }
+}

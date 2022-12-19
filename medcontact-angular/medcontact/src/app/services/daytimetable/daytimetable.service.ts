@@ -1,8 +1,10 @@
 import { Sortstate } from './../../models/sortstate';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Timetabledoctindexmodel } from 'src/app/models/timetabledoctindexmodel';
 import { ApiService } from '../api.service';
+import { Daytimetabledto } from 'src/app/models/daytimetabledto';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +13,54 @@ export class DaytimetableService {
 
   constructor(private apiService: ApiService) { }
 
-  getTimeTableDoctIndexFromApi(dataid?:string, uid?:string, reflink?:string, page?:string, sortorder?:Sortstate):
+  liteModel?:Timetabledoctindexmodel;
+
+  getTimeTableDoctIndexFromApi(dataid?:string, uid?:string, reflink?:string, page?:string, pagesize?:string, sortorder?:string):
     Observable<Timetabledoctindexmodel>{
       return this.apiService.get('DayTimeTable/TimeTableDoctIndex/',{
             dataid: dataid,
             uid: uid,
             reflink: reflink,
             page: page,
+            pageSize: pagesize,
             sortorder: sortorder
             }).pipe();}
 
+  // getTimeTableDoctIndexCollectionFromApi(dataid?:string, uid?:string, reflink?:string, page?:string, pagesize?:string, sortorder?:string):
+  //   Observable<Daytimetabledto[]>{
+  //    return (this. apiService.get('DayTimeTable/TimeTableDoctIndex/',{
+  //           dataid: dataid,
+  //           uid: uid,
+  //           reflink: reflink,
+  //           page: page,
+  //           pageSize: pagesize,
+  //           sortorder: sortorder
+  //           }).pipe() as Observable<Timetabledoctindexmodel>)?.tableList;
+  //         }
+   getDaytimetabledtoCollectFromApi(dataid?:string, uid?:string, reflink?:string, page?:string, pagesize?:string, sortorder?:string):
+    Observable<Daytimetabledto[]>{
+      return  this.apiService.get('DayTimeTable/TimeTableDoctIndex/',{
+                  dataid: dataid,
+                   uid: uid,
+                   reflink: reflink,
+                   page: page,
+                   pageSize: pagesize,
+                   sortorder: sortorder
+                   }).pipe(map((data:any)=>{
+            let ttableDoctIndexmodel = data["tableList"];
+               let  model= data as Timetabledoctindexmodel;
+               if(model) {
+                this.liteModel =model;
+                this.getLiteDaytimetableModel();
+               }
+            return ttableDoctIndexmodel as Daytimetabledto[] ;
+              }))};
 
-//     getOnlinerArticlesFromApi(): Observable<Article[]>{
-//       return this.apiService.get('Articles', {
-//         sourceId: "02cff32a-097a-48b4-8240-f27f81e8a0c1",
-//         pageSize:5,
-//         pageNumber:0}).pipe();
-// getArticleByIdFromApi(id:string): Observable<Article>{
-//   return this.apiService.get(`Articles/${id}`, {}).pipe();
-
+   getLiteDaytimetableModel() : Observable<Timetabledoctindexmodel|undefined> {
+      if(this.liteModel)
+      {
+        this.liteModel.tableList=undefined;
+      }
+      return of(this.liteModel);
+    }
 }

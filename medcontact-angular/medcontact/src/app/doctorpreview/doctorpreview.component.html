@@ -37,10 +37,11 @@
   <td area-label="Birth Date">
     {{doctor.birthDate | date: 'dd/MM/yyyy'  }}
   <td>
-    <a class="button-detail" type="button" (click)="onSelect(doctor)"> Details</a>
+      <button mat-raised-button type="button" (click)="onSelect(doctor)"> Details</button>
   </td>
    <td>
-    <a class="button-detail" routerLink="/timetabledoctindex/{{doctor.id}}">Daytimetables</a>
+    <!-- <button mat-raised-button [routerLink]="['/timetabledoctindex']" [queryParams]="{dataid: doctor.id }">Daytimetables</button> -->
+    <button mat-raised-button  routerLink="/timetabledoctindex/{{doctor.id}}">Daytimetables</button>
   </td>
 </tr>
 </tbody>

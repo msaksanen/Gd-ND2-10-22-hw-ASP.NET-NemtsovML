@@ -100,7 +100,7 @@ namespace MedContactApp.Controllers
                 medDatas = _medSortFilter.MedDataSort(medDatas, sortOrder);
 
                 var count = await medDatas.CountAsync();
-                var items = await medDatas.Skip((page - 1) * pageSize).Take(pageSize)
+                var items = await medDatas.Skip((page - 1) * _pageSize).Take(_pageSize)
                          .Select(md => _mapper.Map<MedDataDto>(md)).ToListAsync();
 
 
@@ -119,7 +119,7 @@ namespace MedContactApp.Controllers
                 ViewData["Reflink"] = link;
                 MedDataIndexViewModel viewModel = new(
                     usr, sysinfo, link, datainfo, processOptions,
-                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new PageViewModel(count, page, _pageSize, pageRoute),
                     new FilterMedDataViewModel(name, type, speciality, depart, text, date),
                     new SortViewModel(sortOrder)
                 );

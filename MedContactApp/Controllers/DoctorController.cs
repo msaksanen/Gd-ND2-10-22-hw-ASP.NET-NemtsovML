@@ -75,7 +75,7 @@ namespace MedContactApp.Controllers
                 dDatas = _adminSortFilter.DoctorDataSort(dDatas, sortOrder);
 
                 var count = await dDatas.CountAsync();
-                var doctorDatas = await dDatas.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                var doctorDatas = await dDatas.Skip((page - 1) * _pageSize).Take(_pageSize).ToListAsync();
                 var items = doctorDatas.Select(dd => _mapper.Map<DoctorFullDataDto>((dd, dd.User, dd.Speciality)));
 
                 string pageRoute = @"/doctor/index?page=";
@@ -87,7 +87,7 @@ namespace MedContactApp.Controllers
 
                 DoctDataIndexViewModel viewModel = new(
                     items, processOptions, link,
-                    new PageViewModel(count, page, pageSize, pageRoute),
+                    new PageViewModel(count, page, _pageSize, pageRoute),
                     new FilterSpecViewModel(null, null, name, "", speciality),
                     new SortViewModel(sortOrder)
                 );

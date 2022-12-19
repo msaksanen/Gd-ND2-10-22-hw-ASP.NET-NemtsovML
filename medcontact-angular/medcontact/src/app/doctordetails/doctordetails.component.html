@@ -1,4 +1,4 @@
-<h6>Doctor Details</h6>
+<!-- <h6>Doctor Details</h6>
 <ul *ngIf="DetailDoctor">
   <li>
     Name: {{DetailDoctor.username}} {{DetailDoctor.midName}}
@@ -16,5 +16,28 @@
     Role: {{role.name}}
     Id: {{role.guidId}}
    </li>
-</ul>
+</ul> -->
+
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-subtitle>Doctor Details</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content *ngIf="DetailDoctor">
+    <p>Name: {{DetailDoctor.username}} {{DetailDoctor.midName}}</p>
+    <mat-divider></mat-divider>
+    <li>
+      Id: {{DetailDoctor.id}}
+    </li>
+     <li>
+      SpecialityId: {{DetailDoctor.specialityId}}
+     </li>
+     <li>
+      UserId: {{DetailDoctor.userId}}
+      </li>
+      <li *ngFor="let role of DetailDoctor.roles">
+       Role: {{role.name}}
+       Id: {{role.guidId}}
+      </li>
+  </mat-card-content>
+</mat-card>
 

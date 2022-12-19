@@ -1,5 +1,9 @@
-<div>
+<div class="content">
+  <div [style.display]="showSpinner ? 'flex' : 'none'">
+  <mat-spinner [strokeWidth]="3"></mat-spinner>
+  </div>
   <app-doctorpreview   *ngIf="doctors" [doctors] ="doctors" (DoctorFromPreview)="viewDoctorParent($event)"></app-doctorpreview>
   <hr/>
   <app-doctordetails *ngIf="selectedDoctor" [DetailDoctor] = "selectedDoctor"></app-doctordetails>
 </div>
+

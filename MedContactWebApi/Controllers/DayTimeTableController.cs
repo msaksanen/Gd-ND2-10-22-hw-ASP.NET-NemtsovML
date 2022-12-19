@@ -142,8 +142,15 @@ namespace MedContactWebApi.Controllers
                 IEnumerable<DayTimeTableDto>? timeTableList = await _mediator.Send(new GetDayTimeTableListByDoctorDataIdQuery() 
                                                                     { DoctorDataId = dInfo.DoctorDataId });
 
-                bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
-                if (result) _pageSize = pageSize;
+                if (model.PageSize!=null && model.PageSize>0)
+                {
+                    _pageSize = (int)model.PageSize;
+                }
+                else
+                {
+                    bool result = int.TryParse(_configuration["PageSize:Default"], out var pageSize);
+                    if (result) _pageSize = pageSize;
+                }
                 int flag = 0;
 
 
@@ -209,7 +216,8 @@ namespace MedContactWebApi.Controllers
                 if (timeTableList != null)
                 {
                     count = timeTableList.Count();
-                    items = timeTableList.Skip((model.Page - 1) * pageSize).Take(pageSize).ToList();
+                    items = timeTableList.Skip((model.Page - 1) * _pageSize).Take(_pageSize).ToList();
+                    items.ToList().ForEach(d => d.DoctorData = null);
                 }
 
                 if (!string.IsNullOrEmpty(model.RefLink))
@@ -221,7 +229,7 @@ namespace MedContactWebApi.Controllers
 
                 TimeTableDoctIndexModel viewmodel = new(
                        items, processOptions, dInfo, model.RefLink, flag,
-                       new PageViewModel(count, model.Page, pageSize, pageRoute),
+                       new PageViewModel(count, model.Page, _pageSize, pageRoute),
                        new SortViewModel(model.SortOrder));
 
                 if (customer != null)

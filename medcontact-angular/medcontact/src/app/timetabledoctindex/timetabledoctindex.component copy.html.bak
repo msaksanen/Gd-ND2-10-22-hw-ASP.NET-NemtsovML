@@ -1,0 +1,115 @@
+<div class="container">
+  <div class="row">
+   <div class="col-sm-6">
+             <h4>Doctor: {{model?.doctorInfo?.name}} {{model?.doctorInfo?.surname}}</h4>
+             <h6>Speciality {{model?.doctorInfo?.speciality}}</h6>
+             <div *ngIf="model?.flag!>=1">  <!-- @*Admin & Doctor*@ -->
+              <p> <a href="~/daytimetable/create/?dataid={{model?.doctorInfo?.doctorDataId!}}&uid={{model?.user?.id!}}&reflink={{model?.reflink!}}">Create New DayTimeTable</a> </p>
+             </div>
+   </div>
+  <div class="col-sm-6" *ngIf="model?.flag==2 && model?.user">  <!-- @*Doctor re-appoints patients*@ -->
+
+                 <h4 class="justify-content-end">Customer: {{model?.user?.name}} {{model?.user?.surname}}</h4>
+                 <h6 class ="justify-content-end">Appointment creation </h6>
+                 <h6>User Id: {{model?.user?.id}}</h6>
+ </div>
+
+ </div>
+ </div>
+
+ <hr />
+
+     <Table class="delivery" *ngIf="(model?.tableList && model?.doctorInfo?.doctorDataId); else othercase">
+         <caption>TimeTable</caption>
+         <thead>
+             <!--  routerLink="/timetabledoctindex/{{model?.doctorInfo?.doctorDataId}}" -->
+             <tr>
+                  <th>
+                    <button mat-raised-button (click)="dateSort()">Date</button>
+                      <!-- <a  [routerLink]="['/timetabledoctindex']"
+                          [queryParams]="{dataid: model?.doctorInfo?.doctorDataId, uid:model?.user?.id,
+                           reflink:model?.reflink,sortorder:model?.sortViewModel?.dateSort}">Date</a> -->
+                 </th>
+                 <th>
+                     Start WorkTime
+                 </th>
+                 <th>
+                     Finish WorkTime
+                 </th>
+                 <th>
+                     Consult Duration
+                 </th>
+                 <th>
+                     Total Ticket Quantity
+                 </th>
+                 <th>
+                     Free Ticket Quantity
+                 </th>
+                 <th>
+                     Creation Date
+                 </th>
+                 <th>
+                     Details
+                 </th>
+             </tr>
+         </thead >
+         <tbody *ngIf="model?.tableList">
+                     <tr *ngFor="let item of model?.tableList">
+                         <td area-label="Date">
+                           {{item?.date |  date: 'dd/MM/yyyy'  }}
+                        </td>
+                         <td area-label="StartWorkTime">
+                           {{item?.startWorkTime | date: 'HH:mm'  }}
+                         </td>
+                         <td area-label="FinishWorkTime">
+                           {{item?.finishWorkTime | date: 'HH:mm' }}
+                        </td>
+                        <td area-label="ConsultDuration">
+                           {{item?.consultDuration}}
+                        </td>
+                         <td area-label="Total Ticket Quantity">
+                           {{item?.totalTicketQty}}
+                         </td>
+                         <td area-label="Free Ticket Quantity">
+                           {{item?.freeTicketQty}}
+                         </td>
+                          <td area-label="Creation Date">
+                           {{item?.creationDate | date: 'dd/MM/yyyy' }}
+                         </td>
+                          <td>
+                                 <!--@*Doctor re-appoints patients*@ -->
+                                 <span *ngIf="model?.flag==2 && model?.user"> <a class="btn btn-link" href="~/appointment/createindex/?id={{item.id}}&uid={{model?.user?.id}}&reflink={{model?.reflink}}">Add an appointment</a></span>
+                                 <!-- @*Admin & Doctor*@ -->
+                                 <div *ngIf="model?.flag!>=1; else other">
+                                  <span><a class="btn btn-link" href="~/appointment/viewindex/?id={{item.id}}&reflink={{model?.reflink}}">View appointments</a></span>
+                                 </div>
+                                <!-- @*Customer*@ -->
+                                <ng-template #other>
+                                  <span> <a class="btn btn-link" href="~/appointment/createindex/?id={{item.id}}&reflink={{model?.reflink}}">Add an appointment</a></span>
+                                </ng-template>
+                          </td>
+
+                     </tr>
+         </tbody>
+     </Table>
+
+     <ng-template #othercase>
+      <h6>Doctor has no actual timetables</h6>
+     </ng-template>
+
+
+<div class="back">
+  <button mat-raised-button (click)="goBack()">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_back"></mat-icon>Back
+  </button>
+</div>
+
+<mat-paginator [length]="model?.pageViewModel?.count"
+               [pageSize]="model?.pageViewModel?.pageSize"
+               [pageIndex]="model?.pageViewModel?.pageNumber"
+               [pageSizeOptions]="[2,5, 10, 25, 100]"
+              aria-label="Select page">
+              (page)="pageEvent=getServerData($event)";
+</mat-paginator>
+
+

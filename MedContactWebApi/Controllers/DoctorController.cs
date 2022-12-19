@@ -93,7 +93,7 @@ namespace MedContactWebApi.Controllers
 
                 DoctDataIndexViewModel viewModel = new(
                     items, processOptions, link,
-                    new PageViewModel(count, model.Page, pageSize, pageRoute),
+                    new PageViewModel(count, model.Page, _pageSize, pageRoute),
                     new FilterSpecViewModel(null, null, model.Name, "", model.Speciality),
                     new SortViewModel(model.SortOrder)
                 );

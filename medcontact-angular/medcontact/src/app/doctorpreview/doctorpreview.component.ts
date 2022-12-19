@@ -12,6 +12,7 @@ export class DoctorpreviewComponent {
   @Input() doctors?: Doctdataindexviewmodel;
   @Output() DoctorFromPreview= new EventEmitter<Doctorfulldata>();
 
+
   onSelect(doctor: Doctorfulldata) {
     this.DoctorFromPreview?.emit(doctor);
   }
