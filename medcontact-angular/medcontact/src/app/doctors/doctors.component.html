@@ -7,3 +7,9 @@
   <app-doctordetails *ngIf="selectedDoctor" [DetailDoctor] = "selectedDoctor"></app-doctordetails>
 </div>
 
+<br/>
+<div class="back">
+  <button mat-raised-button (click)="goBack()">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_back"></mat-icon>Back
+  </button>
+</div>

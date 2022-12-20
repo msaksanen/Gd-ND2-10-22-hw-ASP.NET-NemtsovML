@@ -24,7 +24,7 @@ export class TimetabledoctindexDataSource  implements DataSource<Daytimetabledto
     this.loadingSubject.complete();
   }
 
-  loadDaytimetable(dataid:string, uid= NIL_UUID, reflink='/doctors', page:number=1, pagesize:number=3,
+  loadDaytimetable(dataid:string, uid= NIL_UUID, reflink='/doctors', page:number=0, pagesize:number=3,
   sortorder=9) {
 
   this.loadingSubject.next(true);

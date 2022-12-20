@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/aurh/auth.service';
-import { first } from 'rxjs';
+import { first, forkJoin } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ export class LoginComponent implements OnInit{
 
   constructor(
     private formBuilder: FormBuilder,
+    private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService)
@@ -35,7 +37,12 @@ export class LoginComponent implements OnInit{
       });
     }
 
-    onSubmit(){
+
+     goBack() {
+     this.location.back();
+     }
+
+     onSubmit(){
       this.isSubmitted = true;
 
           if (this.loginForm.invalid){
@@ -46,7 +53,9 @@ export class LoginComponent implements OnInit{
       this.error = '';
       const formData = this.loginForm.controls;
 
-      this.authService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value)
+
+
+      this.authService.combiLogin(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value)
         .pipe(first())
         .subscribe({
           next: () => {
@@ -57,6 +66,9 @@ export class LoginComponent implements OnInit{
             this.error = error;
             this.isSubmitted = false;
           }
-        })
+        });
+
+
+
     }
 }

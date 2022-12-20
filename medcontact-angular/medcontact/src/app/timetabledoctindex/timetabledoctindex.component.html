@@ -92,11 +92,6 @@
  </div>
 
 <br/>
-<div class="back">
-  <button mat-raised-button (click)="goBack()">
-    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_back"></mat-icon>Back
-  </button>
-</div>
 
 <mat-paginator [length]="model?.pageViewModel?.count"
                [pageSize]="model?.pageViewModel?.pageSize"
@@ -104,7 +99,9 @@
                [pageSizeOptions]="[2,5, 10, 25, 100]">
 </mat-paginator>
 
-<!-- <mat-paginator [length]="course?.lessonsCount" [pageSize]="3"
-[pageSizeOptions]="[3, 5, 10]"></mat-paginator> -->
-
-
+<br/>
+<div class="back">
+  <button mat-raised-button (click)="goBack()">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_back"></mat-icon>Back
+  </button>
+</div>

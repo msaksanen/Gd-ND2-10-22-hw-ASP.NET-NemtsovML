@@ -14,7 +14,7 @@ namespace MedContactWebApi.Models
        /// 
        public string RefLink { get; set; } = string.Empty;
        ///
-       public int Page { get; set; } = 1;
+       public int Page { get; set; } = 0;
        ///
        public int? PageSize { get; set; }
        ///

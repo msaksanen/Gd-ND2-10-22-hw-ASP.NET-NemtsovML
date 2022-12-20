@@ -1,26 +1,38 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, map } from 'rxjs';
-import { Userdto } from 'src/app/models/userdto';
+import { BehaviorSubject, Observable, map, forkJoin, mergeMap } from 'rxjs';
+import { User } from 'src/app/models/user';
+import { Userdatamodel } from 'src/app/models/userdatamodel';
 import { ApiService } from '../api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private userSubject?: BehaviorSubject<Userdto | null>;
-  public user?: Observable<Userdto | null>;
+  private userSubject?: BehaviorSubject<User | null>;
+  public user?: Observable<User | null>;
+  private userdataSubject?: BehaviorSubject<Userdatamodel | null>;
+  public userdata?: Observable<Userdatamodel | null>;
 
   constructor(private router: Router, private apiService: ApiService) {
-    this.userSubject = new BehaviorSubject<Userdto | null>(
+    this.userSubject = new BehaviorSubject<User | null>(
       JSON.parse(localStorage.getItem('user')!)
     );
     this.user = this.userSubject.asObservable();
+    this.userdataSubject = new BehaviorSubject<Userdatamodel | null>(
+      JSON.parse(localStorage.getItem('userdata')!)
+    );
+    this.userdata = this.userdataSubject.asObservable();
   }
 
   public get userValue() {
     return this.userSubject?.value;
   }
+
+  public get userDataValue() {
+    return this.userdataSubject?.value;
+  }
+
 
   login(username: string, password: string) {
     return this.apiService.post('Token/CreateJwtToken', { email: username, password }).pipe(
@@ -30,7 +42,23 @@ export class AuthService {
         return user;
       })
     );
+
   }
+
+  getUserLoginPreview(){
+    return this.apiService.get('Account/UserLoginPreview',{}).pipe(
+      map((data) => {
+        localStorage.setItem('userdata', JSON.stringify(data));
+        this.userdataSubject?.next(data);
+        return data;
+      })
+    );
+  }
+
+  combiLogin(username:string, password:string) {
+    return this.login(username, password).pipe((mergeMap(user =>(this.getUserLoginPreview()))));
+  }
+
 
   refreshToken(refreshToken: string) {
     return this.apiService.post('Token/RefreshToken', { refreshToken }).pipe(
@@ -45,6 +73,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('user');
     this.userSubject?.next(null);
-    this.router.navigateByUrl('/login');
+    localStorage.removeItem('userdata');
+    this.userdataSubject?.next(null);
+   // this.router.navigateByUrl('/logout');
   }
 }

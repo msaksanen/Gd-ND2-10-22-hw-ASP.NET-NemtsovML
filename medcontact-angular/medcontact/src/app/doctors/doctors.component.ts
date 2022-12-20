@@ -3,6 +3,7 @@ import { Doctorfulldata } from './../models/doctorfulldata';
 import { Component, OnInit } from '@angular/core';
 import { Doctorslist } from 'src/app/data/doctorslist';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-doctors',
@@ -15,7 +16,7 @@ export class DoctorsComponent implements OnInit {
   selectedDoctor? : Doctorfulldata;
   showSpinner: boolean=false;
 
- constructor (private doctorsService: DoctorsService ){
+ constructor (private doctorsService: DoctorsService,  private location:Location ){
 
  }
   ngOnInit(): void {
@@ -30,5 +31,10 @@ export class DoctorsComponent implements OnInit {
   viewDoctorParent(doctor: Doctorfulldata) {
     this.selectedDoctor = doctor;
   }
+
+
+  goBack() {
+    this.location.back();
+   }
 
 }

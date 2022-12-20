@@ -73,7 +73,7 @@ export class TimetabledoctindexComponent implements OnInit, AfterViewInit  {
 
 
       this.dataSource = new TimetabledoctindexDataSource(this.daytimetableService);
-      this.dataSource.loadDaytimetable(this.dataid, this.uid, this.reflink, 1, 3,  this.sortorder);
+      this.dataSource.loadDaytimetable(this.dataid, this.uid, this.reflink, 0, 3,  this.sortorder);
 
     //   this.daytimetableService.getLiteDaytimetableModel()
     //  .subscribe(data => this.model = data);
@@ -99,7 +99,7 @@ export class TimetabledoctindexComponent implements OnInit, AfterViewInit  {
       this.dataSource?.loadDaytimetable(
       this.dataid,
       this.uid, this.reflink,
-      this.paginator.pageIndex+1,
+      this.paginator.pageIndex,
       this.paginator.pageSize,
       this.sortorder);
     }

@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DoctorsComponent } from './doctors/doctors.component';
 import { DoctordetailsComponent } from './doctordetails/doctordetails.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomepageComponent } from './homepage/homepage.component';
 import { TimetabledoctindexComponent } from './timetabledoctindex/timetabledoctindex.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -25,6 +25,9 @@ import { MatSortModule} from '@angular/material/sort';
 import { LoginComponent } from './login/login.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule} from '@angular/material/progress-bar';
+import { AuthErrorInterceptor } from './interceptors/auth-error.interceptor';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,7 @@ import { MatProgressBarModule} from '@angular/material/progress-bar';
     HomepageComponent,
     TimetabledoctindexComponent,
     LoginComponent,
+    LogoutComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +62,10 @@ import { MatProgressBarModule} from '@angular/material/progress-bar';
     MatProgressBarModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthErrorInterceptor, multi: true},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
