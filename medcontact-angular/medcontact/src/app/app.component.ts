@@ -15,7 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   someSubscription: any;
   userPreview: Userdatamodel | undefined| null;
-
+  isLoggedIn?: boolean = false;
 
 
   private _mobileQueryListener: () => void;
@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     media: MediaMatcher) {
+
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -40,24 +41,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.authService.isloggedIn
+    .subscribe(data => this.isLoggedIn = data);
+    this.authService.userData!
+    .subscribe(data => this.userPreview = data);
   }
 
   ngOnDestroy() {
     if (this.someSubscription) {
       this.someSubscription.unsubscribe();
     }
-  }
-  isLoggedIn(): boolean {
-    const user = this.authService.userValue;
-    const preview = this.authService.userDataValue;
-    if (user){
-     this.userPreview= preview;
-      return true;
-    }
-
-    else
-      return false;
-
   }
 
 

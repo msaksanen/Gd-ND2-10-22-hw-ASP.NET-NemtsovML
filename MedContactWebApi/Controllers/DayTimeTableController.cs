@@ -154,7 +154,11 @@ namespace MedContactWebApi.Controllers
                 int flag = 0;
 
 
-                if (!string.IsNullOrEmpty(model.RefLink) && (User.IsInRole("Doctor") || User.IsInRole("Admin")))
+                if (!string.IsNullOrEmpty(model.RefLink) && (User.IsInRole("Doctor") || User.IsInRole("Admin")) &&
+                    (model.RefLink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true ||
+                     model.RefLink?.Contains(@"appointment/patientviewindex", StringComparison.OrdinalIgnoreCase) == true ||
+                     model.RefLink?.Contains(@"adminpaneldoctor/doctordataindex", StringComparison.OrdinalIgnoreCase) == true
+                    ))
                 {
                     if (User.IsInRole("Doctor") && model.RefLink?.Contains(@"daytimetable/selelctspec", StringComparison.OrdinalIgnoreCase) == true)
                     {
