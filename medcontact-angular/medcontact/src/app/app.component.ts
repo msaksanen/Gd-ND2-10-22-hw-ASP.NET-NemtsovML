@@ -32,11 +32,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
     };
-    this.someSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.router.navigated = false;
-      }
-    });
+    // this.someSubscription = this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     this.router.navigated = false;
+    //   }
+    // });
   }
 
 
@@ -48,9 +48,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.someSubscription) {
-      this.someSubscription.unsubscribe();
-    }
+    // if (this.someSubscription) {
+    //   this.someSubscription.unsubscribe();
+    // }
   }
 
 

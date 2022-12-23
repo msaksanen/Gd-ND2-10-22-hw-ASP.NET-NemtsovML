@@ -29,12 +29,12 @@ namespace MedContactApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            //builder.Services.AddControllersWithViews(options =>
-            //{
-            //    options.Filters.Add<CustomExceptionFilter>();
-            //    options.Filters.Add<StatusCodeResultFilter>();
-            //});
+            //builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<CustomExceptionFilter>();
+                options.Filters.Add<StatusCodeResultFilter>();
+            });
 
             builder.Host.UseSerilog((ctx, lc) =>
               lc.WriteTo.File(

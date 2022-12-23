@@ -121,7 +121,7 @@ namespace MedContactBusiness.ServicesImplementations
         public async Task<IEnumerable<AppointmentInfo>?> GetAppointmentMailListAsync(int daysTerm)
         {
             var list = await  _unitOfWork.AppointmentRepository.Get()
-                                  .Where(a => a.StartTime!=null && a.StartTime>=DateTime.Now.AddDays(daysTerm))
+                                  .Where(a => a.StartTime!=null && a.StartTime.Value.Date==DateTime.Now.Date.AddDays(daysTerm))
                                   .Include(a => a.CustomerData)
                                     .ThenInclude(c => c!.User)
                                   .Include(a => a.DayTimeTable)
@@ -131,7 +131,6 @@ namespace MedContactBusiness.ServicesImplementations
                                     .ThenInclude(d => d!.DoctorData)
                                         .ThenInclude(d => d!.Speciality)
                                   .ToListAsync();
-
             var apmInfo = list?.Select(x => _mapper.Map<AppointmentInfo>
                                               ((x, x?.DayTimeTable?.DoctorData, x?.CustomerData)))
                                               .ToList();

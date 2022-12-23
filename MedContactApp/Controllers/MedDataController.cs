@@ -22,6 +22,7 @@ using System.Drawing;
 using MedContactApp.FilterSortPageHelpers;
 using System.Collections.Generic;
 using MedContactBusiness.ServicesImplementations;
+using System.Text;
 
 namespace MedContactApp.Controllers
 {
@@ -286,13 +287,14 @@ namespace MedContactApp.Controllers
                     model.SystemInfo += "<b> You have not uploaded files</b>";
                 else
                 {
-                    var resSize = _fileValidation.FileSizeValidation(model.Uploads);
-                    var resExt = _fileValidation.FileExtValidation(model.Uploads);
-                    if (resSize.IntResult == 1 && resExt.IntResult == 1)
-                    {
-                        List<FileDataDto> list = new();
+                    StringBuilder sb = new StringBuilder();
+                    List<FileDataDto> list = new();
 
-                        foreach (var uploadedFile in model.Uploads)
+                    foreach (var uploadedFile in model.Uploads)
+                    {
+                        var resSize = _fileValidation.SingleFileSizeValidation(uploadedFile);
+                        var resExt = _fileValidation.SingleFileExtValidation(uploadedFile);
+                        if (resSize.IntResult == 1 && resExt.IntResult == 1)
                         {
                             string ext = Path.GetExtension(uploadedFile.FileName);
                             string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
@@ -311,17 +313,60 @@ namespace MedContactApp.Controllers
                             };
                             list.Add(file);
                         }
-                        var fileResult = await _fileDataService.AddListToFileData(list);
-
-                        if (fileResult > 1)
-                            model.SystemInfo += $"<b> {fileResult} files have been uploaded.</b>";
-                        else if (fileResult == 1)
-                            model.SystemInfo += $"<b> 1 file has been uploaded.</b>";
                         else
-                            model.SystemInfo += $"<b> No files have been uploaded./b>";
+                        {
+                           sb.Append($"<br/><b>{uploadedFile.FileName}</b>: ");
+                           if (resSize.IntResult == 0)  sb.Append(resSize.Name);
+                           if (resExt.IntResult == 0)   sb.Append(resExt.Name);
+                        }
                     }
+                    var fileResult = await _fileDataService.AddListToFileData(list);
+
+                    if (fileResult > 1)
+                            model.SystemInfo += $"<br/><b> {fileResult} files have been uploaded.</b>";
+                    else if (fileResult == 1)
+                            model.SystemInfo += $"<br/><b> 1 file has been uploaded.</b>";
                     else
-                        model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
+                            model.SystemInfo += $"<br/><b> No files have been uploaded./b>";
+
+                    model.SystemInfo+=sb.ToString();
+                      
+                    //var resSize = _fileValidation.FileSizeValidation(model.Uploads);
+                    //var resExt = _fileValidation.FileExtValidation(model.Uploads);
+                    //if (resSize.IntResult == 1 && resExt.IntResult == 1)
+                    //{
+                    //    List<FileDataDto> list = new();
+
+                    //    foreach (var uploadedFile in model.Uploads)
+                    //    {
+                    //        string ext = Path.GetExtension(uploadedFile.FileName);
+                    //        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
+                    //        string path = "/files/meddata/" + name;
+                    //        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    //        {
+                    //            await uploadedFile.CopyToAsync(fileStream);
+                    //        }
+                    //        FileDataDto file = new FileDataDto
+                    //        {
+                    //            Id = Guid.NewGuid(),
+                    //            MedDataId = medData.Id,
+                    //            Name = uploadedFile.FileName,
+                    //            Path = path,
+                    //            Category = "MedData"
+                    //        };
+                    //        list.Add(file);
+                    //    }
+                    //    var fileResult = await _fileDataService.AddListToFileData(list);
+
+                    //    if (fileResult > 1)
+                    //        model.SystemInfo += $"<b> {fileResult} files have been uploaded.</b>";
+                    //    else if (fileResult == 1)
+                    //        model.SystemInfo += $"<b> 1 file has been uploaded.</b>";
+                    //    else
+                    //        model.SystemInfo += $"<b> No files have been uploaded./b>";
+                    //}
+                    //else
+                    //    model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
                 }
 
                 return RedirectToAction("UserMedData", "MedData", new { id = usr.Id, doctid = model.DoctorDataId, sysinfo = model.SystemInfo });

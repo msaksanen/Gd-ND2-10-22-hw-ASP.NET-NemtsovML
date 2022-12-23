@@ -18,18 +18,21 @@ namespace MedContactApp.Helpers
             if  (curEmail != null && curEmail.Equals(email)) 
                 return true;
 
-            var mainUserId = context.User.FindFirst("MUId")?.Value;
-          
-            if (Guid.TryParse(mainUserId, out Guid Uid))
+            if (!await _userService.CheckUserEmailAsync(email))
+
+                return true;
+            else
             {
-                var family = await _familyService.GetRelativesAsync(Uid);
-                if (family != null && family.Any(r => r.Email!=null && r.Email.Equals(email)))
-                    return true;
+                var mainUserId = context.User.FindFirst("MUId")?.Value;
+                if (Guid.TryParse(mainUserId, out Guid Uid))
+                {
+                    var family = await _familyService.GetRelativesAsync(Uid);
+                    if (family != null && family.Any(r => r.Email != null && r.Email.Equals(email)))
+                        return true;
+                }
+                return false;
             }
 
-                if (await _userService.CheckUserEmailAsync(email))
-                return false;
-            return true;
         }
     }
 }

@@ -204,19 +204,20 @@ namespace MedContactApp.Controllers
                     if (await _userService.CheckUserPassword(UId, model.Password))
                     {
                         result = await _roleService.AddRoleByNameToUser(UId, "Applicant");
+                        if (result > 0)
+                            model.SystemInfo = "<b>You have been added to applicants<b><br/>";
+                        else
+                            model.SystemInfo = "<b>You have been added to applicants before<b><br/>";
 
-                        var resSize = _fileValidation.FileSizeValidation(model.Uploads);
-                        var resExt = _fileValidation.FileExtValidation(model.Uploads);
-                        if (resSize.IntResult == 1 && resExt.IntResult == 1)
+                        StringBuilder sb = new StringBuilder();
+                        List<FileDataDto> list = new();
+
+                        foreach (var uploadedFile in model.Uploads)
                         {
-                            List<FileDataDto> list = new();
-                            if (result > 0)
-                                model.SystemInfo = "<b>You have been added to applicants<br/>";
-                            else
-                                model.SystemInfo = "<b>You have been added to applicants before<br/>";
-
-                            foreach (var uploadedFile in model.Uploads)
-                            {
+                              var resSize = _fileValidation.SingleFileSizeValidation(uploadedFile);
+                              var resExt = _fileValidation.SingleFileExtValidation(uploadedFile);
+                              if (resSize.IntResult == 1 && resExt.IntResult == 1)
+                              {
                                 string ext = Path.GetExtension(uploadedFile.FileName);
                                 string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
                                 string path = "/files/cv/" + name;
@@ -233,29 +234,86 @@ namespace MedContactApp.Controllers
                                     Category = "Applicant"
                                 };
                                 list.Add(file);
-                            }
+                              }
+                              else
+                              {
+                                sb.Append($"<br/><b>{uploadedFile.FileName}<b/>: ");
+                                if (resSize.IntResult == 0) sb.Append(resSize.Name);
+                                if (resExt.IntResult == 0) sb.Append(resExt.Name);
+                              }
+                               
+                        }
                             var fileResult = await _fileDataService.AddListToFileData(list);
 
                             if (fileResult > 1)
-                                model.SystemInfo = model.SystemInfo + $"{fileResult} files have been uploaded</b>";
+                                model.SystemInfo += $"<br/><b>{fileResult} files have been uploaded</b>";
                             else if (fileResult == 1)
-                                model.SystemInfo = model.SystemInfo + $"1 file has been uploaded</b>";
+                                model.SystemInfo += $"<br/><b> 1 file has been uploaded</b>";
                             else
-                                model.SystemInfo = model.SystemInfo + $"No files have been uploaded</b>";
+                                model.SystemInfo += $"<br/><b> No files have been uploaded</b>";
 
-                            return View(model);
-                        }
-                        else
-                        {
-                            model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
-                            return View(model);
-                        }
+                             model.SystemInfo += sb.ToString();
+
+                             return View(model);
                     }
-                    model.SystemInfo = "<b>You have entered incorrect password</b>";
+                        //var resSize = _fileValidation.FileSizeValidation(model.Uploads);
+                        //var resExt = _fileValidation.FileExtValidation(model.Uploads);
+                        //if (resSize.IntResult == 1 && resExt.IntResult == 1)
+                        //{
+                        //    List<FileDataDto> list = new();
+                        //    if (result > 0)
+                        //        model.SystemInfo = "<b>You have been added to applicants<br/>";
+                        //    else
+                        //        model.SystemInfo = "<b>You have been added to applicants before<br/>";
+
+                        //    foreach (var uploadedFile in model.Uploads)
+                        //    {
+                        //        string ext = Path.GetExtension(uploadedFile.FileName);
+                        //        string name = Path.GetFileNameWithoutExtension(uploadedFile.FileName) + $"-{DateTime.Now:HH.mm-dd.MM.yyyy}" + ext;
+                        //        string path = "/files/cv/" + name;
+                        //        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                        //        {
+                        //            await uploadedFile.CopyToAsync(fileStream);
+                        //        }
+                        //        FileDataDto file = new FileDataDto
+                        //        {
+                        //            Id = Guid.NewGuid(),
+                        //            UserId = UId,
+                        //            Name = uploadedFile.FileName,
+                        //            Path = path,
+                        //            Category = "Applicant"
+                        //        };
+                        //        list.Add(file);
+                        //    }
+                        //    var fileResult = await _fileDataService.AddListToFileData(list);
+
+                        //    if (fileResult > 1)
+                        //        model.SystemInfo = model.SystemInfo + $"{fileResult} files have been uploaded</b>";
+                        //    else if (fileResult == 1)
+                        //        model.SystemInfo = model.SystemInfo + $"1 file has been uploaded</b>";
+                        //    else
+                        //        model.SystemInfo = model.SystemInfo + $"No files have been uploaded</b>";
+
+                        //    return View(model);
+                        //}
+                        //else
+                        //{
+                        //    model.SystemInfo += $"<b> No files have been uploaded.</b>" + resSize.Name + resExt.Name;
+                        //    return View(model);
+                        //}
+                    else
+                    {
+                        model.SystemInfo = "<b>You have entered incorrect password</b>";
+                        return View(model);
+                    }
+                  
+                }
+                else
+                {
+                    model.SystemInfo = "<b>Something went wrong (</b>";
                     return View(model);
                 }
-                model.SystemInfo = "<b>Something went wrong (</b>";
-                return View(model);
+   
             }
             catch (Exception e)
             {

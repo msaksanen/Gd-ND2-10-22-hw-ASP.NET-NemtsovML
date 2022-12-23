@@ -42,6 +42,7 @@ namespace MedContactApp.Filters
                                     });
 
                 }
+
             }
 
             await next();

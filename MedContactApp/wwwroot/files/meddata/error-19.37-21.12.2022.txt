@@ -1,0 +1,24 @@
+Microsoft.EntityFrameworkCore.DbUpdateException
+  HResult=0x80131500
+  Message=An error occurred while saving the entity changes. See the inner exception for details.
+  Source=Microsoft.EntityFrameworkCore.Relational
+  StackTrace:
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.<ExecuteAsync>d__29.MoveNext()
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.<ExecuteAsync>d__9.MoveNext()
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.<ExecuteAsync>d__9.MoveNext()
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.<ExecuteAsync>d__9.MoveNext()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.<SaveChangesAsync>d__103.MoveNext()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.<SaveChangesAsync>d__107.MoveNext()
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.<ExecuteAsync>d__7`2.MoveNext()
+   at Microsoft.EntityFrameworkCore.DbContext.<SaveChangesAsync>d__60.MoveNext()
+   at Microsoft.EntityFrameworkCore.DbContext.<SaveChangesAsync>d__60.MoveNext()
+   at MedContactDataRepositories.UnitOfWork.<Commit>d__38.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactDataRepositories\UnitOfWork.cs:line 51
+   at MedContactBusiness.ServicesImplementations.UserService.<RemoveUserById>d__27.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactBusiness\ServicesImplementations\UserService.cs:line 321
+   at MedContactApp.Controllers.FamilyAccountController.<RemoveAccount>d__13.MoveNext() in C:\Users\wisor\source\repos\msaksanen\Gd-ND2-10-22-hw-ASP.NET-NemtsovML\MedContactApp\Controllers\FamilyAccountController.cs:line 251
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+
+Inner Exception 1:
+SqlException: The DELETE statement conflicted with the REFERENCE constraint "FK_MedData_CustomerDatas_CustomerDataId". The conflict occurred in database "MedContactNewDb", table "dbo.MedData", column 'CustomerDataId'.
+The statement has been terminated.
