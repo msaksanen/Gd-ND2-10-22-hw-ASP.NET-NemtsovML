@@ -125,6 +125,7 @@ namespace MedContactWebApi.Controllers
         /// <param name="model TimeTableDoctIndexRqstModel [FromQuery]"></param>
         /// string? dataid, string? reflink = "", SortState sortOrder = SortState.DateDesc, int page = 1
         /// <returns></returns>
+        //[Authorize] for testing front-end
         [HttpGet]
         public async Task<IActionResult> TimeTableDoctIndex([FromQuery] TimeTableDoctIndexRqstModel model)
         {

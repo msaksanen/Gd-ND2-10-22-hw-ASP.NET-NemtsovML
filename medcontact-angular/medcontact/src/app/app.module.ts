@@ -63,8 +63,8 @@ import { LogoutComponent } from './logout/logout.component';
     ReactiveFormsModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: AuthErrorInterceptor, multi: true},
+    // {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthErrorInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })
